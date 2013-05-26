@@ -1,0 +1,2 @@
+<td><a href="<!--#echo var="menuHref"-->"><img src="<!--#echo var="root"-->images/<!--#echo var="menuColor"-->Box.gif" alt="" border="0" /></a></td>
+<td><a class="menuItem <!--#echo var="area"-->Menu" href="<!--#echo var="menuHref"-->"><!--#echo var="menuTitle"--></a></td>

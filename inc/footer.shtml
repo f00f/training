@@ -1,0 +1,16 @@
+        </div>
+        </div>
+        <br />
+        <noscript><b>JavaScript aktiviert?</b></noscript>
+        <table width="100%" cellpadding="0">
+            <tr><td class="hr" colspan="3"><img src="<!--#echo var="root"-->images/trans1x1.gif" alt="" border="0" /></td></tr>
+        <tr>
+        <td class="shade" valign="top">
+            Letztes Update<b>:</b>&nbsp;<!--#config timefmt="%d.%m.%Y %H:%M" --><!--#echo var="LAST_MODIFIED" --><br />
+            copyright &copy; 2008 <a href="http://uwr1.de/kontakt/" class="shade">Hannes Hofmann</a>
+        </td>
+		<td class="shade" align="right">
+			<a href="http://validator.w3.org/check/referer" class="shade" target="_blank">valid xhtml 1.0</a><br />
+		</td></tr></table>
+	</body>
+</html>

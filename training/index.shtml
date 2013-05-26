@@ -1,0 +1,299 @@
+<!--#include virtual="root.shtml"-->
+<!--#set var="metaKeywords" value="Unterwasser, Rugby, Team, Sport, Unterwasser Rugby, Unter Wasser Rugby, Unter-Wasser-Rugby, 3D, 3D-Action, Action, UWR, Tauchclub, DEINESTADT, Unter, Wasser, TC, under, water, deutschland, bayern, homepage, web, online"-->
+<!--#set var="metaDescription" value="Unterwasser Rugby Training in DEINESTADT"-->
+<!--#include virtual="./$root/inc/header.shtml"-->
+<style>
+#liste {
+	background:		#fff;
+	border:			1px solid #808080;
+	border-top:		none;
+	margin-left:	4px;
+	margin-right:	4px;
+	padding-left:	1px;
+}
+#liste a,
+#liste div,
+#liste div * {
+	cursor:			pointer;
+	text-decoration: none;
+	color:			#000;
+	background:		#fff;
+}
+#combo {
+	margin-left:	4px;
+	margin-right:	4px;
+	padding-left:	1px;
+}
+#nixgesagt span {
+	cursor:			pointer;
+}
+</style>
+<b><big>training</big></b><br />
+<br />
+<!--#include virtual="inc/stats.html"-->
+<br />
+
+<div>
+<strong>Deine Meldung:</strong><br />
+<br />
+<form action="training.php">
+	<div style="float: left;">
+		Name:
+	</div>
+	<div style="float: left;">
+		<input type="text" name="text" value="" id="combo" onkeyup="UpdateComboBoxList(this, namen);" autocomplete="off" />
+		<div id="liste"></div>
+	</div>
+	<div style="float: left;">
+		<input type="submit" name="zusage" value="Zusage" />
+		<input type="submit" name="absage" value="Absage" /><br />
+	</div><br style="clear: both;" />
+<!--
+	<div id="reset">
+		<br />
+		<input type="submit" name="reset" value="Liste zurücksetzen" /> (Ist garnicht so gefährlich)
+	</div>
+-->
+</form>
+</div>
+
+<br /><hr /><br />
+
+<div>
+	<strong>Das machen die Anderen:</strong><br />
+	<br />
+	<!--#include virtual="inc/beteiligung.html"-->
+	<br />
+	<a href="training.php">Aktualisieren</a><br />
+</div>
+
+<br /><hr /><br />
+
+<div>
+<strong>Funktionen:</strong><br />
+<ul>
+	<li>Einstellbare E-Mail Häufigkeit (mir sagen wie gewünscht):
+		<ul>
+		<li>Nur die ersten x E-Mails, oder jede x-te E-Mail.</li>
+		<li>Keine Mail für die eigene Meldung.</li>
+		<li>Keine Mails mehr nachdem man sich gemeldet hat.</li>
+		</ul>
+	</li>
+	<li>Namen bei &quot;nixgesagt&quot; können jetzt angeklickt werden</li>
+	<li>Liste mit Namensvorschlägen kann mit Pfeiltasten bedient werden</li>
+	<li>An-/Abmeldung direkt aus den E-Mails</li>
+	<li>Jetzt ist ein längerer Text möglich, das erste Wort wird als Name erkannt, z.B.: "<em>Flo</em> muss schlafen"</li>
+	<li>Dein Name wird für 28 Tage gespeichert, damit man ihn nicht immer eingeben muss.<noscript> <em>Dazu muss JavaScript aktiviert sein.</em></noscript></li>
+	<li>Spamfilter, IP Adressen werden gespeichert, etc.</li>
+</ul>
+</div>
+
+<br /><hr /><br />
+
+<div style="float:right;">
+	<a href="http://www.uwr1.de/" target="_blank"><img src="http://www.sloganizer.net/style3,UWR.png" border="0" alt="" /></a>
+</div>
+<br style="clear:both;" />
+<script>
+var gListIdx      = -1;
+var gListItemCnt  = 0;
+var gComboInput   = document.getElementById('combo');
+var gListElement  = document.getElementById('liste');
+var gFirstLetters = '';
+var brow, vers, n4, moz;
+
+brow = navigator.appName;
+vers = parseInt(navigator.appVersion);
+n4   = (document.layers) ? true:false;
+moz  = (brow == "Netscape" && vers >= 5) ? true:false;
+
+if ((new Date()).getTime()/1000 > naechstesTrain)
+	{ window.location.href = 'http://'+window.location.host+'/training/training.php'; }
+
+/**
+ * Gets the value of the specified cookie.
+ *
+ * name  Name of the desired cookie.
+ *
+ * Returns a string containing value of specified cookie,
+ *   or null if cookie does not exist.
+ */
+function GetCookie(name) {
+    var dc = document.cookie;
+    var prefix = name + '=';
+    var begin = dc.indexOf('; ' + prefix);
+    if (begin == -1) {
+        begin = dc.indexOf(prefix);
+        if (begin != 0)
+        	{ return null; }
+    }
+    else
+    	{ begin += 2; }
+    var end = document.cookie.indexOf(";", begin);
+    if (end == -1)
+    	{ end = dc.length; }
+    return unescape(dc.substring(begin + prefix.length, end));
+}
+function LoadName() {
+	var name = GetCookie("spieler");
+	if (null != name)
+		{ gComboInput.value = name; }
+}
+
+function UpdateComboBoxList(combo, values) {
+	if (gComboInput.value.toLowerCase() == gFirstLetters)
+		{ return; }
+
+	ListClear();
+
+	gFirstLetters = gComboInput.value.toLowerCase();
+	var searchLen = gFirstLetters.length;
+	if (0 == searchLen)
+		{ return; }
+
+	var lcValue = "";
+	for (var i = 0; i < values.length; i++) {
+		lcValue = values[i].toLowerCase();
+		if (lcValue.substr(0, searchLen) != gFirstLetters)
+			{ continue; }
+		ListAddItem(values[i]);
+	}
+	gListItemCnt = gListElement.childNodes.length;
+}
+
+function ListClear() {
+	while (gListElement.hasChildNodes())
+		{ gListElement.removeChild(gListElement.firstChild); }
+	gListItemCnt = 0;
+	gListIdx = -1;
+}
+function ListAddItem(label) {
+	var link = document.createElement('a');
+	var div  = document.createElement('div');
+	div.appendChild(document.createTextNode(label));
+	div.id          = gListItemCnt;
+	div.onclick     = ListItemOnClickHandler;
+	div.onmouseover = ListItemOnMouseOverHandler;
+	link.appendChild(div);
+	gListElement.appendChild(link);
+	++gListItemCnt;
+}
+
+function ListLowlight(idx) {
+	var item = gListElement.childNodes[idx];
+	item.style.color      = '';
+	item.style.background = '';
+	item = item.firstChild;
+	item.style.color      = '';
+	item.style.background = '';
+}
+function ListHighlight(idx) {
+	var item = gListElement.childNodes[idx];
+	item.style.color      = '#fff';
+	item.style.background = 'navy';
+	item = item.firstChild;
+	item.style.color      = '#fff';
+	item.style.background = 'navy';
+}
+
+function ListScrollTo(newIdx) {
+	if (newIdx < 0 || newIdx >= gListItemCnt)
+		{ return; }
+	if (gListIdx != -1) {
+		ListLowlight(gListIdx);
+		gListIdx = -1;
+	}
+	ListHighlight(newIdx);
+	gListIdx = newIdx;
+}
+function ListScrollUp()
+	{ ListScrollTo(gListIdx-1); }
+function ListScrollDown()
+	{ ListScrollTo(gListIdx+1); }
+
+function ListItemOnClickHandler(evt) {
+	var obj = (!evt) ? window.event.srcElement : evt.target;
+	ListAcceptChoice(obj);
+}
+function ListItemOnMouseOverHandler(evt) {
+	var obj = (!evt) ? window.event.srcElement : evt.target;
+	ListScrollTo(parseInt(obj.id));
+}
+function ListAcceptChoice(obj) {
+	gComboInput.value = obj.innerHTML;
+	gComboInput.onkeyup();
+	// IE Bug: move cursor to the end
+	if (gComboInput.createTextRange) {
+		var tr = gComboInput.createTextRange();
+		tr.collapse(false);
+		tr.select();
+	}
+	gComboInput.focus();
+	// combo box gets redrawn (with the new prefix)
+	// optionally: hide combo box by clearing
+	ListClear();
+}
+function ListKeyDownHandler (evt) {
+	evt = (evt) ? evt : ((event) ? event : null);
+	if (n4) {
+		if (evt.modifiers && Event.ALT_MASK || evt.modifiers && Event.CTRL_MASK)
+			{ return true; }
+	}
+	if (moz) {
+		if (evt.altKey || evt.ctrlKey)
+			{ return true; }
+	}
+	switch(evt.keyCode) {
+		case 38:	// up
+			ListScrollUp();
+			break;
+		case 40:	// down
+			ListScrollDown();
+			break;
+		default:
+			return true;
+	}
+	evt.cancelBubble = true;
+	evt.returnValue  = false;
+	return false;
+}
+function ListKeyPressHandler (evt) {
+	evt = (evt) ? evt : ((event) ? event : null);
+	if (!evt)
+		{ return true; }
+	if (n4) {
+		if (evt.modifiers && Event.ALT_MASK || evt.modifiers && Event.CTRL_MASK)
+			{ return true; }
+	}
+	if (moz) {
+		if (evt.altKey || evt.ctrlKey)
+			{ return true; }
+	}
+	switch(evt.keyCode) {
+		case 13:	// enter
+			if (-1 != gListIdx)
+				{ ListAcceptChoice(gListElement.childNodes[gListIdx].firstChild); }
+			break;
+		default:
+			return true;
+	}
+	evt.cancelBubble = true;
+	evt.returnValue  = false;
+	return false;
+}
+function InstallNixgesagtHandlers() {
+	var nixChildren = document.getElementById('nixgesagt').childNodes;
+	for (var i=0, span=null; i<nixChildren.length; i++) {
+		span = nixChildren[i];
+		if (1 != span.nodeType)
+			{ continue; }
+		span.onclick = ListItemOnClickHandler;
+	}
+}
+LoadName();
+InstallNixgesagtHandlers();
+gComboInput.onkeydown  = ListKeyDownHandler;
+gComboInput.onkeypress = ListKeyPressHandler;
+gComboInput.focus();
+</script>
+<!--#include virtual="$root/inc/footer.shtml"-->

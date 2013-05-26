@@ -1,0 +1,6 @@
+<!--#set var="menuColor" value="blue"-->
+<table border="0" cellpadding="1" cellspacing="0" align="right">
+    <tr>
+    <!--#set var="menuTitle" value="uwr1.de"--><!--#set var="menuHref" value="http://uwr1.de/"--><!--#include file="menuePunkt.shtml"-->
+    </tr>
+</table>

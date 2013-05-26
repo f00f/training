@@ -1,0 +1,164 @@
+/*
+ * http://www.f00f.de/
+ * copyright (c) Hannes Hofmann 2002+
+ * Stylesheet Grundgerüst
+ */
+
+.headline {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+a {
+    color: #000000;
+    background-color: #ffffff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+body {
+    color: #606060;
+    background-color: #ffffff;
+    font-family: Verdana, Arial, Helvetica, Sans-Serif;
+    font-size: 12px;
+}
+div, td {
+    color: #606060;
+    font-family: Verdana, Arial, Helvetica, Sans-Serif;
+    font-size: 12px;
+}
+
+.big1 {
+    color: #606060;
+    background-color: #ffffff;
+    font-size: large;
+}
+.big2 {
+    color: #606060;
+    background-color: #ffffff;
+    font-size: x-large;
+}
+
+.headline1 {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.hr {
+    background: url(../images/hr.gif);
+}
+.vr {
+    background: url(../images/vr.gif);
+}
+
+/*
+ *für den link zum xhtml validator
+ */
+.shade    {
+    color: #c0c0c0;
+    background-color: #ffffff;
+    font-size: xx-small;
+}
+a.shade:hover {
+    color: #808080;
+    text-decoration: none;
+}
+
+/*
+ * Hauptmenü
+ */
+#menu {
+    text-align: right;
+}
+a.menuItem {
+    color: #808080;
+    background-color: #ffffff;
+    font-size: 11px;
+    border: solid 1px #ffffff;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+a.menuItem:hover {
+    color: #606060;
+    border: solid 1px #606060;
+    background-color: #f8f8f8;
+    text-decoration: none;
+}
+span.tutorialsMenu {
+    color: #99cc66;
+    font-style: italic;
+}
+span.uwrMenu {
+    color: #6699cc;
+}
+a.uwrMenu {
+    border: solid 1px #ffffff;
+}
+a.uwrMenu:hover {
+    color: #6699cc;
+/*
+    border-top: solid 1px #6699cc;
+    border-right: solid 1px #6699cc;
+    border-bottom: solid 1px #6699cc;
+    border-left: solid 0px #ffffff;
+*/
+    border: solid 1px #6699cc;
+    background-color: #d0e8ff;
+    text-decoration: none;
+}
+
+/*
+ * Quickbar
+ */
+#quick {
+    top: 0px;
+    right: 0px;
+    font-size: xx-small;
+    color: #6699cc;
+}
+.quick {
+    background-color: #e8e8e8;
+}
+a.quick:hover {
+    background-color: #c0c0c0;
+}
+
+/*
+ * rnd()
+ */
+.minitext {
+    font-size: xx-small;
+    text-align: right;
+}
+.nobr { /* nowrap */
+    white-space: nowrap;
+}
+.bBlue { /* border blue */
+    border: thin solid #6699cc;
+}
+.oBlue { /* overline blue */
+    border-top: 1px solid #6699cc;
+}
+.uBlue { /* underline blue */
+    border-bottom: 1px solid #6699cc;
+}
+.greyBg {
+    background-color: #f0f0f0;
+}
+/*
+ * Gallerie
+ */
+.gallerie {
+    font-size: x-small;
+    text-align: justify;
+    vertical-align: top;
+    width: 200px;
+}
+.gallerieUeber {
+    font-weight: bold;
+}
+.gallerieCopyright {
+    color: #c0c0c0;
+    font-size: xx-small;
+}
