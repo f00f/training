@@ -112,7 +112,7 @@ function SpamCheck($p_name, $p_ip) {
 	}
 /*
  * Redirect wenn ein User innerhalb von SPAM_SAME_USER_TIMEOUT von der gleichen IP
- * aktualisiert wird. Es soll möglich sein einen User kurz nacheinander von
+ * aktualisiert wird. Es soll mï¿½glich sein einen User kurz nacheinander von
  * unterschiedlichen IPs aus zu aktualisieren
  */
 	if ($lastIPOfUser == $p_ip) {
@@ -175,7 +175,7 @@ function FindNextTraining() {
 
 function FirstWord($p_text) {
 	$matches = array();
-	preg_match('/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/', $p_text, $matches);
+	preg_match('/^(.*?)[^A-Za-z0-9ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]/', $p_text, $matches);
 	return $matches[1];
 }
 
@@ -187,7 +187,7 @@ function UpdateFiles() {
 		var namen = new Array(\''.implode("', '", $allPlayers).'\');
 		var naechstesTrain = '.$nextTraining['when'].';
 		</script>
-		Das nächste Training ist am <strong>'.$nextTraining['wtag'].', '.date('d.m.', $nextTraining['datum']).' um '.$nextTraining['zeit'].'</strong> (Beckenzeit) in <strong>'.$nextTraining['ort'].'</strong><br />
+		Das nï¿½chste Training ist am <strong>'.$nextTraining['wtag'].', '.date('d.m.', $nextTraining['datum']).' um '.$nextTraining['zeit'].'</strong> (Beckenzeit) in <strong>'.$nextTraining['ort'].'</strong><br />
 		Anreise empfohlen um '.$nextTraining['anreise'].' ;-)<br />
 		<br />
 		Letzte Meldung am '.date('d.m.y \u\m H:i', $lastUpdate).'<br />';
@@ -216,6 +216,7 @@ function UpdateFiles() {
 }
 
 function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
+	global $emailFrom, $rootUrl, $teamNameShort;
 	if (@ON_TEST_SERVER OR !$p_action) { return; }
 
 	if ('reset' == $p_action) {
@@ -270,12 +271,12 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 	$zwischenstand = "Zwischenstand: {$p_anzZu} Zusagen, {$p_anzAb} Absagen.\n"
 				. "Den aktuellen Stand findest Du hier: {$trainingsUrl}\n\n";
 	$neu = "Funktionen:\n"
-		. "+ Einstellbare E-Mail Häufigkeit (mir sagen wie gewünscht):\n"
+		. "+ Einstellbare E-Mail Hï¿½ufigkeit (mir sagen wie gewï¿½nscht):\n"
 		. "  - Wahlweise nur die ersten x Mails oder jede x-te Mail bekommen.\n"
-		. "  - Wahlweise keine Mail für die eigene Meldung bekommen.\n"
+		. "  - Wahlweise keine Mail fï¿½r die eigene Meldung bekommen.\n"
 		. "  - Wahlweise keine Mails mehr bekommen nachdem man sich gemeldet hat.\n"
 		. "+ Direkte An-/Abmeldung aus den Mails\n"
-		. "+ Ein längerer Text ist möglich, das erste Wort wird als Name erkannt,\n"
+		. "+ Ein lï¿½ngerer Text ist mï¿½glich, das erste Wort wird als Name erkannt,\n"
 		. "  z.B.: \"Flo muss schlafen\"\n\n";
 	$ps = '';
 
