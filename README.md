@@ -17,4 +17,4 @@ yeah, it's a mess.
 * training/inc/conf.inc.php
 * training/inc/dbconf.inc.php
 * training/inc/spieler.inc.php
-* training/inc/trainingszeite.inc.php
+* training/inc/trainingszeiten.inc.php
