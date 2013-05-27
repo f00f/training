@@ -216,6 +216,7 @@ function UpdateFiles() {
 }
 
 function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
+	global $emailFrom, $rootUrl, $teamNameShort;
 	if (@ON_TEST_SERVER OR !$p_action) { return; }
 
 	if ('reset' == $p_action) {
