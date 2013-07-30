@@ -175,8 +175,8 @@ function FindNextTraining() {
 
 function FirstWord($p_text) {
 	$matches = array();
-	preg_match('/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/', $p_text, $matches);
-	return $matches[1];
+	preg_match('/^([\w ]*)/', $p_text, $matches);
+	return trim($matches[1]);
 }
 
 function UpdateFiles() {
