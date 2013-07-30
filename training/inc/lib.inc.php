@@ -187,21 +187,21 @@ function UpdateFiles() {
 		var namen = new Array(\''.implode("', '", $allPlayers).'\');
 		var naechstesTrain = '.$nextTraining['when'].';
 		</script>
-		Das nächste Training ist am <strong>'.$nextTraining['wtag'].', '.date('d.m.', $nextTraining['datum']).' um '.$nextTraining['zeit'].'</strong> (Beckenzeit) in <strong>'.$nextTraining['ort'].'</strong><br />
-		Anreise empfohlen um '.$nextTraining['anreise'].' ;-)<br />
-		<br />
-		Letzte Meldung am '.date('d.m.y \u\m H:i', $lastUpdate).'<br />';
+		<div id="nexttraining">Das nächste Training ist am <strong>'.$nextTraining['wtag'].', '.date('d.m.', $nextTraining['datum']).' um '.$nextTraining['zeit'].'</strong> (Beckenzeit) im <strong>'.$nextTraining['ort'].'</strong></div>
+		<div id="infos">Anreise empfohlen um '.$nextTraining['anreise'].' ;-)</div>
+		
+		<div id="letztem">Letzte Meldung am '.date('d.m.y \u\m H:i', $lastUpdate).'</div>';
 
 	$fh = fopen('inc/stats.html', 'w');
 	fwrite($fh, $html);
 	fclose($fh);
 
 	// store people's status
-	$html = '<strong class="zusage">zugesagt '.(1 == $anzahlZugesagt ? 'hat' : 'haben').' '.$anzahlZugesagt.':</strong><br />
-'.($anzahlZugesagt ? implode('; ', $zugesagt) : '---').'<br />
+	$html = '<strong class="zusage">zugesagt '.(1 == $anzahlZugesagt ? 'hat' : 'haben').' '.$anzahlZugesagt.':</strong><div id="zusager"><span>
+'.($anzahlZugesagt ? implode('</span>; <span>', $zugesagt) : '---').'</span></div>
 <br />
-<strong class="absage">abgesagt '.(1 == $anzahlAbgesagt ? 'hat' : 'haben').' '.$anzahlAbgesagt.':</strong><br />
-'.($anzahlAbgesagt ? implode('; ', $abgesagt) : '---').'<br />
+<strong class="absage">abgesagt '.(1 == $anzahlAbgesagt ? 'hat' : 'haben').' '.$anzahlAbgesagt.':</strong><div id="absager"><span>
+'.($anzahlAbgesagt ? implode('</span>; <span>', $abgesagt) : '---').'</span></div>
 <br />
 <div id="nixgesagt">
 <strong>nix gesagt haben bisher:</strong><br />
