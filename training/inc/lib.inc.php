@@ -228,8 +228,6 @@ function UpdateFiles() {
 
 // from: http://www.jonasjohn.de/snippets/php/random-file.htm
 // mod: /i modifier for extensions pattern
-
-
 function RandomFile($folder='', $extensions='.*'){
     // fix path:
     $folder = trim($folder);
