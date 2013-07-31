@@ -195,6 +195,18 @@ function UpdateFiles() {
 	$fh = fopen('inc/stats.html', 'w');
 	fwrite($fh, $html);
 	fclose($fh);
+	
+	// find random pool image
+	$fh = fopen('inc/bad.html', 'w');
+	$poolImageFolder = './badbilder/'.strtolower($nextTraining['ort']).'/';
+	if (!file_exists($poolImageFolder) || !is_dir($poolImageFolder)) {
+		fwrite($fh, '');
+	} else {
+		// list all files, choose a random one
+		$badBildFile = RandomFile($poolImageFolder, 'jpg|png|gif');
+		fwrite($fh, '<a href="'.$badBildFile.'"><img id="badbild" src="'.$badBildFile.'" /></a>');
+	}
+	fclose($fh);
 
 	// store people's status
 	$html = '<strong class="zusage">zugesagt '.(1 == $anzahlZugesagt ? 'hat' : 'haben').' '.$anzahlZugesagt.':</strong><div id="zusager"><span>
