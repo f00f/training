@@ -92,3 +92,9 @@ tr.gemeldet a {
 .absage {
 	color:				#804040;
 }
+#badbild {
+	max-width:240px;
+	max-height:180px;
+	float:right;
+	border:1px solid #FFFFFF;
+}

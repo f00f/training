@@ -31,6 +31,7 @@
 <b><big>training</big></b><br />
 <br />
 <!--#include virtual="inc/stats.html"-->
+<!--#include virtual="inc/bad.html"-->
 <br />
 
 <div>
