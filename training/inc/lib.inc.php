@@ -195,15 +195,40 @@ function UpdateFiles() {
 	$fh = fopen('inc/stats.html', 'w');
 	fwrite($fh, $html);
 	fclose($fh);
-	
+
 	// find random pool image
 	$fh = fopen('inc/bad.html', 'w');
 	$poolImageFolder = './badbilder/'.strtolower($nextTraining['ort']).'/';
 	if (!file_exists($poolImageFolder) || !is_dir($poolImageFolder)) {
 		fwrite($fh, '');
 	} else {
-		$badBildFile = RandomFile($poolImageFolder, 'jpg|png|gif');
-		fwrite($fh, '<a href="'.$badBildFile.'"><img id="badbild" src="'.$badBildFile.'" /></a>');
+		$poolImageFile = RandomFile($poolImageFolder, 'jpg|png|gif');
+		// thumb
+		$poolThumbFolder = './badbilder/thumbs/'.strtolower($nextTraining['ort']).'/';
+		if (!file_exists($poolThumbFolder) || !is_dir($poolThumbFolder)) {
+			mkdir($poolThumbFolder);
+			copy('./badbilder/thumbs/index_sub.html', $poolThumbFolder.'index.html');
+		}
+		$poolThumbFile = str_replace($poolImageFolder, $poolThumbFolder, $poolImageFile);
+		$thumbMaxH = 240;
+		$hasValidThumbnail = true;
+		if (!file_exists($poolThumbFile)) { // is there a thumbnail at all?
+			$hasValidThumbnail = false;
+		}
+		if ($hasValidThumbnail) { // is the thumbnail small enough?
+			$imageSize = getimagesize($poolThumbFile);
+			$imageH = $imageSize[1];
+			if ($imageH > $thumbMaxH) {
+				$hasValidThumbnail = false;
+			}
+		}
+		if (!$hasValidThumbnail) { // try creating a new thumbnail
+			$hasValidThumbnail = CreateThumbnail($poolImageFile, $poolThumbFile, $thumbMaxH);
+		}
+		if (!$hasValidThumbnail) { // fall-back
+			$poolThumbFile = $poolImageFile;
+		}
+		fwrite($fh, '<a href="'.$poolImageFile.'"><img id="badbild" src="'.$poolThumbFile.'" /></a>');
 	}
 	fclose($fh);
 
@@ -226,9 +251,48 @@ function UpdateFiles() {
 	fclose($fh);
 }
 
+function CreateThumbnail($imageFile, $thumbFile, $maxHeight)
+{
+	$imageSize = getimagesize($imageFile);
+	$imageW = $imageSize[0];
+	$imageH = $imageSize[1];
+	
+	// image is small enough already
+	if ($imageH <= $maxHeight) {
+		return copy($imageFile, $thumbFile);
+	}
+	
+	// image has to be resized
+	$origImg = false;
+	if (IMAGETYPE_GIF == $imageSize[2])
+		$origImg = imagecreatefromgif($imageFile);
+	if (IMAGETYPE_JPEG == $imageSize[2])
+		$origImg = imagecreatefromjpeg($imageFile);
+	if (IMAGETYPE_PNG == $imageSize[2])
+		$origImg = imagecreatefrompng($imageFile);
+	if (false === $origImg) {
+		return false;
+	}
+	$thumbH = $maxHeight;
+	$thumbW = $imageW / ($imageH / $thumbH);
+	$thumbImg = imagecreatetruecolor($thumbW, $thumbH);
+	if (false === $thumbImg) {
+		return false;
+	}
+	$success = imagecopyresampled($thumbImg, $origImg, 0, 0, 0, 0, $thumbW, $thumbH, $imageW, $imageH);
+	if (false === $success) {
+		return false;
+	}
+	// safe thumbnail
+	$qual = 85;
+	imageinterlace($thumbImg, 1);
+	return imagejpeg($thumbImg, $thumbFile, $qual);
+}
+
 // from: http://www.jonasjohn.de/snippets/php/random-file.htm
 // mod: /i modifier for extensions pattern
-function RandomFile($folder='', $extensions='.*'){
+function RandomFile($folder='', $extensions='.*')
+{
     // fix path:
     $folder = trim($folder);
     $folder = ($folder == '') ? './' : $folder;
