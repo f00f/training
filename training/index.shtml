@@ -1,33 +1,58 @@
 <!--#include virtual="root.shtml"-->
-<!--#set var="metaKeywords" value="Unterwasser, Rugby, Team, Sport, Unterwasser Rugby, Unter Wasser Rugby, Unter-Wasser-Rugby, 3D, 3D-Action, Action, UWR, Tauchclub, DEINESTADT, Unter, Wasser, TC, under, water, deutschland, bayern, homepage, web, online"-->
-<!--#set var="metaDescription" value="Unterwasser Rugby Training in DEINESTADT"-->
-<!--#include virtual="./$root/inc/header.shtml"-->
-<style>
-#liste {
-	background:		#fff;
-	border:			1px solid #808080;
-	border-top:		none;
-	margin-left:	4px;
-	margin-right:	4px;
-	padding-left:	1px;
-}
-#liste a,
-#liste div,
-#liste div * {
-	cursor:			pointer;
-	text-decoration: none;
-	color:			#000;
-	background:		#fff;
-}
-#combo {
-	margin-left:	4px;
-	margin-right:	4px;
-	padding-left:	1px;
-}
-#nixgesagt span {
-	cursor:			pointer;
-}
-</style>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+    <head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <link rel="stylesheet" href="t.css" type="text/css" />
+        <title><!--#echo var="title"--> |<!--#echo var="rooturl"--></title>
+        <meta name="distribution" content="GLOBAL" />
+        <meta name="revisit-after" content="15 Days" />
+        <meta name="robots" content="ALL" />
+        <meta name="rating" content="SAFE FOR KIDS" />
+        <meta name="copyright" content="(c) Hannes Hofmann 2008+" />
+        <meta name="Author" content="Hannes Hofmann" />
+        <meta name="Classification" content="Sports" />
+        <meta name="Language" content="de" />
+        <meta name="keywords" content="Unterwasser, Rugby, Team, Sport, Unterwasser Rugby, Unter Wasser Rugby, Unter-Wasser-Rugby, 3D, 3D-Action, Action, UWR, Tauchclub, DEINESTADT, Unter, Wasser, TC, under, water, deutschland, bayern, homepage, web, online" />
+        <meta name="description" content="Unterwasser-Rugby Training in DEINESTADT" />
+        <!--#if expr="$noindex = '1'"--><meta name="robots" content="noindex" /><!--#endif -->
+    </head>
+    <body>
+<!--#config timefmt="%d.%m.%Y %H:%M" -->
+        <table width="100%" align="center" cellpadding="0">
+        <tr>
+            <td rowspan="3" width="10" nowrap="nowrap">
+                <div style="white-space: nowrap;">
+                <a href="../"><b><span class="big2"><!--#echo var="rooturl"--></span></b></a><b><span class="big1">:</span></b><span class="big1">training</span>&nbsp;&nbsp;
+                </div>
+            </td>
+            <td class="minitext">
+                <!--#if expr="$minitext != ''" --><!--#echo var="minitext"--><!--#else -->&nbsp;<!--#endif -->
+            </td>
+        </tr>
+        <tr>
+            <td class="hr"><img src="../images/trans1x1.gif" alt="" border="0" /></td>
+        </tr>
+        <tr>
+            <td id="menu" style="padding: 1px;">
+            <!--#set var="menuColor" value="blue"-->
+			<table border="0" cellpadding="1" cellspacing="0" align="right">
+			<tr>
+			<!--#set var="menuTitle" value="uwr1.de"--><!--#set var="menuHref" value="http://uwr1.de/"--><!--#include file="menuePunkt.shtml"-->
+			</tr>
+			</table>
+            </td>
+        </tr>
+        <tr>
+            <td class="hr" colspan="2"><img src="../images/trans1x1.gif" alt="" border="0" /></td>
+        </tr>
+        </table>
+        <br />
+        <div align="center">
+        <div style="width: 80%; text-align: left; padding: 20px;" class="colorFrame">
 <!--#include virtual="inc/bad.html"-->
 <b><big>training</big></b><br />
 <br />
@@ -70,8 +95,8 @@
 
 <br /><hr /><br />
 
-<div>
-<strong>Funktionen:</strong><br />
+<a href="#" onclick="$('#funktionen').toggle()">Zeige alle Funktionen</a>
+<div id="funktionen">
 <ul>
 	<li>Einstellbare E-Mail Häufigkeit (mir sagen wie gewünscht):
 		<ul>
@@ -87,14 +112,16 @@
 	<li>Dein Name wird für 28 Tage gespeichert, damit man ihn nicht immer eingeben muss.<noscript> <em>Dazu muss JavaScript aktiviert sein.</em></noscript></li>
 	<li>Spamfilter, IP Adressen werden gespeichert, etc.</li>
 </ul>
+<br /><hr />
 </div>
 
-<br /><hr /><br />
+<br /><br />
 
 <div style="float:right;">
 	<a href="http://www.uwr1.de/" target="_blank"><img src="http://www.sloganizer.net/style3,UWR.png" border="0" alt="" /></a>
 </div>
 <br style="clear:both;" />
+<script src="t.js"></script>
 <script>
 var gListIdx      = -1;
 var gListItemCnt  = 0;
@@ -103,198 +130,8 @@ var gListElement  = document.getElementById('liste');
 var gFirstLetters = '';
 var brow, vers, n4, moz;
 
-brow = navigator.appName;
-vers = parseInt(navigator.appVersion);
-n4   = (document.layers) ? true:false;
-moz  = (brow == "Netscape" && vers >= 5) ? true:false;
-
 if ((new Date()).getTime()/1000 > naechstesTrain)
 	{ window.location.href = 'http://'+window.location.host+'/training/training.php'; }
-
-/**
- * Gets the value of the specified cookie.
- *
- * name  Name of the desired cookie.
- *
- * Returns a string containing value of specified cookie,
- *   or null if cookie does not exist.
- */
-function GetCookie(name) {
-    var dc = document.cookie;
-    var prefix = name + '=';
-    var begin = dc.indexOf('; ' + prefix);
-    if (begin == -1) {
-        begin = dc.indexOf(prefix);
-        if (begin != 0)
-        	{ return null; }
-    }
-    else
-    	{ begin += 2; }
-    var end = document.cookie.indexOf(";", begin);
-    if (end == -1)
-    	{ end = dc.length; }
-    return unescape(dc.substring(begin + prefix.length, end));
-}
-function LoadName() {
-	var name = GetCookie("spieler");
-	if (null != name)
-		{ gComboInput.value = name; }
-}
-
-function UpdateComboBoxList(combo, values) {
-	if (gComboInput.value.toLowerCase() == gFirstLetters)
-		{ return; }
-
-	ListClear();
-
-	gFirstLetters = gComboInput.value.toLowerCase();
-	var searchLen = gFirstLetters.length;
-	if (0 == searchLen)
-		{ return; }
-
-	var lcValue = "";
-	for (var i = 0; i < values.length; i++) {
-		lcValue = values[i].toLowerCase();
-		if (lcValue.substr(0, searchLen) != gFirstLetters)
-			{ continue; }
-		ListAddItem(values[i]);
-	}
-	gListItemCnt = gListElement.childNodes.length;
-}
-
-function ListClear() {
-	while (gListElement.hasChildNodes())
-		{ gListElement.removeChild(gListElement.firstChild); }
-	gListItemCnt = 0;
-	gListIdx = -1;
-}
-function ListAddItem(label) {
-	var link = document.createElement('a');
-	var div  = document.createElement('div');
-	div.appendChild(document.createTextNode(label));
-	div.id          = gListItemCnt;
-	div.onclick     = ListItemOnClickHandler;
-	div.onmouseover = ListItemOnMouseOverHandler;
-	link.appendChild(div);
-	gListElement.appendChild(link);
-	++gListItemCnt;
-}
-
-function ListLowlight(idx) {
-	var item = gListElement.childNodes[idx];
-	item.style.color      = '';
-	item.style.background = '';
-	item = item.firstChild;
-	item.style.color      = '';
-	item.style.background = '';
-}
-function ListHighlight(idx) {
-	var item = gListElement.childNodes[idx];
-	item.style.color      = '#fff';
-	item.style.background = 'navy';
-	item = item.firstChild;
-	item.style.color      = '#fff';
-	item.style.background = 'navy';
-}
-
-function ListScrollTo(newIdx) {
-	if (newIdx < 0 || newIdx >= gListItemCnt)
-		{ return; }
-	if (gListIdx != -1) {
-		ListLowlight(gListIdx);
-		gListIdx = -1;
-	}
-	ListHighlight(newIdx);
-	gListIdx = newIdx;
-}
-function ListScrollUp()
-	{ ListScrollTo(gListIdx-1); }
-function ListScrollDown()
-	{ ListScrollTo(gListIdx+1); }
-
-function ListItemOnClickHandler(evt) {
-	var obj = (!evt) ? window.event.srcElement : evt.target;
-	ListAcceptChoice(obj);
-}
-function ListItemOnMouseOverHandler(evt) {
-	var obj = (!evt) ? window.event.srcElement : evt.target;
-	ListScrollTo(parseInt(obj.id));
-}
-function ListAcceptChoice(obj) {
-	gComboInput.value = obj.innerHTML;
-	gComboInput.onkeyup();
-	// IE Bug: move cursor to the end
-	if (gComboInput.createTextRange) {
-		var tr = gComboInput.createTextRange();
-		tr.collapse(false);
-		tr.select();
-	}
-	gComboInput.focus();
-	// combo box gets redrawn (with the new prefix)
-	// optionally: hide combo box by clearing
-	ListClear();
-}
-function ListKeyDownHandler (evt) {
-	evt = (evt) ? evt : ((event) ? event : null);
-	if (n4) {
-		if (evt.modifiers && Event.ALT_MASK || evt.modifiers && Event.CTRL_MASK)
-			{ return true; }
-	}
-	if (moz) {
-		if (evt.altKey || evt.ctrlKey)
-			{ return true; }
-	}
-	switch(evt.keyCode) {
-		case 38:	// up
-			ListScrollUp();
-			break;
-		case 40:	// down
-			ListScrollDown();
-			break;
-		default:
-			return true;
-	}
-	evt.cancelBubble = true;
-	evt.returnValue  = false;
-	return false;
-}
-function ListKeyPressHandler (evt) {
-	evt = (evt) ? evt : ((event) ? event : null);
-	if (!evt)
-		{ return true; }
-	if (n4) {
-		if (evt.modifiers && Event.ALT_MASK || evt.modifiers && Event.CTRL_MASK)
-			{ return true; }
-	}
-	if (moz) {
-		if (evt.altKey || evt.ctrlKey)
-			{ return true; }
-	}
-	switch(evt.keyCode) {
-		case 13:	// enter
-			if (-1 != gListIdx)
-				{ ListAcceptChoice(gListElement.childNodes[gListIdx].firstChild); }
-			break;
-		default:
-			return true;
-	}
-	evt.cancelBubble = true;
-	evt.returnValue  = false;
-	return false;
-}
-function InstallNixgesagtHandlers() {
-	var nixChildren = document.getElementById('nixgesagt').childNodes;
-	for (var i=0, span=null; i<nixChildren.length; i++) {
-		span = nixChildren[i];
-		if (1 != span.nodeType)
-			{ continue; }
-		span.onclick = ListItemOnClickHandler;
-	}
-}
-LoadName();
-InstallNixgesagtHandlers();
-gComboInput.onkeydown  = ListKeyDownHandler;
-gComboInput.onkeypress = ListKeyPressHandler;
-gComboInput.focus();
 </script>
+<script type="text/javascript">$(function(){$('#funktionen').toggle()});</script>
 <!--#include virtual="$root/inc/footer.shtml"-->
