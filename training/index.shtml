@@ -6,7 +6,7 @@
     <head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-        <link rel="stylesheet" href="t.css" type="text/css" />
+        <link rel="stylesheet" href="t.css?v=20130801" type="text/css" />
         <title><!--#echo var="title"--> |<!--#echo var="rooturl"--></title>
         <meta name="robots" content="ALL" />
         <meta name="copyright" content="(c) Hannes Hofmann 2008+" />
@@ -98,7 +98,7 @@
 	<li>Liste mit Namensvorschlägen kann mit Pfeiltasten bedient werden</li>
 	<li>An-/Abmeldung direkt aus den E-Mails</li>
 	<li>Jetzt ist ein längerer Text möglich, das erste Wort wird als Name erkannt, z.B.: "<em>Flo</em> muss schlafen"</li>
-	<li>Dein Name wird für 28 Tage gespeichert, damit man ihn nicht immer eingeben muss.<noscript> <em>Dazu muss JavaScript aktiviert sein.</em></noscript></li>
+	<li>Dein Name wird für 28 Tage in deinem Browser gespeichert, damit Du ihn nicht immer eingeben musst.<noscript> Dazu muss JavaScript aktiviert sein.</em></noscript></li>
 	<li>Spamfilter, IP Adressen werden gespeichert, etc.</li>
 </ul>
 </div>
