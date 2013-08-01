@@ -51,7 +51,6 @@
 <!--#include virtual="inc/bad.html"-->
 <h2>training</h2>
 <!--#include virtual="inc/stats.html"-->
-<br />
 
 <div id="you">
 <h3>Deine Meldung:</h3>
