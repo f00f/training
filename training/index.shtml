@@ -41,7 +41,7 @@
             <!--#set var="menuColor" value="blue"-->
 			<table border="0" cellpadding="1" cellspacing="0" align="right">
 			<tr>
-			<!--#set var="menuTitle" value="uwr1.de"--><!--#set var="menuHref" value="http://uwr1.de/"--><!--#include file="menuePunkt.shtml"-->
+			<!--#set var="menuTitle" value="uwr1.de"--><!--#set var="menuHref" value="http://uwr1.de/"--><!--#include virtual="../inc/menuePunkt.shtml"-->
 			</tr>
 			</table>
             </td>
@@ -134,4 +134,4 @@ if ((new Date()).getTime()/1000 > naechstesTrain)
 	{ window.location.href = 'http://'+window.location.host+'/training/training.php'; }
 </script>
 <script type="text/javascript">$(function(){$('#funktionen').toggle()});</script>
-<!--#include virtual="$root/inc/footer.shtml"-->
+<!--#include virtual="../inc/footer.shtml"-->
