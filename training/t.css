@@ -48,9 +48,6 @@ div, td {
 .hr {
     background: url(../images/hr.gif);
 }
-.vr {
-    background: url(../images/vr.gif);
-}
 
 /*
  *für den link zum xhtml validator
@@ -176,6 +173,16 @@ div.colorFrame {
     vertical-align:		bottom;
 }
 
+.fl {
+	float:left;
+}
+.fr {
+	float:right;
+}
+br.clear {
+	clear: both;
+}
+
 #liste {
 	background:		#fff;
 	border:			1px solid #808080;
@@ -201,7 +208,6 @@ div.colorFrame {
 	cursor:			pointer;
 }
 
-
 .zusage {
 	color:				#408040;
 }
@@ -213,4 +219,25 @@ div.colorFrame {
 	max-height:180px;
 	float:right;
 	border:1px solid #FFFFFF;
+}
+#you,
+#theothers,
+#help #funktionen {
+	padding-top:0.1em;
+	border-bottom:1px solid #888;
+	margin-bottom:1em;
+}
+#you,
+#theothers,
+#help {
+	padding-bottom:2em;
+}
+#you h3,
+#theothers h3 {
+	font-size:110%;
+}
+#you .name,
+#you .input,
+#you .btns {
+	float:left;
 }

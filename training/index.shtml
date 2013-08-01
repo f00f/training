@@ -8,14 +8,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
         <link rel="stylesheet" href="t.css" type="text/css" />
         <title><!--#echo var="title"--> |<!--#echo var="rooturl"--></title>
-        <meta name="distribution" content="GLOBAL" />
-        <meta name="revisit-after" content="15 Days" />
         <meta name="robots" content="ALL" />
-        <meta name="rating" content="SAFE FOR KIDS" />
         <meta name="copyright" content="(c) Hannes Hofmann 2008+" />
         <meta name="Author" content="Hannes Hofmann" />
-        <meta name="Classification" content="Sports" />
-        <meta name="Language" content="de" />
         <meta name="keywords" content="Unterwasser, Rugby, Team, Sport, Unterwasser Rugby, Unter Wasser Rugby, Unter-Wasser-Rugby, 3D, 3D-Action, Action, UWR, Tauchclub, DEINESTADT, Unter, Wasser, TC, under, water, deutschland, bayern, homepage, web, online" />
         <meta name="description" content="Unterwasser-Rugby Training in DEINESTADT" />
         <!--#if expr="$noindex = '1'"--><meta name="robots" content="noindex" /><!--#endif -->
@@ -54,26 +49,25 @@
         <div align="center">
         <div style="width: 80%; text-align: left; padding: 20px;" class="colorFrame">
 <!--#include virtual="inc/bad.html"-->
-<b><big>training</big></b><br />
-<br />
+<h2>training</h2>
 <!--#include virtual="inc/stats.html"-->
 <br />
 
-<div>
-<strong>Deine Meldung:</strong><br />
-<br />
+<div id="you">
+<h3>Deine Meldung:</h3>
 <form action="training.php">
-	<div style="float: left;">
+	<div class="name">
 		Name:
 	</div>
-	<div style="float: left;">
+	<div class="input">
 		<input type="text" name="text" value="" id="combo" onkeyup="UpdateComboBoxList(this, namen);" autocomplete="off" />
 		<div id="liste"></div>
 	</div>
-	<div style="float: left;">
+	<div class="btns">
 		<input type="submit" name="zusage" value="Zusage" />
-		<input type="submit" name="absage" value="Absage" /><br />
-	</div><br style="clear: both;" />
+		<input type="submit" name="absage" value="Absage" />
+	</div>
+	<br class="clear" />
 <!--
 	<div id="reset">
 		<br />
@@ -83,18 +77,14 @@
 </form>
 </div>
 
-<br /><hr /><br />
-
-<div>
-	<strong>Das machen die Anderen:</strong><br />
-	<br />
+<div id="theothers">
+	<h3>Das machen die Anderen:</h3>
 	<!--#include virtual="inc/beteiligung.html"-->
 	<br />
-	<a href="training.php">Aktualisieren</a><br />
+	<a href="training.php">Aktualisieren</a>
 </div>
 
-<br /><hr /><br />
-
+<div id="help">
 <a href="#" onclick="$('#funktionen').toggle()">Zeige alle Funktionen</a>
 <div id="funktionen">
 <ul>
@@ -112,15 +102,13 @@
 	<li>Dein Name wird für 28 Tage gespeichert, damit man ihn nicht immer eingeben muss.<noscript> <em>Dazu muss JavaScript aktiviert sein.</em></noscript></li>
 	<li>Spamfilter, IP Adressen werden gespeichert, etc.</li>
 </ul>
-<br /><hr />
+</div>
 </div>
 
-<br /><br />
-
-<div style="float:right;">
+<div class="fr">
 	<a href="http://www.uwr1.de/" target="_blank"><img src="http://www.sloganizer.net/style3,UWR.png" border="0" alt="" /></a>
 </div>
-<br style="clear:both;" />
+<br class="clear" />
 <script src="t.js"></script>
 <script>
 var gListIdx      = -1;
@@ -132,6 +120,7 @@ var brow, vers, n4, moz;
 
 if ((new Date()).getTime()/1000 > naechstesTrain)
 	{ window.location.href = 'http://'+window.location.host+'/training/training.php'; }
+
+$(function(){$('#funktionen').toggle()});
 </script>
-<script type="text/javascript">$(function(){$('#funktionen').toggle()});</script>
 <!--#include virtual="../inc/footer.shtml"-->
