@@ -143,6 +143,13 @@ function ListKeyDownHandler (evt) {
 		case 40:	// down
 			ListScrollDown();
 			break;
+		case 13:	// enter
+			var obj = gListElement.childNodes[gListIdx].childNodes[0];
+			ListAcceptChoice(obj);
+			break;
+		case 27:	// esc
+			ListClear();
+			break;
 		default:
 			return true;
 	}
