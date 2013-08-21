@@ -220,6 +220,9 @@ br.clear {
 	float:right;
 	border:1px solid #FFFFFF;
 }
+#help a {
+	color:#606060;
+}
 #you,
 #theothers,
 #help #funktionen {
@@ -240,4 +243,46 @@ br.clear {
 #you .input,
 #you .btns {
 	float:left;
+}
+
+@media all and (max-width: 1000px) {
+	.colorFrame {
+		width:100%!important;
+		padding:5px!important;
+	}
+	.colorFrame,
+	.colorFrame a {
+		background-color:transparent!important;
+	}
+	.colorFrame h2,
+	.fr {
+		display:none;
+	}
+	#you .input {
+		z-index:2;
+	}
+	#you .input,
+	#you .btns {
+		position:relative;
+	}
+	#you .input,
+	#you .btns input {
+		height:50px;
+		width:30%;
+	}
+	#you .input #combo {
+		height:40px;
+		width:100%;
+		margin-left:0;
+	}
+	#you .input #liste {
+		margin-right:0;
+	}
+	#you .name,
+	#you .input,
+	#you .btns,
+	#you .btns input {
+		display:block;
+		float:inherit;
+	}
 }
