@@ -136,6 +136,7 @@ function ListKeyDownHandler (evt) {
 		if (evt.altKey || evt.ctrlKey)
 			{ return true; }
 	}
+	var cancelEvent = true;
 	switch(evt.keyCode) {
 		case 38:	// up
 			ListScrollUp();
@@ -143,9 +144,17 @@ function ListKeyDownHandler (evt) {
 		case 40:	// down
 			ListScrollDown();
 			break;
+		case 9:	// tab
+			cancelEvent = false;
+			if (gListIdx < 0) {
+				ListClear(); // hide list
+			}
+			/* fall through */
 		case 13:	// enter
-			var obj = gListElement.childNodes[gListIdx].childNodes[0];
-			ListAcceptChoice(obj);
+			if (gListIdx >= 0) {
+				var obj = gListElement.childNodes[gListIdx].childNodes[0];
+				ListAcceptChoice(obj);
+			}
 			break;
 		case 27:	// esc
 			ListClear();
@@ -153,9 +162,12 @@ function ListKeyDownHandler (evt) {
 		default:
 			return true;
 	}
-	evt.cancelBubble = true;
-	evt.returnValue  = false;
-	return false;
+	if (cancelEvent) {
+		evt.cancelBubble = true;
+		evt.returnValue  = false;
+		return false;
+	}
+	return true;
 }
 function ListKeyPressHandler (evt) {
 	evt = (evt) ? evt : ((event) ? event : null);
