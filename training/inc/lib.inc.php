@@ -228,7 +228,7 @@ function UpdateFiles() {
 		if (!$hasValidThumbnail) { // fall-back
 			$poolThumbFile = $poolImageFile;
 		}
-		fwrite($fh, '<a href="'.$poolImageFile.'"><img id="badbild" src="'.$poolThumbFile.'" /></a>');
+		fwrite($fh, '<div id="badbild"><a href="'.$poolImageFile.'"><img src="'.$poolThumbFile.'" /></a></div>');
 	}
 	fclose($fh);
 

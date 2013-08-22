@@ -215,9 +215,11 @@ br.clear {
 	color:				#804040;
 }
 #badbild {
+	float:right;
+}
+#badbild img {
 	max-width:240px;
 	max-height:180px;
-	float:right;
 	border:1px solid #FFFFFF;
 }
 #help a {
@@ -245,7 +247,21 @@ br.clear {
 	float:left;
 }
 
+#nixgesagt {
+	line-height:1.5;
+}
+
+@media all and (max-width: 320px) {
+	/*hide badbild*/
+	#badbild {
+		display:none;
+	}
+}
+
 @media all and (max-width: 1000px) {
+	html, body {
+		font-size: 24px;
+	}
 	.colorFrame {
 		width:100%!important;
 		padding:5px!important;
@@ -268,7 +284,7 @@ br.clear {
 	#you .input,
 	#you .btns input {
 		height:50px;
-		width:30%;
+		width:50%;
 	}
 	#you .input #combo {
 		height:40px;
