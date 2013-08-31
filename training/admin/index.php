@@ -14,6 +14,7 @@ navbar();
       <div class="starter-template">
         <h1>Trainingsseite Admin <small><?=$teamNameShort?></small></h1>
         <p class="lead">Hier kann die Trainingsseite von <?=$teamNameShort?> verwaltet werden.</p>
+
 		<h2>Spieler</h2>
 		<ul>
 		<li><a href="player_list.php">anzeigen, bearbeiten und löschen</a></li>
@@ -27,6 +28,11 @@ navbar();
 		<li><a href="times_add.php">hinzufügen</a></li>
 		</ul>
 		</div>
+
+		<h2>Sonstiges</h2>
+		<ul class='list-group'>
+		<a class='list-group-item' href="players_migrate_to_db.php">Spieler aus Datei in die DB importieren (einmalig)</a>
+		</ul>
       </div>
 
     </div><!-- /.container -->
