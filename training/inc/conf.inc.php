@@ -16,3 +16,6 @@ $teamNameShort = 'UWR BA';
 //emailFrom: used to build the sender username of notification emails.
 // the actual sender will be "training-{$emailFrom}@uwr1.de"
 $emailFrom = 'ba';
+
+
+$teamId = 'ba';

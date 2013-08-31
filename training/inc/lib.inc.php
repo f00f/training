@@ -2,7 +2,11 @@
 /*
  * Created on 04.06.2006
  */
-require_once 'inc/conf.inc.php';
+session_start();
+
+if (!defined('NO_INCLUDES') || !NO_INCLUDES) {
+	require_once 'inc/conf.inc.php';
+}
 
 define('SPAM_SAME_IP_TIMEOUT', 120);
 define('SPAM_SAME_IP_COUNT', 2);
@@ -112,7 +116,7 @@ function SpamCheck($p_name, $p_ip) {
 	}
 /*
  * Redirect wenn ein User innerhalb von SPAM_SAME_USER_TIMEOUT von der gleichen IP
- * aktualisiert wird. Es soll m�glich sein einen User kurz nacheinander von
+ * aktualisiert wird. Es soll möglich sein einen User kurz nacheinander von
  * unterschiedlichen IPs aus zu aktualisieren
  */
 	if ($lastIPOfUser == $p_ip) {
@@ -134,8 +138,11 @@ function SpamCheck($p_name, $p_ip) {
 	return true;
 }
 
-function Redirect() {
-	header('Location: ./?nocache='.time());
+function Redirect($loc = null) {
+	if (!$loc) {
+		$loc = './?nocache='.time();
+	}
+	header("Location: {$loc}");
 	exit;
 }
 
@@ -187,7 +194,7 @@ function UpdateFiles() {
 		var namen = new Array(\''.implode("', '", $allPlayers).'\');
 		var naechstesTrain = '.$nextTraining['when'].';
 		</script>
-		<div id="nexttraining">Das n�chste Training ist am <strong>'.$nextTraining['wtag'].', '.date('d.m.', $nextTraining['datum']).' um '.$nextTraining['zeit'].'</strong> (Beckenzeit) im <strong>'.$nextTraining['ort'].'</strong></div>
+		<div id="nexttraining">Das nächste Training ist am <strong>'.$nextTraining['wtag'].', '.date('d.m.', $nextTraining['datum']).' um '.$nextTraining['zeit'].'</strong> (Beckenzeit) im <strong>'.$nextTraining['ort'].'</strong></div>
 		<div id="infos">Anreise empfohlen um '.$nextTraining['anreise'].' ;-)</div>
 		
 		<div id="letztem">Letzte Meldung am '.date('d.m.y \u\m H:i', $lastUpdate).'</div>';
@@ -396,12 +403,12 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 	$zwischenstand = "Zwischenstand: {$p_anzZu} Zusagen, {$p_anzAb} Absagen.\n"
 				. "Den aktuellen Stand findest Du hier: {$trainingsUrl}\n\n";
 	$neu = "Funktionen:\n"
-		. "+ Einstellbare E-Mail H�ufigkeit (mir sagen wie gew�nscht):\n"
+		. "+ Einstellbare E-Mail Häufigkeit (mir sagen wie gewünscht):\n"
 		. "  - Wahlweise nur die ersten x Mails oder jede x-te Mail bekommen.\n"
-		. "  - Wahlweise keine Mail f�r die eigene Meldung bekommen.\n"
+		. "  - Wahlweise keine Mail für die eigene Meldung bekommen.\n"
 		. "  - Wahlweise keine Mails mehr bekommen nachdem man sich gemeldet hat.\n"
 		. "+ Direkte An-/Abmeldung aus den Mails\n"
-		. "+ Ein l�ngerer Text ist m�glich, das erste Wort wird als Name erkannt,\n"
+		. "+ Ein längerer Text ist möglich, das erste Wort wird als Name erkannt,\n"
 		. "  z.B.: \"Flo muss schlafen\"\n\n";
 	$ps = '';
 
@@ -452,4 +459,305 @@ function DbQuery($query) {
 	}
 	return $result;
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//// HTML ////
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+function html_header() {
+	global $pagetitle;
 ?>
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- link rel="shortcut icon" href="../../assets/ico/favicon.png" -->
+
+    <title><?= $pagetitle ?></title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="admin.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.js"></script>
+      <script src="../js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+<?php
+	if (@$_SESSION['error']) {
+		print '<div class="container">'
+			. "<div class='alert alert-warning'>{$_SESSION['error']}</div>"
+			. '</div>';
+		unset($_SESSION['error']);
+	}
+	if (@$_SESSION['notice']) {
+		print '<div class="container">'
+			. "<div class='alert alert-success'>{$_SESSION['notice']}</div>"
+			. '</div>';
+		unset($_SESSION['notice']);
+	}
+} // html_header
+
+function navbar() {
+	global $pagetitle;
+?>
+    <div class="navbar navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#"><?= $pagetitle; ?></a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav pull-right">
+            <li class="active"><a href="./">Home</a></li>
+            <li><a href="../">Trainingsseite</a></li>
+            <li class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spieler <b class="caret"></b></a>
+			  <ul class="dropdown-menu">
+			  <li><a href="player_list.php">Auflisten</a></li>
+			  <li><a href="player_add.php">Hinzufügen</a></li>
+			  </ul>
+			</li>
+            <li class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Zeiten <b class="caret"></b></a>
+			  <ul class="dropdown-menu">
+			  <li><a href="times_list.php">Auflisten</a></li>
+			  <li><a href="times_add.php">Hinzufügen</a></li>
+			  </ul>
+			</li>
+            <li><a href="contact.php">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+<?php
+}
+
+function html_footer() {
+	global $enablePopovers;
+?>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+	<?php
+	if (count($enablePopovers) > 0) {
+		$sels = array_keys($enablePopovers);
+		print "<script>\n";
+		foreach ($sels as $sel) {
+			print "\$('{$sel}').popover({html:true});\n";
+		}
+		print "</script>\n";
+	}
+	?>
+  </body>
+</html>
+<?php
+} // html_footer
+
+$CACHE = new stdClass();
+
+
+function sani($s) {
+	return mysql_real_escape_string($s);
+}
+
+function ValidateInstance(&$inst, &$model) {
+	$data = array();
+
+	// fill def. values and sanitize
+	foreach ($model as $fld => $fldProp) {
+		if (isset($inst[$fld])) {
+			$val = sani($inst[$fld]);
+			if (@$fldProp['values']) {
+				if (is_array($fldProp['values'])) {
+					// todo: maybe process $val (strtolower, trim, etc.)
+					if (!in_array($val, $fldProp['values'])) {
+						continue;
+					}
+				}
+				if ('numeric' == $fldProp['values']) {
+					$val = intval($val);
+				}
+				if ('bool' == $fldProp['values']) {
+					$val = $val ? 1 : 0;
+				}
+			}
+			$data[$fld] = $val;
+		}
+		if (!isset($data[$fld]) && @$fldProp['default']) {
+			$data[$fld] = sani($fldProp['default']);
+		}
+	}
+	return $data;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//// Players ////
+////////////////////////////////////////////////////////////////////////////////
+
+
+function LoadPlayer($playerUID) {
+	global $tables;
+
+	$q = "SELECT `uid`, `club_id`, `player_name`, `player_data` FROM `{$tables['players_conf']}` "
+		. "WHERE `uid` = '{$playerUID}'";
+	$result = DbQuery($q);
+	if (mysql_num_rows($result) != 1) {
+		return false;
+	}
+
+	$row = mysql_fetch_assoc($result);
+	$player = unserialize($row['player_data']);
+	$player['uid'] = $row['uid'];
+	$player['club_id'] = $row['club_id'];
+	$player['nameLC'] = $row['player_name'];
+
+	return $player;
+}
+
+function SavePlayer($player) {
+	global $playerAvailableFields;
+	global $tables;
+
+	$data = ValidateInstance($player, $playerAvailableFields);
+	$data = serialize($data);
+
+	$uid = 0;
+	if (isset($player['uid'])) { $uid = intval($player['uid']); }
+	if ($uid < 1) { $uid = 0; }
+	$cid = 'n/a';
+	if ($player['club_id']) { $cid = $player['club_id']; }
+	$player_name = '';
+	if ($player['name']) { $player_name = strtolower(FirstWord($player['name'])); }
+
+	// store to DB
+	$q = "REPLACE INTO `{$tables['players_conf']}` "
+		. "(`uid`, `club_id`, `player_name`, `player_data`) "
+		. "VALUES "
+		. "({$uid}, '{$cid}', '{$player_name}', '{$data}')";
+		//. "WHERE `uid` = '{$playerUID}'";
+	$result = DbQuery($q);
+
+	return true;
+}
+
+// load _all_ player names, from DB
+function loadPlayerDataFromDB($cid) {
+	global $tables;
+	global $players;
+
+	# reset configuration from file and use DB instead
+	$players = array();
+
+	$q = "SELECT `uid`, `player_name`, `player_data` FROM `{$tables['players_conf']}` "
+		. "WHERE `club_id` = '{$cid}' "
+		. "ORDER BY `player_name` ASC";//TODO: add deleted
+	$result = DbQuery($q);
+	if (mysql_num_rows($result) > 0) {
+		while ($row = mysql_fetch_assoc($result)) {
+			$pData = unserialize($row['player_data']);
+			$pData['uid'] = $row['uid'];
+			$players[ $row['player_name'] ] = $pData;
+		}
+	}
+}
+// load _all_ player names, from file and DB
+function LoadAllPlayers($cid) {
+	global $CACHE;
+	if (isset($CACHE->allPlayers) && false !== @$CACHE->allPlayers) {
+		return $CACHE->allPlayers;
+	}
+
+	$CACHE->allPlayers = array();
+
+	global $tables;
+	global $players, $playerAliases;
+
+	loadPlayerDataFromDB($cid);
+
+	// do not consider players from the config file, but only those from the DB
+	$loadOnlyFromDB = false;
+	if (! $loadOnlyFromDB) {
+		foreach ($players as $s => $v) {
+			$CACHE->allPlayers[strtolower($v['name'])] = $v;
+		}
+	}
+
+	// load additional player names
+	$someMonthsAgo = strtotime('- 2 months'); // only those who replied within the last 2 months
+	$result = DbQuery("SELECT DISTINCT `name` FROM `{$tables['replies']}` "
+		. "WHERE `club_id` = '{$cid}' "
+		. "AND `when` > {$someMonthsAgo}");
+	if (mysql_num_rows($result) > 0) {
+		while ($row = mysql_fetch_assoc($result)) {
+			$nameLC = strtolower($row['name']);
+			// check $players
+			$name = @$players[ $nameLC ]['name'];
+			if (!$name) {
+				$name = @$playerAliases[ $nameLC ];
+			}
+			if (!$name) {
+				$name = $row['name'];
+			}
+			$lcName = mb_strtolower($name, 'utf8');
+			$CACHE->allPlayers[ $lcName ] = $name;
+		}
+	}
+
+	//asort($CACHE->allPlayers);
+
+	return $CACHE->allPlayers;
+}
+
+$playerAvailableFields = array(
+	'uid' => array(
+		'type' => 'hidden',
+	),
+	'club_id' => array(
+		'type' => 'hidden',
+	),
+	'name' => array(
+		'help' => 'Der Name darf nur Buchstaben enthalten.',
+	),
+	'email' => array(
+		'label' => 'E-Mail',
+		'help' => 'Die E-Mail-Adresse wird nur für Benachrichtigungs-E-Mails benutzt.',
+	),
+	'freq' => array(
+		'label' => 'Frequenz',
+		'values' => 'numeric',
+		'help' => 'Häufigkeit der Benachrichtigungs-E-Mails.<br>x &lt; 0: bis zur x-ten Meldung.<br>x = 0: garkeine Mails.<br>x &gt; 0: bei jeder x-ten Meldung.',
+	),
+	'keineSelbstMail' => array(
+		'values' => 'bool',
+		'help' => 'Keine E-Mail für die eigene An-/Abmeldung schicken.',
+	),
+	'tendenz' => array(
+		'values' => array('ja', 'nein', ''),
+		'help' => 'Dieser Spieler kommt tendenziell eher (<em>ja</em>) oder eher nicht (<em>nein</em>) zum Training.<br>Mögliche Werte für das Feld: <em>ja</em>, <em>nein</em> oder <em>leer lassen</em>.',
+	),
+	'grund' => array(
+		'help' => '"Grund für die Tendenz" &ndash; Ein Standard-Kommentar, der in der nichts-gesagt-Liste in Klammern hinter dem Namen angezeigt wird.',
+	),
+);

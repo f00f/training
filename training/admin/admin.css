@@ -1,0 +1,27 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+}
+
+.player-list .player .player-name {
+  width:100px;
+  font-weight:bold;
+}
+.input-group {
+  margin-bottom:5px;
+  width:100%;
+}
+.input-group-addon {
+  width:100px;
+}
+.form-control {
+  /*width:360px !important;*/
+}
+.btn.pop {
+  color:#999;
+}
+.del {
+  color:#B94A48;
+}
