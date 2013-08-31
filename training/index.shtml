@@ -6,7 +6,7 @@
     <head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-        <link rel="stylesheet" href="t.css?v=20130823" type="text/css" />
+        <link rel="stylesheet" href="css/t.css?v=20130831" type="text/css" />
         <title><!--#echo var="title"--> |<!--#echo var="rooturl"--></title>
         <meta name="robots" content="ALL" />
         <meta name="copyright" content="(c) Hannes Hofmann 2008+" />
@@ -108,7 +108,7 @@
 	<a href="http://www.uwr1.de/" target="_blank"><img src="http://www.sloganizer.net/style3,UWR.png" border="0" alt="" /></a>
 </div>
 <br class="clear" />
-<script src="t.js"></script>
+<script src="js/t.js"></script>
 <script>
 var gListIdx      = -1;
 var gListItemCnt  = 0;

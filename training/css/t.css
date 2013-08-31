@@ -248,13 +248,19 @@ br.clear {
 }
 
 #nixgesagt {
-	line-height:1.5;
+	line-height:150%;
 }
 
 @media all and (max-width: 320px) {
 	/*hide badbild*/
 	#badbild {
 		display:none;
+	}
+}
+
+@media all and (max-width: 640px) {
+	#badbild {
+		float:none;
 	}
 }
 
