@@ -452,6 +452,12 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 	}
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//// HELPERS ////
+////////////////////////////////////////////////////////////////////////////////
+
+
 function DbQuery($query) {
 	$result	= mysql_query($query);
 	if (mysql_errno() != 0) {
@@ -460,12 +466,17 @@ function DbQuery($query) {
 	return $result;
 }
 
+$CACHE = new stdClass();
+
+
+function sani($s) {
+	return mysql_real_escape_string($s);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 //// HTML ////
 ////////////////////////////////////////////////////////////////////////////////
-
 
 
 function html_header() {
@@ -574,12 +585,8 @@ function html_footer() {
 <?php
 } // html_footer
 
-$CACHE = new stdClass();
 
 
-function sani($s) {
-	return mysql_real_escape_string($s);
-}
 
 function ValidateInstance(&$inst, &$model) {
 	$data = array();
@@ -681,6 +688,7 @@ function loadPlayerDataFromDB($cid) {
 			$players[ $row['player_name'] ] = $pData;
 		}
 	}
+	return $players;
 }
 // load _all_ player names, from file and DB
 function LoadAllPlayers($cid) {

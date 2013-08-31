@@ -20,16 +20,17 @@ if (('add' == $action OR 'remove' == $action) AND !$f_text) {
 	trigger_error('Kein Spieler ausgewählt.', E_USER_ERROR);
 }
 
-# load players
-$allPlayers = array();
-foreach ($spieler as $s) {
-	$allPlayers[strtolower($s['name'])] = $s['name'];
-}
-
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
 mysql_select_db($dbDB);
+
+# load players
+$allPlayers = array();
+$spieler = loadPlayerDataFromDB($teamId);
+foreach ($spieler as $s) {
+	$allPlayers[strtolower($s['name'])] = $s['name'];
+}
 
 # load additional player names
 $sixMonthsAgo = strtotime('- 6 months');
