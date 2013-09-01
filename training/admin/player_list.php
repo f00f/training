@@ -27,7 +27,6 @@ $players = LoadAllPlayers($teamId);
 	    print '<tr class="list-group-item player">';
 		print "<th class='player-name'>{$p['name']}</th>";
 		print "<td>"
-			. "<!-- <a href='player_show.php?id={$pId}'><span class='glyphicon glyphicon-search'></span> ansehen</a>, -->"
 			. "<a href='player_edit.php?id={$pId}'><span class='glyphicon glyphicon-edit'></span> bearbeiten</a> "
 			. "<a class='del' href='player_del.php?id={$pId}'><span class='glyphicon glyphicon-remove'></span> löschen</a>"
 			. "</td>";
