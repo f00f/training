@@ -525,7 +525,7 @@ function html_header() {
 function navbar() {
 	global $pagetitle;
 ?>
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top navbar-default">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -537,7 +537,7 @@ function navbar() {
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav pull-right">
-            <li class="active"><a href="./">Home</a></li>
+            <li><a href="./">Home</a></li>
             <li><a href="../">Trainingsseite</a></li>
             <li class="dropdown">
 			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spieler <b class="caret"></b></a>
@@ -553,6 +553,7 @@ function navbar() {
 			  <li><a href="times_add.php">Hinzufügen</a></li>
 			  </ul>
 			</li>
+            <li><a href="config_edit.php">Konfig</a></li>
             <li><a href="contact.php">Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->
