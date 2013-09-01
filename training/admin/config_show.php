@@ -22,34 +22,42 @@ if (@$_POST['id']) {
 	$_SESSION['notice'] = "<strong>Yes!</strong> {$player['name']} wurde erfolgreich gespeichert.";
 }
 
-if (!@$_REQUEST['id']) {
-	$_SESSION['error'] = 'Spieler nicht gefunden.';
-	Redirect($rootUrl . 'admin/player_list.php');
-}
-$playerUID = $_REQUEST['id'];
-
-// load player data
-$player = LoadPlayer($playerUID);
-if (false === $player) {
-	$_SESSION['error'] = 'Spieler nicht gefunden.';
-	Redirect($rootUrl . 'admin/player_list.php');
-}
-
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
 navbar();
+
+$confVars = array(
+	'teamNameShort' => array(
+		'label' => 'Kurzname',
+		'help' => 'Wird auf der Traininsseite (und in den E-Mails) angezeigt.',
+	),
+	'emailFrom' => array(
+		'label' => 'Absender Suffix',
+		'help' => 'Benachrichtigungs-E-Mails werden mit dem Absender <tt>training-<em>suffix</em>@uwr1.de</tt> versendet.<br>(Meist gleich der Mannschafts-ID)',
+	),
+	'teamId' => array(
+		'label' => 'Mannschafts-ID',
+		'help' => 'Interne ID der Mannschaft.',
+	),
+	'rootUrl' => array(
+		'label' => 'Trainingsseite',
+		'help' => 'Adresse der Trainingsseite.<br>(Meist: <tt>http://<em>teamID</em>.uwr1.de/training/</tt>)',
+	),
+);
 ?>
     <div class="container">
-	  <h1>Spieler "<?=$player['name']?>" bearbeiten <small><?=$teamNameShort?></small></h1>
-      <div class="player-data">
+	  <h1>Konfiguration bearbeiten <small><?=$teamNameShort?></small></h1>
+	  <p>
+	  Hier kannst Du einige Konfigurationsvariablen der Trainingsseite ansehen.
+	  Ändern und speichern kannst Du sie hier aber (noch) nicht.
+	  </p>
+      <div class="config-data">
 	  <form role="form" method="post">
-	  <input type="hidden" name="id" value="<?=$playerUID?>">
-	  <input type="hidden" name="club_id" value="<?=$player['club_id']?>">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($playerAvailableFields as $fld => $fldProp) {
-		$val = @$player[$fld];
+	  foreach ($confVars as $fld => $fldProp) {
+		$val = @$$fld;
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";
 			continue;
@@ -58,11 +66,11 @@ navbar();
 		if (!@$fldProp['label']) { $fldProp['label'] = ucfirst($fld); }
 		print "<div class='input-group'>\n";
 		if ('bool' == @$fldProp['values']) {
-			print "  <span class='input-group-addon'><input type='checkbox' name='{$fld}'".($val ? " checked='checked'" : '')."></span> \n"
-				. "  <input class='form-control' onfocus='blur()' name='_{$fld}_' value='{$fldProp['label']}'>\n";
+			print "  <span class='input-group-addon'><input disabled='disabled' type='checkbox' name='{$fld}'".($val ? " checked='checked'" : '')."></span> \n"
+				. "  <input disabled='disabled' class='form-control' name='_{$fld}_' value='{$fldProp['label']}'>\n";
 		} else {
 			print "  <span class='input-group-addon'>{$fldProp['label']}</span> \n"
-				. "  <input class='form-control' name='{$fld}' value='{$val}'>\n";
+				. "  <input disabled='disabled' class='form-control' name='{$fld}' value='{$val}'>\n";
 		}
 		if (@$fldProp['help']) {
 			$enablePopovers['.pop'] = true;
@@ -77,18 +85,20 @@ navbar();
 	  }
 	  ?>
 	  </div>
+<?php
+/*
 	  <div>
 	  <button class="btn btn-primary" type="submit">Speichern</button>
 	  </div>
+*/
+?>
 	  </form>
       </div>
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
-	  <tr class="list-group-item"><td><a class='del' href="player_del.php?id=<?=$playerUID?>"><span class="glyphicon glyphicon-remove"></span> <?=$player['name']?> löschen</a></td></tr>
-	  <tr class="list-group-item"><td><a href="player_list.php"><span class="glyphicon glyphicon-list"></span> Alle Spieler auflisten</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>
-	</div>
+  </div>
 <?php
 html_footer();

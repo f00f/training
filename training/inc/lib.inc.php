@@ -553,7 +553,7 @@ function navbar() {
 			  <li><a href="times_add.php">Hinzufügen</a></li>
 			  </ul>
 			</li>
-            <li><a href="config_edit.php">Konfig</a></li>
+            <li><a href="config_show.php">Konfig</a></li>
             <li><a href="contact.php">Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->

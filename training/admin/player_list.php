@@ -33,6 +33,12 @@ $players = LoadAllPlayers($teamId);
 	  }
 	  ?>
       </table>
-	</div>
+
+
+	  <h3>Aktionen</h3>
+	  <table class="list-group">
+	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
+	  </table>
+  </div>
 <?php
 html_footer();

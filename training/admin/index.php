@@ -31,6 +31,7 @@ navbar();
 
 		<h2>Sonstiges</h2>
 		<ul class='list-group'>
+		<a class='list-group-item' href="config_show.php">Konfiguration anzeigen</a>
 		<a class='list-group-item' href="players_migrate_to_db.php">Spieler aus Datei in die DB importieren (einmalig)</a>
 		</ul>
       </div>
