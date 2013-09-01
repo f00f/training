@@ -550,8 +550,8 @@ function navbar() {
             <li class="dropdown">
 			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Zeiten <b class="caret"></b></a>
 			  <ul class="dropdown-menu">
-			  <li><a href="times_list.php">Auflisten</a></li>
-			  <li><a href="times_add.php">Hinzufügen</a></li>
+			  <li><a href="practice_times_list.php">Auflisten</a></li>
+			  <li><a href="practice_times_add.php">Hinzufügen</a></li>
 			  </ul>
 			</li>
             <li><a href="config_show.php">Konfig</a></li>

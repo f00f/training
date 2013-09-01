@@ -21,18 +21,17 @@ navbar();
 		<li><a href="player_add.php">hinzufügen</a></li>
 		</ul>
 
-		<div class="hidden">
 		<h2>Trainingszeiten</h2>
 		<ul>
-		<li><a href="times_list.php">anzeigen, bearbeiten und löschen</a></li>
-		<li><a href="times_add.php">hinzufügen</a></li>
+		<li><a href="practice_times_list.php">anzeigen, bearbeiten und löschen</a></li>
+		<li><a href="practice_times_add.php">hinzufügen</a></li>
 		</ul>
-		</div>
 
 		<h2>Sonstiges</h2>
 		<ul class='list-group'>
 		<a class='list-group-item' href="config_show.php">Konfiguration anzeigen</a>
 		<a class='list-group-item' href="players_migrate_to_db.php">Spieler aus Datei in die DB importieren (einmalig)</a>
+		<a class='list-group-item' href="practice_times_migrate_to_db.php">Trainingszeiten aus Datei in die DB importieren (einmalig)</a>
 		</ul>
       </div>
 
