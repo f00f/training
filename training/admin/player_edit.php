@@ -3,6 +3,8 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
+// load player model
+require_once '../inc/model_player.inc.php';
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
@@ -13,8 +15,8 @@ if (@$_POST['id']) {
 	$player = array();
 	$player['uid'] = $_POST['id'];
 	$player['club_id'] = @$_POST['club_id'];
-	foreach ($playerAvailableFields as $fld => $fldProp) {
-		if (@$_POST[$fld]) {
+	foreach ($PlayerModel->fields as $fld => $fldProp) {
+		if (isset($_POST[$fld])) {
 			$player[$fld] = $_POST[$fld];
 		}
 	}
@@ -48,7 +50,7 @@ navbar();
 	  <input type="hidden" name="club_id" value="<?=$player['club_id']?>">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($playerAvailableFields as $fld => $fldProp) {
+	  foreach ($PlayerModel->fields as $fld => $fldProp) {
 		$val = @$player[$fld];
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";

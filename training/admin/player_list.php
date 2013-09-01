@@ -3,6 +3,8 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
+// load player model
+require_once '../inc/model_player.inc.php';
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
