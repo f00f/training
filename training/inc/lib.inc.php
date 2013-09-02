@@ -511,9 +511,15 @@ function html_header() {
 <?php
 	if (@$_SESSION['error']) {
 		print '<div class="container">'
-			. "<div class='alert alert-warning'>{$_SESSION['error']}</div>"
+			. "<div class='alert alert-danger'>{$_SESSION['error']}</div>"
 			. '</div>';
 		unset($_SESSION['error']);
+	}
+	if (@$_SESSION['warning']) {
+		print '<div class="container">'
+			. "<div class='alert alert-warning'>{$_SESSION['warning']}</div>"
+			. '</div>';
+		unset($_SESSION['warning']);
 	}
 	if (@$_SESSION['notice']) {
 		print '<div class="container">'

@@ -14,7 +14,6 @@ if (@$_POST['id']) {
 	// save player data
 	$player = array();
 	$player['uid'] = $_POST['id'];
-	$player['club_id'] = @$_POST['club_id'];
 	foreach ($PlayerModel->fields as $fld => $fldProp) {
 		if (isset($_POST[$fld])) {
 			$player[$fld] = $_POST[$fld];
@@ -25,7 +24,7 @@ if (@$_POST['id']) {
 }
 
 if (!@$_REQUEST['id']) {
-	$_SESSION['error'] = 'Spieler nicht gefunden.';
+	$_SESSION['warning'] = 'Spieler nicht gefunden.';
 	Redirect($rootUrl . 'admin/player_list.php');
 }
 $playerUID = $_REQUEST['id'];
@@ -33,7 +32,7 @@ $playerUID = $_REQUEST['id'];
 // load player data
 $player = LoadPlayer($playerUID, $teamId);
 if (false === $player) {
-	$_SESSION['error'] = 'Spieler nicht gefunden.';
+	$_SESSION['warning'] = 'Spieler nicht gefunden.';
 	Redirect($rootUrl . 'admin/player_list.php');
 }
 
@@ -47,7 +46,6 @@ navbar();
       <div class="player-data">
 	  <form role="form" method="post">
 	  <input type="hidden" name="id" value="<?=$playerUID?>">
-	  <input type="hidden" name="club_id" value="<?=$player['club_id']?>">
 	  <div style="margin-bottom:10px;">
 	  <?php
 	  foreach ($PlayerModel->fields as $fld => $fldProp) {
