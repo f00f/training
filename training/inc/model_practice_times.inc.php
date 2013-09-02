@@ -116,27 +116,34 @@ function LoadAllPracticeTimes($cid) {
 		$dow2date[$dowThen] = $dateThen;
 	}
 
-	$q = "SELECT `practice_id`, `dow`, `begin`, `end`, `first`, `last`, `data` FROM `{$tables['practices_conf']}` "
+	$q = "SELECT `practice_id`, `club_id`, `dow`, `begin`, `end`, `first`, `last`, `data` FROM `{$tables['practices_conf']}` "
 		. "WHERE `club_id` = '{$cid}' "
 		. "ORDER BY `last` DESC, `first` DESC";//TODO: add deleted
 	$result = DbQuery($q);
 	$now = date('Y-m-d');
 	if (mysql_num_rows($result) > 0) {
 		while ($row = mysql_fetch_assoc($result)) {
-			$row['uid'] = $row['practice_id'];
-			$row['data'] = unserialize($row['data']);
+			$p = unserialize($row['data']);
+
+			$p['uid'] = $row['practice_id'];
+			$p['club_id'] = $row['club_id'];
+			$p['dow'] = $row['dow'];
 			list($h, $m, $s) = explode(':', $row['begin']);
-			$row['begin'] = "{$h}:{$m}";
+			$p['begin'] = "{$h}:{$m}";
 			list($h, $m, $s) = explode(':', $row['end']);
-			$row['end'] = "{$h}:{$m}";
+			$p['end'] = "{$h}:{$m}";
+			$p['first'] = $row['first'];
+			$p['last'] = $row['last'];
 			$dowIdx = $tag2Int[$row['dow']];
-			$row['dowIdx'] = ($dowIdx - 1) % 7;
-			$row['has-started'] = $row['first'] <= $now;
-			$row['has-ended'] = $row['last'] < $now;
-			$row['active'] = $dow2date[$dowIdx] >= $row['first'] && $dow2date[$dowIdx] <= $row['last'];
-			$CACHE->allPracticeTimes[] = $row;
-			if ($row['active']) {
-				$CACHE->activePracticeTimes[] = $row;
+			$p['dowIdx'] = ($dowIdx - 1) % 7;
+			$p['has-started'] = $row['first'] <= $now;
+			$p['has-ended'] = $row['last'] < $now;
+			$p['active'] = $dow2date[$dowIdx] >= $row['first'] && $dow2date[$dowIdx] <= $row['last'];
+
+			$CACHE->allPracticeTimes[] = $p;
+
+			if ($p['active']) {
+				$CACHE->activePracticeTimes[] = $p;
 			}
 		}
 	}

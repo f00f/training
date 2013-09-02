@@ -30,12 +30,12 @@ $times = LoadAllPracticeTimes($teamId);
 		$classes[] = $t['has-started'] ? 'has-started' : 'has-not-started';
 		$classes[] = $t['has-ended'] ? 'has-ended' : 'has-not-ended';
 	    print "<tr class='list-group-item practice-time ".implode(' ', $classes)."'>\n"
-			. "  <th>{$icon}{$t['dow']}, {$t['begin']} &ndash; {$t['end']} Uhr, {$t['data']['ort']}</th>\n"
+			. "  <th>{$icon}{$t['dow']}, {$t['begin']} &ndash; {$t['end']} Uhr, {$t['ort']}</th>\n"
 			. "  <td>{$t['first']} &ndash; {$t['last']}</td>\n"
 			. "  <td>".implode(' ', $classes)."</td>\n"
 			. "  <td>"
-			. "<a href='times_edit.php?id={$tId}'><span class='glyphicon glyphicon-edit'></span> bearbeiten</a> "
-			. "<a class='del' href='times_del.php?id={$tId}'><span class='glyphicon glyphicon-remove'></span> löschen</a>"
+			. "<a href='practice_times_edit.php?id={$tId}'><span class='glyphicon glyphicon-edit'></span> bearbeiten</a> "
+			. "<a class='del' href='practice_times_del.php?id={$tId}'><span class='glyphicon glyphicon-remove'></span> löschen</a>"
 			. "</td>\n"
 			. "</tr>\n";
 	  }
