@@ -99,7 +99,8 @@ navbar();
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
-	  <tr class="list-group-item"><td><a class='del' href="practice_time_del.php?id=<?=$practiceUID?>"><span class="glyphicon glyphicon-remove"></span> Diese Trainingszeit löschen</a></td></tr>
+	  <tr class="list-group-item"><td><a class='text-danger' href="practice_time_del.php?id=<?=$practiceUID?>"><span class="glyphicon glyphicon-trash"></span> Diese Trainingszeit löschen</a></td></tr>
+	  <tr class="list-group-item"><td><a href="practice_time_add.php"><span class="glyphicon glyphicon-plus"></span> Eine Trainingszeit hinzufügen</a></td></tr>
 	  <tr class="list-group-item"><td><a href="practice_times_list.php"><span class="glyphicon glyphicon-th-list"></span> Alle Trainingszeiten auflisten</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>

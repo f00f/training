@@ -80,11 +80,10 @@ navbar();
       </div>
 
 	  <h3>Aktionen</h3>
-	  <div style="width:200px">
-	  <div class="list-group">
-	  <a class="list-group-item" href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> Alle Spieler auflisten</a>
-	  </div>
-	  </div>
+	  <table class="list-group">
+	  <tr class="list-group-item"><td><a href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> Alle Spieler auflisten</a></td></tr>
+	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
+	  </table>
 	</div>
 <?php
 html_footer();

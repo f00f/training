@@ -17,35 +17,70 @@ navbar();
 
 // load all times data
 $times = LoadAllPracticeTimes($teamId);
+$icons = array(
+  'active' => array(
+	'desc' => 'Momentan aktive Trainingszeit.',
+	'sym' => 'bell',
+  ),
+  'future' => array(
+	'desc' => 'Trainingszeit, die in der Zukunft aktiv wird.',
+	'sym' => 'time',
+  ),
+  'past' =>array(
+	'desc' => 'Trainingszeit, die nicht mehr aktiv ist.',
+	'sym' => 'ban-circle',
+  ),
+);
 ?>
     <div class="container">
 	  <h1>Alle Trainingszeiten <small><?=$teamNameShort?></small></h1>
-      <table class="list-group practice-times-list">
+      <table class="table _list-group practice-times-list">
+	  <thead>
+	  <tr>
+	  <th>Tag und Zeit</th>
+	  <th>Ort und Zeitraum</th>
+	  <th>Aktionen</th>
+	  </tr>
+	  </thead>
+	  <tbody>
 	  <?php
 	  foreach ($times as $t) {
 		$tId = $t['uid'];
-		$icon = $t['active'] ? '<span class="glyphicon glyphicon-star"></span> ' : '<span class="glyphicon glyphicon-star-empty"></span> ';
+		$icon = false;
+		if (!$icon && $t['active']) { $icon = $icons['active']; }
+		if (!$icon && !$t['has-started']) { $icon = $icons['future']; }
+		if (!$icon && $t['has-ended']) { $icon = $icons['past']; }
+		$icon = "<span class='glyphicon glyphicon-{$icon['sym']}'></span> ";
 		$classes = array();
-		$classes[] = $t['active'] ? 'active' : 'inactive';
+		$classes[] = $t['active'] ? 'current' : 'inactive';
 		$classes[] = $t['has-started'] ? 'has-started' : 'has-not-started';
 		$classes[] = $t['has-ended'] ? 'has-ended' : 'has-not-ended';
-	    print "<tr class='list-group-item practice-time ".implode(' ', $classes)."'>\n"
-			. "  <th>{$icon}{$t['dow']}, {$t['begin']} &ndash; {$t['end']} Uhr, {$t['ort']}</th>\n"
-			. "  <td>{$t['first']} &ndash; {$t['last']}</td>\n"
-			. "  <td>".implode(' ', $classes)."</td>\n"
+	    print "<tr class='_list-group-item practice-time ".implode(' ', $classes)."'>\n"
+			. "  <th>{$icon}{$t['dow']}, {$t['begin']} &ndash; {$t['end']} Uhr</th>\n"
+			. "  <td>{$t['ort']}, {$t['first']} &ndash; {$t['last']}</td>\n"
+			//. "  <td>".implode(' ', $classes)."</td>\n"
 			. "  <td>"
-			. "<a href='practice_time_edit.php?id={$tId}'><span class='glyphicon glyphicon-edit'></span> bearbeiten</a> "
-			. "<a class='del' href='practice_time_del.php?id={$tId}'><span class='glyphicon glyphicon-remove'></span> löschen</a>"
+			. "<a href='practice_time_edit.php?id={$tId}'><span class='glyphicon glyphicon-pencil'></span> bearbeiten</a> "
+			. "<a class='text-danger' href='practice_time_del.php?id={$tId}'><span class='glyphicon glyphicon-trash'></span> löschen</a>"
 			. "</td>\n"
 			. "</tr>\n";
 	  }
 	  ?>
+	  </tbody>
       </table>
-
+	  <p>
+	  <span class='lead'>Legende</span><br>
+	  <?php
+	  foreach($icons as $slug => $icon) {
+		$sym = "<span class='glyphicon glyphicon-{$icon['sym']}'></span> ";
+		print "{$sym} {$icon['desc']}<br>";
+	  }
+	  ?>
+	  </p>
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
-	  <tr class="list-group-item"><td><a href="practice_time_add.php"><span class="glyphicon glyphicon-plus"></span> Trainingszeit hinzufügen</a></td></tr>
+	  <tr class="list-group-item"><td><a href="practice_time_add.php"><span class="glyphicon glyphicon-plus"></span> Eine Trainingszeit hinzufügen</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>
   </div>

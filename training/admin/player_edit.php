@@ -99,7 +99,8 @@ navbar();
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
-	  <tr class="list-group-item"><td><a class='del' href="player_del.php?id=<?=$playerUID?>"><span class="glyphicon glyphicon-remove"></span> <?=$player['name']?> löschen</a></td></tr>
+	  <tr class="list-group-item"><td><a class='text-danger' href="player_del.php?id=<?=$playerUID?>"><span class="glyphicon glyphicon-trash"></span> <?=$player['name']?> löschen</a></td></tr>
+	  <tr class="list-group-item"><td><a href="player_add.php"><span class="glyphicon glyphicon-plus"></span> Einen Spieler hinzufügen</a></td></tr>
 	  <tr class="list-group-item"><td><a href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> Alle Spieler auflisten</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>

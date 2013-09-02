@@ -27,8 +27,8 @@ $players = LoadAllPlayers($teamId);
 	    print '<tr class="list-group-item player">';
 		print "<th class='player-name'>{$p['name']}</th>";
 		print "<td>"
-			. "<a href='player_edit.php?id={$pId}'><span class='glyphicon glyphicon-edit'></span> bearbeiten</a> "
-			. "<a class='del' href='player_del.php?id={$pId}'><span class='glyphicon glyphicon-remove'></span> löschen</a>"
+			. "<a href='player_edit.php?id={$pId}'><span class='glyphicon glyphicon-pencil'></span> bearbeiten</a> "
+			. "<a class='text-danger' href='player_del.php?id={$pId}'><span class='glyphicon glyphicon-trash'></span> löschen</a>"
 			. "</td>";
 	    print '</tr>';
 	  }
@@ -38,7 +38,7 @@ $players = LoadAllPlayers($teamId);
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
-	  <tr class="list-group-item"><td><a href="player_add.php"><span class="glyphicon glyphicon-plus"></span> Spieler hinzufügen</a></td></tr>
+	  <tr class="list-group-item"><td><a href="player_add.php"><span class="glyphicon glyphicon-plus"></span> Einen Spieler hinzufügen</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>
   </div>

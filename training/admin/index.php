@@ -22,13 +22,13 @@ navbar();
 
 		<h2><span class="glyphicon glyphicon-user"></span> Spieler</h2>
 		<div class='list-group'>
-		<a class='list-group-item' href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, bearbeiten und löschen</a>
+		<a class='list-group-item' href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class='glyphicon glyphicon-pencil'></span> bearbeiten und <span class='glyphicon glyphicon-trash'></span> löschen</a>
 		<a class='list-group-item' href="player_add.php"><span class="glyphicon glyphicon-plus"></span> hinzufügen</a>
 		</div>
 
 		<h2><span class="glyphicon glyphicon-calendar"></span> Trainingszeiten</h2>
 		<div class='list-group'>
-		<a class='list-group-item' href="practice_times_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, bearbeiten und löschen</a>
+		<a class='list-group-item' href="practice_times_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class='glyphicon glyphicon-pencil'></span> bearbeiten und <span class='glyphicon glyphicon-trash'></span> löschen</a>
 		<a class='list-group-item' href="practice_time_add.php"><span class="glyphicon glyphicon-plus"></span> hinzufügen</a>
 		</div>
 
@@ -37,6 +37,7 @@ navbar();
 		<a class='list-group-item' href="config_show.php"><span class="glyphicon glyphicon-cog"></span> Konfiguration anzeigen</a>
 		<a class='list-group-item' href="players_migrate_to_db.php"><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-log-in"></span> Spieler aus Datei in die DB importieren (einmalig)</a>
 		<a class='list-group-item' href="practice_times_migrate_to_db.php"><span class="glyphicon glyphicon-calendar"></span><span class="glyphicon glyphicon-log-in"></span> Trainingszeiten aus Datei in die DB importieren (einmalig)</a>
+		<a class='list-group-item' href="contact.php"><span class="glyphicon glyphicon-envelope"></span> Kontaktdaten</a>
 		</div>
       </div>
 
