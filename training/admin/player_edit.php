@@ -31,7 +31,7 @@ if (!@$_REQUEST['id']) {
 $playerUID = $_REQUEST['id'];
 
 // load player data
-$player = LoadPlayer($playerUID);
+$player = LoadPlayer($playerUID, $teamId);
 if (false === $player) {
 	$_SESSION['error'] = 'Spieler nicht gefunden.';
 	Redirect($rootUrl . 'admin/player_list.php');

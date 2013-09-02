@@ -39,11 +39,14 @@ $PlayerModel->fields = array(
 );
 
 
-function LoadPlayer($playerUID) {
+function LoadPlayer($playerUID, $cid = 'use $club_id') {
 	global $tables;
 
 	$q = "SELECT `uid`, `club_id`, `player_name`, `player_data` FROM `{$tables['players_conf']}` "
 		. "WHERE `uid` = '{$playerUID}'";
+	if ($cid !== false) {
+		$q .= " AND `club_id` = '{$cid}'";
+	}
 	$result = DbQuery($q);
 	if (mysql_num_rows($result) != 1) {
 		return false;
