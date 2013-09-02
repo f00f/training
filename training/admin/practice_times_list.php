@@ -34,8 +34,8 @@ $times = LoadAllPracticeTimes($teamId);
 			. "  <td>{$t['first']} &ndash; {$t['last']}</td>\n"
 			. "  <td>".implode(' ', $classes)."</td>\n"
 			. "  <td>"
-			. "<a href='practice_times_edit.php?id={$tId}'><span class='glyphicon glyphicon-edit'></span> bearbeiten</a> "
-			. "<a class='del' href='practice_times_del.php?id={$tId}'><span class='glyphicon glyphicon-remove'></span> löschen</a>"
+			. "<a href='practice_time_edit.php?id={$tId}'><span class='glyphicon glyphicon-edit'></span> bearbeiten</a> "
+			. "<a class='del' href='practice_time_del.php?id={$tId}'><span class='glyphicon glyphicon-remove'></span> löschen</a>"
 			. "</td>\n"
 			. "</tr>\n";
 	  }
@@ -45,6 +45,7 @@ $times = LoadAllPracticeTimes($teamId);
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
+	  <tr class="list-group-item"><td><a href="practice_time_add.php"><span class="glyphicon glyphicon-plus"></span> Trainingszeit hinzufügen</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>
   </div>

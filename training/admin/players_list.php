@@ -38,6 +38,7 @@ $players = LoadAllPlayers($teamId);
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
+	  <tr class="list-group-item"><td><a href="player_add.php"><span class="glyphicon glyphicon-plus"></span> Spieler hinzufügen</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>
   </div>
