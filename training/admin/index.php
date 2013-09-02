@@ -22,7 +22,7 @@ navbar();
 
 		<h2><span class="glyphicon glyphicon-user"></span> Spieler</h2>
 		<div class='list-group'>
-		<a class='list-group-item' href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, bearbeiten und löschen</a></li>
+		<a class='list-group-item' href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, bearbeiten und löschen</a>
 		<a class='list-group-item' href="player_add.php"><span class="glyphicon glyphicon-plus"></span> hinzufügen</a>
 		</div>
 
