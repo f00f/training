@@ -594,19 +594,51 @@ function html_footer() {
 } // html_footer
 
 
+////////////////////////////////////////////////////////////////////////////////
+//// Model Data Validation ////
+////////////////////////////////////////////////////////////////////////////////
 
 
-function ValidateInstance(&$inst, &$model) {
-	$data = array();
-
+function ValidateInstance(&$inst, &$model, &$warnings, &$errors) {
 	// fill def. values and sanitize
 	foreach ($model as $fld => $fldProp) {
+		$lbl = @$fldProp['label'];
+		if (!$lbl) { $lbl = ucfirst($fld); }
+
 		if (isset($inst[$fld])) {
 			$val = sani($inst[$fld]);
 			if (@$fldProp['values']) {
 				if (is_array($fldProp['values'])) {
 					// todo: maybe process $val (strtolower, trim, etc.)
 					if (!in_array($val, $fldProp['values'])) {
+						unset($inst[$fld]);
+						if (!@$fldProp['is_column'] && !@$fldProp['required']) {
+							// only for optional fields. Otherwise, an error will be raised later.
+							$warnings[] = $lbl;
+						}
+						continue;
+					}
+				}
+				if ('date' == $fldProp['values']) {
+					list($y, $m, $d) = explode('-', $val);
+					$y = intval($y);
+					$m = intval($m);
+					$d = intval($d);
+					if ($m < 10) { $m = "0{$m}"; }
+					if ($d < 10) { $d = "0{$d}"; }
+					if ("{$y}-{$m}-{$d}" != $val) {
+						unset($inst[$fld]);
+						continue;
+					}
+				}
+				if ('time' == $fldProp['values']) {
+					list($h, $m) = explode(':', $val);
+					$h = intval($h);
+					$m = intval($m);
+					if ($h < 10) { $h = "0{$h}"; }
+					if ($m < 10) { $m = "0{$m}"; }
+					if ("{$h}:{$m}" != $val) {
+						unset($inst[$fld]);
 						continue;
 					}
 				}
@@ -617,13 +649,40 @@ function ValidateInstance(&$inst, &$model) {
 					$val = $val ? 1 : 0;
 				}
 			}
-			$data[$fld] = $val;
+			$inst[$fld] = $val;
 		}
-		if (!isset($data[$fld]) && @$fldProp['default']) {
-			$data[$fld] = sani($fldProp['default']);
+		if (!isset($inst[$fld]) && @$fldProp['default']) {
+			$inst[$fld] = sani($fldProp['default']);
 		}
 	}
-	return $data;
+
+	foreach ($model as $fld => $fldProp) {
+		if (@$fldProp['is_column'] || @$fldProp['required']) {
+			if (!isset($inst[$fld])) {
+				$lbl = @$fldProp['label'];
+				if (!$lbl) { $lbl = ucfirst($fld); }
+				$errors[] = $lbl;
+			}
+		}
+	}
+
+	$warnings = array_unique($warnings);
+	$errors = array_unique($errors);
+	return count($warnings) == 0 && count($errors) == 0;
+}
+
+function GetOptionalData(&$inst , &$model) {
+	$optData = array();
+
+	foreach ($model as $fld => $fldProp) {
+		if (!@$fldProp['is_column']) {
+			if (isset($inst[$fld])) {
+				$optData[$fld] = $inst[$fld];
+			}
+		}
+	}
+
+	return $optData;
 }
 
 // load player model

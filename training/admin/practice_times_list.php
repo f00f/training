@@ -4,7 +4,7 @@ require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
 // load times model
-require_once '../inc/model_practice_times.inc.php';
+require_once '../inc/model_practice_time.inc.php';
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);

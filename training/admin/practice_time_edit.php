@@ -3,8 +3,8 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
-// load player model
-require_once '../inc/model_player.inc.php';
+// load times model
+require_once '../inc/model_practice_time.inc.php';
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
@@ -12,17 +12,17 @@ mysql_select_db($dbDB);
 
 $loadFromDB = true;
 if (@$_POST['id']) {
-	// save player data
-	$player = array();
-	$player['uid'] = $_POST['id'];
-	foreach ($PlayerModel->fields as $fld => $fldProp) {
+	// save practice time data
+	$practice = array();
+	$practice['practice_id'] = $_POST['id'];
+	foreach ($PracticeTimeModel->fields as $fld => $fldProp) {
 		if (isset($_POST[$fld])) {
-			$player[$fld] = $_POST[$fld];
+			$practice[$fld] = $_POST[$fld];
 		}
 	}
-	$success = SavePlayer($player);
+	$success = SavePracticeTime($practice);
 	if ($success) {
-		$_SESSION['notice'] = "<strong>Yes!</strong> {$player['name']} wurde erfolgreich gespeichert.";
+		$_SESSION['notice'] = "<strong>Yes!</strong> Die Trainingszeit wurde erfolgreich gespeichert.";
 	}
 	else
 	{
@@ -37,17 +37,17 @@ if (@$_POST['id']) {
 }
 
 if (!@$_REQUEST['id']) {
-	$_SESSION['warning'] = 'Spieler nicht gefunden.';
-	Redirect($rootUrl . 'admin/player_list.php');
+	$_SESSION['warning'] = 'Trainingszeit nicht gefunden.';
+	Redirect($rootUrl . 'admin/practice_times_list.php');
 }
-$playerUID = $_REQUEST['id'];
+$practiceUID = $_REQUEST['id'];
 
-// load player data
+// load practice time data
 if ($loadFromDB) {
-	$player = LoadPlayer($playerUID, $teamId);
-	if (false === $player) {
-		$_SESSION['warning'] = 'Spieler nicht gefunden.';
-		Redirect($rootUrl . 'admin/player_list.php');
+	$practice = LoadPracticeTime($practiceUID, $teamId);
+	if (false === $practice) {
+		$_SESSION['warning'] = 'Trainingszeit nicht gefunden.';
+		Redirect($rootUrl . 'admin/practice_times_list.php');
 	}
 }
 
@@ -57,14 +57,14 @@ html_header();
 navbar();
 ?>
     <div class="container">
-	  <h1>Spieler "<?=$player['name']?>" bearbeiten <small><?=$teamNameShort?></small></h1>
-      <div class="player-data">
+	  <h1>Trainingszeit bearbeiten <small><?=$teamNameShort?></small></h1>
+      <div class="practice-time-data">
 	  <form role="form" method="post">
-	  <input type="hidden" name="id" value="<?=$playerUID?>">
+	  <input type="hidden" name="id" value="<?=$practiceUID?>">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($PlayerModel->fields as $fld => $fldProp) {
-		$val = @$player[$fld];
+	  foreach ($PracticeTimeModel->fields as $fld => $fldProp) {
+		$val = @$practice[$fld];
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";
 			continue;
@@ -99,10 +99,10 @@ navbar();
 
 	  <h3>Aktionen</h3>
 	  <table class="list-group">
-	  <tr class="list-group-item"><td><a class='del' href="player_del.php?id=<?=$playerUID?>"><span class="glyphicon glyphicon-remove"></span> <?=$player['name']?> löschen</a></td></tr>
-	  <tr class="list-group-item"><td><a href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> Alle Spieler auflisten</a></td></tr>
+	  <tr class="list-group-item"><td><a class='del' href="practice_time_del.php?id=<?=$practiceUID?>"><span class="glyphicon glyphicon-remove"></span> Diese Trainingszeit löschen</a></td></tr>
+	  <tr class="list-group-item"><td><a href="practice_times_list.php"><span class="glyphicon glyphicon-th-list"></span> Alle Trainingszeiten auflisten</a></td></tr>
 	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
 	  </table>
-	</div>
+  </div>
 <?php
 html_footer();

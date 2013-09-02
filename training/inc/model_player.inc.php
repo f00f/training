@@ -7,10 +7,12 @@ $PlayerModel = new stdClass();
 
 $PlayerModel->fields = array(
 	'uid' => array(
+		'is_column' => true,
 		'type' => 'hidden',
 		'values' => 'numeric',
 	),
 	'club_id' => array(
+		'is_column' => true,
 		'type' => 'hidden',
 	),
 	'name' => array(
@@ -65,8 +67,22 @@ function SavePlayer($player) {
 	global $PlayerModel;
 	global $tables;
 
-	$data = ValidateInstance($player, $PlayerModel->fields);
-	$data = serialize($data);
+	$warnings = array();
+	$errors = array();
+	$success = ValidateInstance($player, $PlayerModel->fields, $warnings, $errors);
+	if (!$success) {
+		if (count($errors) > 0) {
+			$error_msg = 'Folgende nicht-optionale Felder haben fehlerhafte Eingaben: <em>' . implode('</em>, <em>', $errors) . '</em>.';
+			$_SESSION['error'] = $error_msg;
+		}
+		if (count($warnings) > 0) {
+			$warn_msg = 'Folgende optionale Felder haben fehlerhafte Eingaben: <em>' . implode('</em>, <em>', $warnings) . '</em>.';
+			$_SESSION['warning'] = $warn_msg;
+		}
+		// TODO: show add/edit page, but do not re-load data from DB.
+		return false;
+	}
+	$data = serialize(GetOptionalData($player, $PlayerModel->fields));
 
 	$uid = 0;
 	if (isset($player['uid'])) { $uid = intval($player['uid']); }
