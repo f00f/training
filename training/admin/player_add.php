@@ -12,7 +12,7 @@ if (isset($_POST['uid']) && @$_POST['club_id']) {
 	// save player data
 	$player = array();
 	$player['club_id'] = @$_POST['club_id'];
-	foreach ($playerAvailableFields as $fld => $fldProp) {
+	foreach ($PlayerModel->fields as $fld => $fldProp) {
 		if (@$_POST[$fld]) {
 			$player[$fld] = $_POST[$fld];
 		}
@@ -41,7 +41,7 @@ navbar();
 	  <form role="form" method="post">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($playerAvailableFields as $fld => $fldProp) {
+	  foreach ($PlayerModel->fields as $fld => $fldProp) {
 		if ('uid' == $fld || 'club_id' == $fld || 'nameLC' == $fld) {
 			//continue;
 		}
@@ -82,7 +82,7 @@ navbar();
 	  <h3>Aktionen</h3>
 	  <div style="width:200px">
 	  <div class="list-group">
-	  <a class="list-group-item" href="player_list.php"><span class="glyphicon glyphicon-list"></span> Alle Spieler auflisten</a>
+	  <a class="list-group-item" href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> Alle Spieler auflisten</a>
 	  </div>
 	  </div>
 	</div>
