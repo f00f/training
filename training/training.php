@@ -3,6 +3,7 @@ require_once 'inc/lib.inc.php';
 require_once 'inc/spieler.inc.php';
 require_once 'inc/trainingszeiten.inc.php';
 require_once 'inc/dbconf.inc.php';
+require_once 'inc/model_player.inc.php';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 

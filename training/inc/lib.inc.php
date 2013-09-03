@@ -684,6 +684,3 @@ function GetOptionalData(&$inst , &$model) {
 
 	return $optData;
 }
-
-// load player model
-require_once 'model_player.inc.php';
