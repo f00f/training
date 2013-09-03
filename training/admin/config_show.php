@@ -27,7 +27,8 @@ html_header();
 
 navbar_admin('config');
 
-$confVars = array(
+$ConfigModel = new stdClass();
+$ConfigModel->fields = array(
 	'teamNameShort' => array(
 		'label' => 'Kurzname',
 		'help' => 'Wird auf der Traininsseite (und in den E-Mails) angezeigt.',
@@ -47,7 +48,7 @@ $confVars = array(
 );
 ?>
     <div class="container">
-	  <h1>Konfiguration bearbeiten <small><?=$teamNameShort?></small></h1>
+	  <h1>Konfiguration anzeigen <small><?=$teamNameShort?></small></h1>
 	  <p>
 	  Hier kannst Du einige Konfigurationsvariablen der Trainingsseite ansehen.
 	  Ändern und speichern kannst Du sie hier aber (noch) nicht.
@@ -56,7 +57,7 @@ $confVars = array(
 	  <form role="form" method="post">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($confVars as $fld => $fldProp) {
+	  foreach ($ConfigModel->fields as $fld => $fldProp) {
 		$val = @$$fld;
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";
@@ -81,7 +82,6 @@ $confVars = array(
 				. "  </span>\n";
 		}
 		print "</div>\n";
-			// placeholder="foo"
 	  }
 	  ?>
 	  </div>
@@ -94,11 +94,6 @@ $confVars = array(
 ?>
 	  </form>
       </div>
-
-	  <h3>Aktionen</h3>
-	  <table class="list-group">
-	  <tr class="list-group-item"><td><a href="./"><span class="glyphicon glyphicon-home"></span> Zurück zur Startseite</a></td></tr>
-	  </table>
   </div>
 <?php
 html_footer();
