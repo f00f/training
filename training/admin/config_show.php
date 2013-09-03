@@ -25,7 +25,7 @@ if (@$_POST['id']) {
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
-navbar();
+navbar_admin('config');
 
 $confVars = array(
 	'teamNameShort' => array(

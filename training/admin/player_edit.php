@@ -52,7 +52,7 @@ if ($loadFromDB) {
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
-navbar();
+navbar_admin('players');
 ?>
     <div class="container">
 	  <h1>Spieler "<?=$player['name']?>" bearbeiten <small><?=$teamNameShort?></small></h1>

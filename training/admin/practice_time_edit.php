@@ -54,7 +54,7 @@ if ($loadFromDB) {
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
-navbar();
+navbar_admin('practice-times');
 ?>
     <div class="container">
 	  <h1>Trainingszeit bearbeiten <small><?=$teamNameShort?></small></h1>

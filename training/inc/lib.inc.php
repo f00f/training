@@ -529,7 +529,7 @@ function html_header() {
 	}
 } // html_header
 
-function navbar() {
+function navbar_admin($active = null) {
 	global $pagetitle;
 ?>
     <div class="navbar navbar-fixed-top navbar-default">
@@ -544,24 +544,24 @@ function navbar() {
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav pull-right">
-            <li><a href="./">Home</a></li>
+            <li<?=('home'==$active)?' class="active"':''?>><a href="./">Home</a></li>
             <li><a href="../">Trainingsseite</a></li>
-            <li class="dropdown">
+            <li class="dropdown<?=('players'==$active)?' active':''?>">
 			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spieler <b class="caret"></b></a>
 			  <ul class="dropdown-menu">
 			  <li><a href="players_list.php">Auflisten</a></li>
 			  <li><a href="player_add.php">Hinzufügen</a></li>
 			  </ul>
 			</li>
-            <li class="dropdown">
+            <li class="dropdown<?=('practice-times'==$active)?' active':''?>">
 			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Zeiten <b class="caret"></b></a>
 			  <ul class="dropdown-menu">
 			  <li><a href="practice_times_list.php">Auflisten</a></li>
 			  <li><a href="practice_time_add.php">Hinzufügen</a></li>
 			  </ul>
 			</li>
-            <li><a href="config_show.php">Konfig</a></li>
-            <li><a href="contact.php">Contact</a></li>
+            <li<?=('config'==$active)?' class="active"':''?>><a href="config_show.php">Konfig</a></li>
+            <li<?=('contact'==$active)?' class="active"':''?>><a href="contact.php">Kontakt</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

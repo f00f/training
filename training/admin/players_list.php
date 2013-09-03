@@ -13,7 +13,7 @@ mysql_select_db($dbDB);
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
-navbar();
+navbar_admin('players');
 
 // load all players data
 $players = LoadAllPlayers($teamId);

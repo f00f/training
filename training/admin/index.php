@@ -6,7 +6,7 @@ require_once '../inc/lib.inc.php';
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
-navbar();
+navbar_admin('home');
 ?>
 
     <div class="container">

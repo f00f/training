@@ -47,7 +47,7 @@ if ($initPlayer) {
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
-navbar();
+navbar_admin('players');
 ?>
     <div class="container">
 	  <h1>Spieler hinzufügen <small><?=$teamNameShort?></small></h1>

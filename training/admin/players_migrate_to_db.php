@@ -9,7 +9,7 @@ $club_id = $teamId;
 $players =& $spieler;
 
 html_header();
-navbar();
+navbar_admin('players');
 
 print '<div class="container">';
 print "Migrating ".count($players)." players for club '{$club_id}' from file to database.<br>\n";
