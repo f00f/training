@@ -23,9 +23,7 @@ if (@$_POST['id']) {
 	$success = SavePlayer($player);
 	if ($success) {
 		$_SESSION['notice'] = "<strong>Yes!</strong> {$player['name']} wurde erfolgreich gespeichert.";
-	}
-	else
-	{
+	} else {
 		$prefix = '<strong>Nicht gespeichert.</strong> ';
 		if (@$_SESSION['error']) {
 			$_SESSION['error'] = $prefix . $_SESSION['error'];

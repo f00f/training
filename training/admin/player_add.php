@@ -3,32 +3,46 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
+// load player model
+require_once '../inc/model_player.inc.php';
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
 mysql_select_db($dbDB);
 
+$initPlayer = true;
 if (isset($_POST['uid']) && @$_POST['club_id']) {
 	// save player data
 	$player = array();
-	$player['club_id'] = @$_POST['club_id'];
 	foreach ($PlayerModel->fields as $fld => $fldProp) {
-		if (@$_POST[$fld]) {
+		if (isset($_POST[$fld])) {
 			$player[$fld] = $_POST[$fld];
 		}
 	}
-	SavePlayer($player);
-	$player['uid'] = mysql_insert_id();
-	$_SESSION['notice'] = "<strong>Yes!</strong> Der Spieler \"{$player['name']}\" wurde erfolgreich hinzugefügt.";
-	Redirect($rootUrl . 'admin/player_edit.php?id='.$player['uid']);
+	$success = SavePlayer($player);
+	if ($success) {
+		$player['uid'] = mysql_insert_id();
+		$_SESSION['notice'] = "<strong>Yes!</strong> Der Spieler \"{$player['name']}\" wurde erfolgreich hinzugefügt.";
+		Redirect($rootUrl . 'admin/player_edit.php?id='.$player['uid']);
+	} else {
+		$prefix = '<strong>Nicht hinzugefügt.</strong> ';
+		if (@$_SESSION['error']) {
+			$_SESSION['error'] = $prefix . $_SESSION['error'];
+		} else {
+			$_SESSION['warning'] = $prefix . @$_SESSION['warning'];
+		}
+	}
+	$initPlayer = false;
 }
 
 
-// load player data
-$player = array(
-	'uid' => 0,
-	'club_id' => $teamId,
-);
+// set player data
+if ($initPlayer) {
+	$player = array(
+		'uid' => 0,
+		'club_id' => $teamId,
+	);
+}
 
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
@@ -42,9 +56,6 @@ navbar();
 	  <div style="margin-bottom:10px;">
 	  <?php
 	  foreach ($PlayerModel->fields as $fld => $fldProp) {
-		if ('uid' == $fld || 'club_id' == $fld || 'nameLC' == $fld) {
-			//continue;
-		}
 		$val = @$player[$fld];
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";
