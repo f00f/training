@@ -34,7 +34,13 @@ $icons = array(
 ?>
     <div class="container">
 	  <h1>Alle Trainingszeiten <small><?=$teamNameShort?></small></h1>
-      <table class="table _list-group practice-times-list">
+	  <div class='panel panel-default'>
+		<div class='panel-body'>
+		Im Moment kannst Du Trainingszeiten noch nicht löschen. Wenn Du ihr Ende-Datum ("letztmals") aber auf ein Datum in der Vergangenheit setzt, werden sie nie berücksichtigt werden.
+		</div>
+	  </div>
+
+		<table class="table _list-group practice-times-list">
 	  <thead>
 	  <tr>
 	  <th>Tag und Zeit</th>

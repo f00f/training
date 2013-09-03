@@ -20,7 +20,13 @@ $players = LoadAllPlayers($teamId);
 ?>
     <div class="container">
 	  <h1>Alle Spieler <small><?=$teamNameShort?></small></h1>
-      <table class="list-group player-list">
+	  <div class='panel panel-default'>
+		<div class='panel-body'>
+		Im Moment kannst Du Spieler noch nicht löschen. Wenn Du allerdings für einen Spieler die Frequenz aud 0 setzt, wird er keine Benachrichtigungs-E-Mails mehr erhalten. In der nichts-gesagt-Liste auf der Trainingsseite wird er aber weiterhin auftauchen.
+		</div>
+	  </div>
+
+		<table class="list-group player-list">
 	  <?php
 	  foreach ($players as $pLower => $p) {
 		$pId = $p['uid'];

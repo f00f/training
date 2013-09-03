@@ -13,11 +13,14 @@ navbar();
 
       <div class="starter-template">
         <h1>Trainingsseite Admin <small><?=$teamNameShort?></small></h1>
-        <p class="lead">Hier kann die Trainingsseite von <?=$teamNameShort?> verwaltet werden.</p>
+        <p class="lead">Hier kannst Du die Trainingsseite von <?=$teamNameShort?> verwalten.</p>
 		<p>
 		Als Erstes kannst Du Spieler und Trainingszeiten aus den bestehenden Konfigurationsdateien importieren.
 		Danach kannst Du Spieler und Trainingszeiten bearbeiten, sowie weitere hinzufügen oder löschen.
 		Schließlich kannst Du noch ein paar Konfigurationsoptionen ansehen, was beim Beheben von Fehlern helfen kann.
+		</p>
+		<p>
+		<small>Löschen geht im Moment nocht nicht, weitere Hinweise dazu findest Du auf über der <a href="players_list.php">Liste der Spieler</a> bzw. <a href="practice_times_list.php">Trainingszeiten</a>.</small>
 		</p>
 
 		<h2><span class="glyphicon glyphicon-user"></span> Spieler</h2>
