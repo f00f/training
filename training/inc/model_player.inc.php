@@ -103,13 +103,16 @@ function SavePlayer($player) {
 	return true;
 }
 
-// load _all_ player names, from DB
-function loadPlayerDataFromDB($cid) {
+// load data of configured players from DB
+function LoadConfiguredPlayers($cid) {
+	global $CACHE;
 	global $tables;
-	global $players;
 
-	# reset configuration from file and use DB instead
-	$players = array();
+	if (isset($CACHE->configuredPlayers) && false !== @$CACHE->configuredPlayers) {
+		return $CACHE->configuredPlayers;
+	}
+
+	$CACHE->configuredPlayers = array();
 
 	$q = "SELECT `uid`, `player_name`, `player_data` FROM `{$tables['players_conf']}` "
 		. "WHERE `club_id` = '{$cid}' "
@@ -119,12 +122,13 @@ function loadPlayerDataFromDB($cid) {
 		while ($row = mysql_fetch_assoc($result)) {
 			$pData = unserialize($row['player_data']);
 			$pData['uid'] = $row['uid'];
-			$players[ $row['player_name'] ] = $pData;
+			$CACHE->configuredPlayers[ $row['player_name'] ] = $pData;
 		}
 	}
-	return $players;
+
+	return $CACHE->configuredPlayers;
 }
-// load _all_ player names, from file and DB
+// load _all_ players (configured and not) from DB
 function LoadAllPlayers($cid) {
 	global $CACHE;
 	if (isset($CACHE->allPlayers) && false !== @$CACHE->allPlayers) {
@@ -134,16 +138,15 @@ function LoadAllPlayers($cid) {
 	$CACHE->allPlayers = array();
 
 	global $tables;
-	global $players, $playerAliases;
+	global $playerAliases;
 
-	loadPlayerDataFromDB($cid);
+	// TODO: try $CACHE->allPlayers = ...
+	$players = LoadConfiguredPlayers($cid);
 
 	// do not consider players from the config file, but only those from the DB
-	$loadOnlyFromDB = false;
-	if (! $loadOnlyFromDB) {
-		foreach ($players as $s => $v) {
-			$CACHE->allPlayers[strtolower($v['name'])] = $v;
-		}
+	foreach ($players as $s => $v) {
+		$nameLC = mb_strtolower($v['name'], 'utf8');
+		$CACHE->allPlayers[$nameLC] = $v;
 	}
 
 	// load additional player names
@@ -153,21 +156,24 @@ function LoadAllPlayers($cid) {
 		. "AND `when` > {$someMonthsAgo}");
 	if (mysql_num_rows($result) > 0) {
 		while ($row = mysql_fetch_assoc($result)) {
-			$nameLC = strtolower($row['name']);
-			// check $players
-			$name = @$players[ $nameLC ]['name'];
-			if (!$name) {
-				$name = @$playerAliases[ $nameLC ];
+			$name = trim($row['name']);
+			$nameLC = mb_strtolower($name, 'utf8');
+			if (isset($players[ $nameLC ])) {
+				// player is a configured player
+				continue;
 			}
-			if (!$name) {
-				$name = $row['name'];
+			$aliasLC = strtolower(@$playerAliases[ $nameLC ]);
+			if ($aliasLC) {
+				if (isset($players[$aliasLC])) {
+					// name is an alias for a configured player
+					continue;
+				}
 			}
-			$lcName = mb_strtolower($name, 'utf8');
-			$CACHE->allPlayers[ $lcName ] = $name;
+			$CACHE->allPlayers[ $nameLC ] = array('name' => $name);
 		}
 	}
 
-	//asort($CACHE->allPlayers);
+	ksort($CACHE->allPlayers);
 
 	return $CACHE->allPlayers;
 }

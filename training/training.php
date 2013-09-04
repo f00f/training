@@ -28,20 +28,9 @@ mysql_select_db($dbDB);
 
 # load players
 $allPlayers = array();
-$spieler = loadPlayerDataFromDB($teamId);
-foreach ($spieler as $s) {
-	$allPlayers[strtolower($s['name'])] = $s['name'];
-}
-
-# load additional player names
-$sixMonthsAgo = strtotime('- 6 months');
-$result = DbQuery("SELECT DISTINCT `name` FROM `{$table}`"
-	. " WHERE `name` != 'RESET'"
-	. " AND `when` > {$sixMonthsAgo}");
-if (mysql_num_rows($result) > 0) {
-	while ($row = mysql_fetch_assoc($result)) {
-		$allPlayers[strtolower($row['name'])] = $row['name'];
-	}
+$spieler = LoadAllPlayers($teamId);
+foreach ($spieler as $nameLC => $s) {
+	$allPlayers[$nameLC] = $s['name'];
 }
 
 # find last reset before today

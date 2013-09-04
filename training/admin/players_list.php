@@ -16,7 +16,7 @@ html_header();
 navbar_admin('players');
 
 // load all players data
-$players = LoadAllPlayers($teamId);
+$players = LoadConfiguredPlayers($teamId);
 ?>
     <div class="container">
 	  <h1>Alle Spieler <small><?=$teamNameShort?></small></h1>
