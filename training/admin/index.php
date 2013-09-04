@@ -2,6 +2,11 @@
 define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/lib.inc.php';
+require_once '../inc/dbconf.inc.php';
+
+# connect to db
+mysql_connect($dbHost, $dbUser, $dbPass);
+mysql_select_db($dbDB);
 
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
@@ -23,15 +28,23 @@ navbar_admin('home');
 		<small>Löschen geht im Moment nocht nicht, weitere Hinweise dazu findest Du auf über der <a href="players_list.php">Liste der Spieler</a> bzw. <a href="practice_times_list.php">Trainingszeiten</a>.</small>
 		</p>
 
+<?php
+require_once '../inc/model_player.inc.php';
+$playersCount = count(LoadConfiguredPlayers($teamId));
+?>
 		<h2><span class="glyphicon glyphicon-user"></span> Spieler</h2>
 		<div class='list-group'>
-		<a class='list-group-item' href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class='glyphicon glyphicon-pencil'></span> bearbeiten und <span class='glyphicon glyphicon-trash'></span> löschen</a>
+		<a class='list-group-item' href="players_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class='glyphicon glyphicon-pencil'></span> bearbeiten und <span class='glyphicon glyphicon-trash'></span> löschen<span class='badge'><?=$playersCount?></span></a>
 		<a class='list-group-item' href="player_add.php"><span class="glyphicon glyphicon-plus"></span> hinzufügen</a>
 		</div>
 
+<?php
+require_once '../inc/model_practice_time.inc.php';
+$practicesCount = count(LoadAllPracticeTimes($teamId));
+?>
 		<h2><span class="glyphicon glyphicon-calendar"></span> Trainingszeiten</h2>
 		<div class='list-group'>
-		<a class='list-group-item' href="practice_times_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class='glyphicon glyphicon-pencil'></span> bearbeiten und <span class='glyphicon glyphicon-trash'></span> löschen</a>
+		<a class='list-group-item' href="practice_times_list.php"><span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class='glyphicon glyphicon-pencil'></span> bearbeiten und <span class='glyphicon glyphicon-trash'></span> löschen<span class='badge'><?=$practicesCount?></span></a>
 		<a class='list-group-item' href="practice_time_add.php"><span class="glyphicon glyphicon-plus"></span> hinzufügen</a>
 		</div>
 
