@@ -17,5 +17,11 @@ $teamNameShort = 'UWR BA';
 // the actual sender will be "training-{$emailFrom}@uwr1.de"
 $emailFrom = 'ba';
 
+// Non-configured players will disapear from the page N months after their last reply.
+$forgetPlayersAfter = 2;
+
+// Whether configured players will also disapear from the page N months after their last reply.
+// Note: this is only a question of displaying the name on the page.
+$forgetConfiguredPlayers = true;
 
 $teamId = 'ba';

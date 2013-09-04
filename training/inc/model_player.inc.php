@@ -138,7 +138,12 @@ function LoadAllPlayers($cid) {
 	$CACHE->allPlayers = array();
 
 	global $tables;
+	global $forgetPlayersAfter, $forgetConfiguredPlayers;
 	global $playerAliases;
+
+	if (!$forgetPlayersAfter || $forgetPlayersAfter < 0) {
+		$forgetPlayersAfter = 1;
+	}
 
 	// TODO: try $CACHE->allPlayers = ...
 	$players = LoadConfiguredPlayers($cid);
@@ -150,7 +155,8 @@ function LoadAllPlayers($cid) {
 	}
 
 	// load additional player names
-	$someMonthsAgo = strtotime('- 2 months'); // only those who replied within the last 2 months
+	$recentPlayers = array();
+	$someMonthsAgo = strtotime("- {$forgetPlayersAfter} months"); // find only players who replied within the last N months
 	$result = DbQuery("SELECT DISTINCT `name` FROM `{$tables['replies']}` "
 		. "WHERE `club_id` = '{$cid}' "
 		. "AND `when` > {$someMonthsAgo}");
@@ -158,6 +164,7 @@ function LoadAllPlayers($cid) {
 		while ($row = mysql_fetch_assoc($result)) {
 			$name = trim($row['name']);
 			$nameLC = mb_strtolower($name, 'utf8');
+			$recentPlayers[] = $nameLC;
 			if (isset($players[ $nameLC ])) {
 				// player is a configured player
 				continue;
@@ -174,6 +181,16 @@ function LoadAllPlayers($cid) {
 	}
 
 	ksort($CACHE->allPlayers);
+
+	if ($forgetConfiguredPlayers) {
+		foreach (array_keys($players) as $nameLC) {
+			if (!in_array($nameLC, $recentPlayers)) {
+				unset($CACHE->allPlayers[$nameLC]);
+			}
+		}
+	}
+	unset($players);
+	unset($recentPlayers);
 
 	return $CACHE->allPlayers;
 }

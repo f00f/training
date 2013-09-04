@@ -45,6 +45,15 @@ $ConfigModel->fields = array(
 		'label' => 'Trainingsseite',
 		'help' => 'Adresse der Trainingsseite.<br>(Meist: <tt>http://<em>teamID</em>.uwr1.de/training/</tt>)',
 	),
+	'forgetPlayersAfter' => array(
+		'label' => 'Ausblenden nach Monaten',
+		'help' => 'Spieler, die nicht in die Datenbank eingetragen wurden, verschwinden N Monate nach ihrer letzten Meldung wieder von der Seite.',
+	),
+	'forgetConfiguredPlayers' => array(
+		'label' => 'Bekannte Spieler auch ausblenden?',
+		'values' => 'bool',
+		'help' => 'Sollen Spieler, die in die Datenbank eingetragen wurden, auch ausgeblendet werden?',
+	),
 );
 ?>
     <div class="container">
