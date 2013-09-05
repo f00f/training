@@ -4,6 +4,7 @@ require_once 'inc/spieler.inc.php';
 require_once 'inc/trainingszeiten.inc.php';
 require_once 'inc/dbconf.inc.php';
 require_once 'inc/model_player.inc.php';
+require_once 'inc/model_practice_time.inc.php';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -107,7 +108,7 @@ $abgesagt    = array();
 $nixgesagtLc = $allPlayers;
 $lastUpdate  = 0;
 
-# gather data of all players
+# gather all replies
 $result = DbQuery("SELECT `name`, `text`, `status`, `when`"
 	. " FROM `{$table}`"
 	. " WHERE `when` >= '{$lastReset}' AND `when` <= '{$nextReset}' AND `name` != 'RESET'"
@@ -169,7 +170,7 @@ ksort($nixgesagtTendenzJa, SORT_STRING);
 ksort($nixgesagtKeineTendenz, SORT_STRING);
 ksort($nixgesagtTendenzNein, SORT_STRING);
 
-$nextTraining = FindNextTraining();
+$nextTraining = FindNextPracticeTime($teamId);
 list($ntHour, $ntMin) = explode(':', $nextTraining['zeit']);
 $ntMin = (int) $ntMin; // kludge: cut the tail
 $ntDay	= date('d', $nextTraining['datum']);

@@ -19,17 +19,6 @@ if (!defined('ON_TEST_SERVER')) {
 	define('ON_TEST_SERVER', (false !== strpos($_SERVER['HTTP_HOST'], '.test')));
 }
 
-$tag2Int = array(
-	'Mo' => 1,
-	'Di' => 2,
-	'Mi' => 3,
-	'Do' => 4,
-	'Fr' => 5,
-	'Sa' => 6,
-	'So' => 0,
-);
-
-
 function AddWithEndDate(&$pTraining, $pEndDate) {
 	global $date, $training;
 	if ($date <= $pEndDate) {
@@ -145,40 +134,6 @@ function Redirect($loc = null) {
 	}
 	header("Location: {$loc}");
 	exit;
-}
-
-# calculate next training date
-function FindNextTraining() {
-	global $training;
-	global $tag2Int;
-
-	$trainingDates = array();
-	foreach($training as $t) {
-		$wdayIdx = $tag2Int[$t['tag']];
-		$trainingDates[$wdayIdx] = $t;
-	}
-
-	$weekday      = date('w');
-	$daysLeft     = 0;
-	$nextTraining = false;
-	$iter         = 0;
-
-//	$now = strtotime('+1 hour'); // timezone correction
-	$nowTime = date('H:i');
-	while (false === $nextTraining AND ++$iter <= 8) { // 8, ok 
-		if (isset($trainingDates[$weekday]) AND ($daysLeft > 0 OR $trainingDates[$weekday]['zeit'] >= $nowTime)) {
-			$nextTraining = array(
-				'wtag'    => $trainingDates[$weekday]['tag'],
-				'datum'   => strtotime('+ '.$daysLeft.'days'),
-				'zeit'    => $trainingDates[$weekday]['zeit'],
-				'ort'     => $trainingDates[$weekday]['ort'],
-				'anreise' => $trainingDates[$weekday]['anreise'],
-			);
-		}
-		$weekday = ++$weekday % 7;
-		++$daysLeft;
-	}
-	return $nextTraining;
 }
 
 function FirstWord($p_text) {

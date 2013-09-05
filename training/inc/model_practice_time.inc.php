@@ -3,6 +3,9 @@
 //// Practice Times ////
 ////////////////////////////////////////////////////////////////////////////////
 
+@define('NO_INCLUDES', true);
+require_once 'lib.inc.php';
+
 $PracticeTimeModel = new stdClass();
 
 $PracticeTimeModel->fields = array(
@@ -51,6 +54,16 @@ $PracticeTimeModel->fields = array(
 	),
 );
 
+$PracticeTimeModel->tag2int = array(
+	'Mo' => 1,
+	'Di' => 2,
+	'Mi' => 3,
+	'Do' => 4,
+	'Fr' => 5,
+	'Sa' => 6,
+	'So' => 0,
+);
+
 $PracticeTimeModel->dow2int = array(
 	'Mo' => 0,
 	'Di' => 1,
@@ -61,6 +74,27 @@ $PracticeTimeModel->dow2int = array(
 	'So' => 6,
 );
 
+
+# calculate next training date
+function FindNextPracticeTime($cid) {
+	global $PracticeTimeModel;
+
+	$trainingDB = LoadActivePracticeTimes($cid);
+
+	$trainingDatesDB = array();
+	foreach($trainingDB as $t) {
+		$dt = $t['next-date'].' '.$t['begin'];
+		$trainingDatesDB[$dt] = $t;
+	}
+	ksort($trainingDatesDB);
+
+	$nextTrainingDB = array_shift($trainingDatesDB);
+	$nextTrainingDB['wtag'] = "{$nextTrainingDB['dow']}";
+	$nextTrainingDB['zeit'] = "{$nextTrainingDB['begin']} - {$nextTrainingDB['end']}";
+	$nextTrainingDB['datum'] = strtotime($nextTrainingDB['next-date']); // Change: timestamp is now at 00:00
+
+	return $nextTrainingDB;
+}
 
 function LoadPracticeTime($practiceUID, $cid = 'use $club_id') {
 	global $tables;
@@ -118,6 +152,16 @@ function SavePracticeTime($practice) {
 	return true;
 }
 
+// load active practice times from DB
+function LoadActivePracticeTimes($cid) {
+	global $CACHE;
+	if (isset($CACHE->activePracticeTimes) && false !== @$CACHE->activePracticeTimes) {
+		return $CACHE->activePracticeTimes;
+	}
+	LoadAllPracticeTimes($cid);
+	return $CACHE->activePracticeTimes;
+}
+
 // load all practice times from DB
 function LoadAllPracticeTimes($cid) {
 	global $CACHE;
@@ -168,11 +212,12 @@ function CreateDow2Date() {
 
 function row2practice(&$row) {
 	global $CACHE;
-	global $tag2Int;
+	global $PracticeTimeModel;
 
 	CreateDow2Date();
 	$dow2date =& $CACHE->dow2date;
 	$now = date('Y-m-d');
+	$nowTime = date('H:i');
 
 	$p = unserialize($row['data']);
 
@@ -186,11 +231,18 @@ function row2practice(&$row) {
 	$p['end'] = "{$h}:{$m}";
 	$p['first'] = $row['first'];
 	$p['last'] = $row['last'];
-	$dowIdx = $tag2Int[$row['dow']];
+	$dowIdx = $PracticeTimeModel->tag2int[$row['dow']];
 	$p['dowIdx'] = ($dowIdx - 1) % 7;
+	$nextDate = $dow2date[$dowIdx];
 	$p['has-started'] = $row['first'] <= $now;
 	$p['has-ended'] = $row['last'] < $now;
-	$p['active'] = $dow2date[$dowIdx] >= $row['first'] && $dow2date[$dowIdx] <= $row['last'];
+	$p['active'] = $nextDate >= $row['first'] && $nextDate <= $row['last'];
+	if ($nextDate == $now && $p['begin'] < $nowTime) {
+		$p['active'] = false;
+	}
+	if ($p['active']) {
+		$p['next-date'] = $nextDate;
+	}
 
 	return $p;
 }
