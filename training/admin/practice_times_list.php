@@ -56,6 +56,7 @@ $icons = array(
 		if (!$icon && $t['active']) { $icon = $icons['active']; }
 		if (!$icon && !$t['has-started']) { $icon = $icons['future']; }
 		if (!$icon && $t['has-ended']) { $icon = $icons['past']; }
+		if (!$icon && !$t['active'] && $t['has-started'] && !$t['has-ended']) { $icon = $icons['past']; }
 		$icon = "<span class='glyphicon glyphicon-{$icon['sym']}'></span> ";
 		$classes = array();
 		$classes[] = $t['active'] ? 'current' : 'inactive';
