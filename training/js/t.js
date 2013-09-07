@@ -145,6 +145,7 @@ function ListKeyDownHandler (evt) {
 			ListScrollDown();
 			break;
 		case 9:	// tab
+		case 32:	// space
 			cancelEvent = false;
 			if (gListIdx < 0) {
 				ListClear(); // hide list
