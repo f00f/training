@@ -8,6 +8,8 @@ require_once 'inc/model_practice_time.inc.php';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+# Gather information about remote host
+# and parse parameters
 $ip     = $_SERVER['REMOTE_ADDR'];
 $host   = gethostbyaddr($ip);
 $action = GetAction();
@@ -16,9 +18,6 @@ $f_player = FirstWord($f_text.' ');
 $sendMails = false;
 
 if (('add' == $action OR 'remove' == $action) AND !$f_text) {
-	//@@@ DEBUG
-//	print '$f_text: "'.$f_text.'"<br>';
-//	print '$f_player: "'.$f_player.'"<br>';
 	trigger_error('Kein Spieler ausgewählt.', E_USER_ERROR);
 }
 
@@ -60,19 +59,6 @@ if (!$nextReset) {
 	$nextReset = strtotime('+ 1 week');
 }
 
-# load current status for current player
-$currentPlayerStatus = false;
-$result = DbQuery("SELECT `status` FROM `{$table}`"
-	. " WHERE `name` = '{$f_player}'"
-	. " AND `when` >= {$lastReset}"
-	. " AND `when` <= {$nextReset}"
-	. " ORDER BY `when` DESC"
-	. " LIMIT 1");
-$row = mysql_fetch_assoc($result);
-if (mysql_num_rows($result) > 0) {
-	$currentPlayerStatus = $row['status'];
-}
-
 $f_playerLC = strtolower($f_player);
 if (!empty($allPlayers[$f_playerLC])) {
 	$playerNormalized = $allPlayers[$f_playerLC];
@@ -89,19 +75,18 @@ setcookie('spieler', $f_player, time()+2419200, '/');
 switch ($action) {
 	case 'add':
 //		SpamCheck($f_player, $ip);
-		InsertRow($f_player, $f_text, 'ja');
-		$sendMails = ('ja' != $currentPlayerStatus);
+		$statusChanged = Player::StoreReply('ja', $f_player, $f_text, $teamId);
 		break;
 	case 'remove':
 //		SpamCheck($f_player, $ip);
-		InsertRow($f_player, $f_text, 'nein');
-		$sendMails = ('nein' != $currentPlayerStatus);
+		$statusChanged = Player::StoreReply('nein', $f_player, $f_text, $teamId);
 		break;
 	case 'reset':
 		InsertRow('RESET', '', '');
-		$sendMails = false;
+		$statusChanged = false;
 		break;
 }
+$sendMails = false;
 
 $zugesagt    = array();
 $abgesagt    = array();
