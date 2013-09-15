@@ -25,7 +25,7 @@ function GetCookie(name) {
     var end = document.cookie.indexOf(";", begin);
     if (end == -1)
     	{ end = dc.length; }
-    return unescape(dc.substring(begin + prefix.length, end));
+    return unescape(unescape(dc.substring(begin + prefix.length, end)));
 }
 function LoadName() {
 	var name = GetCookie("spieler");
@@ -151,6 +151,7 @@ function ListKeyDownHandler (evt) {
 				ListClear(); // hide list
 			}
 			/* fall through */
+		case 39:	// right
 		case 13:	// enter
 			if (gListIdx >= 0) {
 				var obj = gListElement.childNodes[gListIdx].childNodes[0];
