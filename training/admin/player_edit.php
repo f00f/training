@@ -3,7 +3,6 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
-// load player model
 require_once '../inc/model_player.inc.php';
 
 # connect to db
@@ -15,12 +14,12 @@ if (@$_POST['id']) {
 	// save player data
 	$player = array();
 	$player['uid'] = $_POST['id'];
-	foreach ($PlayerModel->fields as $fld => $fldProp) {
+	foreach (Player::$fields as $fld => $fldProp) {
 		if (isset($_POST[$fld])) {
 			$player[$fld] = $_POST[$fld];
 		}
 	}
-	$success = SavePlayer($player);
+	$success = Player::Save($player);
 	if ($success) {
 		$_SESSION['notice'] = "<strong>Yes!</strong> {$player['name']} wurde erfolgreich gespeichert.";
 	} else {
@@ -42,7 +41,7 @@ $playerUID = $_REQUEST['id'];
 
 // load player data
 if ($loadFromDB) {
-	$player = LoadPlayer($playerUID, $teamId);
+	$player = Player::Load($playerUID, $teamId);
 	if (false === $player) {
 		$_SESSION['warning'] = 'Spieler nicht gefunden.';
 		Redirect($rootUrl . 'admin/player_list.php');
@@ -61,7 +60,7 @@ navbar_admin('players');
 	  <input type="hidden" name="id" value="<?=$playerUID?>">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($PlayerModel->fields as $fld => $fldProp) {
+	  foreach (Player::$fields as $fld => $fldProp) {
 		$val = @$player[$fld];
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";

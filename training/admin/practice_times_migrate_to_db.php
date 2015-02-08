@@ -30,7 +30,7 @@ print '</div>';
 html_footer();
 
 function is_db_empty($cid) {
-	$countDB = count(LoadAllPracticeTimes($cid));
+	$countDB = count(PracticeTime::LoadAll($cid));
 	return $countDB == 0;
 }
 function not_empty_warning($cid) {

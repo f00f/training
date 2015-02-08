@@ -15,6 +15,7 @@ class Player {
 			'type' => 'hidden',
 		),
 		'name' => array(
+			'required' => true,
 			'help' => 'Der Name darf nur Buchstaben enthalten.',
 		),
 		'email' => array(
@@ -209,9 +210,10 @@ class Player {
 		// load additional player names
 		$recentPlayers = array();
 		$someMonthsAgo = strtotime("- {$forgetPlayersAfter} months"); // find only players who replied within the last N months
-		$result = DbQuery("SELECT DISTINCT `name` FROM `{$tables['replies']}` "
+		$sql = "SELECT DISTINCT `name` FROM `{$tables['replies']}` "
 			. "WHERE `club_id` = '{$cid}' "
-			. "AND `when` > {$someMonthsAgo}");
+			. "AND `when` > {$someMonthsAgo}";
+		$result = DbQuery($sql);
 		if (mysql_num_rows($result) > 0) {
 			while ($row = mysql_fetch_assoc($result)) {
 				$name = trim($row['name']);
@@ -228,6 +230,7 @@ class Player {
 						continue;
 					}
 				}
+				// add unknown player to list
 				$CACHE->allPlayers[ $nameLC ] = array('name' => $name);
 			}
 		}
@@ -261,26 +264,32 @@ $PlayerModel = new stdClass();
 $PlayerModel->fields =& Player::$fields;
 
 function LoadPlayer($playerUID, $cid = 'use $club_id') {
+	die('deprecated :'.__FUNCTION__);
 	return Player::Load($playerUID, $cid);
 }
 
 function SavePlayer($player) {
+	die('deprecated :'.__FUNCTION__);
 	return Player::Save($player);
 }
 
 function GetCurrentPlayerStatus($name, $cid) {
+	die('deprecated :'.__FUNCTION__);
 	return Player::GetCurrentStatus($name, $cid);
 }
 
 function StoreReply($reply, $name, $text, $cid) {
+	die('deprecated :'.__FUNCTION__);
 	return Player::StoreReply($reply, $name, $text, $cid);
 }
 
 // load data of configured players from DB
 function LoadConfiguredPlayers($cid) {
+	die('deprecated :'.__FUNCTION__);
 	return Player::LoadConfigured($cid);
 }
 // load _all_ players (configured and not) from DB
 function LoadAllPlayers($cid) {
+	die('deprecated :'.__FUNCTION__);
 	return Player::LoadAll($cid);
 }

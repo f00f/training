@@ -1,0 +1,6 @@
+# large files
+training/badbilder/*
+
+# generated files
+training/json/*
+training/shtml/*

@@ -3,7 +3,6 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
-// load player model
 require_once '../inc/model_player.inc.php';
 
 # connect to db
@@ -16,13 +15,13 @@ html_header();
 navbar_admin('players');
 
 // load all players data
-$players = LoadConfiguredPlayers($teamId);
+$players = Player::LoadConfigured($teamId);
 ?>
     <div class="container">
 	  <h1>Alle Spieler <small><?=$teamNameShort?></small></h1>
 	  <div class='panel panel-default'>
 		<div class='panel-body'>
-		Im Moment kannst Du Spieler noch nicht löschen. Wenn Du allerdings für einen Spieler die Frequenz aud 0 setzt, wird er keine Benachrichtigungs-E-Mails mehr erhalten. In der nichts-gesagt-Liste auf der Trainingsseite wird er aber weiterhin auftauchen.
+		Im Moment kannst Du Spieler noch nicht löschen. Wenn Du allerdings für einen Spieler die Frequenz auf 0 setzt, wird er keine Benachrichtigungs-&shy;E-Mails mehr erhalten. In der nichts-gesagt-Liste auf der Trainingsseite wird er aber weiterhin auftauchen, solange er nicht aufgrund zu langem nicht-melden ausgeblendet wird.
 		</div>
 	  </div>
 

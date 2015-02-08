@@ -29,7 +29,7 @@ print '</div>';
 html_footer();
 
 function is_db_empty($cid) {
-	$countDB = count(LoadConfiguredPlayers($cid));
+	$countDB = count(Player::LoadConfigured($cid));
 	return $countDB == 0;
 }
 function not_empty_warning($cid) {

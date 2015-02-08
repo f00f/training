@@ -76,6 +76,9 @@ class PracticeTime {
 		ksort($trainingDates);
 
 		$nextTraining = array_shift($trainingDates);
+		if (!$nextTraining) {
+			die('Kein Trainingstermin gefunden.');
+		}
 		$nextTraining['wtag'] = "{$nextTraining['dow']}";
 		$nextTraining['zeit'] = "{$nextTraining['begin']} - {$nextTraining['end']}";
 		$nextTraining['datum'] = strtotime($nextTraining['next-date']); // Change: timestamp is now at 00:00
@@ -258,24 +261,29 @@ $PracticeTimeModel->dow2int =& PracticeTime::$dow2int;
 
 # calculate next training date
 function FindNextPracticeTime($cid) {
+	die('deprecated :'.__FUNCTION__);
 	return PracticeTime::GetNext($cid);
 }
 
 function LoadPracticeTime($practiceUID, $cid = 'use $club_id') {
+	die('deprecated :'.__FUNCTION__);
 	return PracticeTime::Load($practiceUID, $cid);
 }
 
 function SavePracticeTime($practice) {
+	die('deprecated :'.__FUNCTION__);
 	return PracticeTime::Save($practice);
 }
 
 // load active practice times from DB
 function LoadActivePracticeTimes($cid) {
+	die('deprecated :'.__FUNCTION__);
 	return PracticeTime::LoadActive($cid);
 }
 
 // load all practice times from DB
 function LoadAllPracticeTimes($cid) {
+	die('deprecated :'.__FUNCTION__);
 	return PracticeTime::LoadAll($cid);
 }
 

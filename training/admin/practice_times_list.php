@@ -3,7 +3,6 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
-// load times model
 require_once '../inc/model_practice_time.inc.php';
 
 # connect to db
@@ -16,7 +15,7 @@ html_header();
 navbar_admin('practice-times');
 
 // load all times data
-$times = LoadAllPracticeTimes($teamId);
+$times = PracticeTime::LoadAll($teamId);
 $icons = array(
   'active' => array(
 	'desc' => 'Momentan aktive Trainingszeit.',

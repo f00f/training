@@ -3,7 +3,6 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
-// load player model
 require_once '../inc/model_player.inc.php';
 
 # connect to db
@@ -14,12 +13,12 @@ $initPlayer = true;
 if (isset($_POST['uid']) && @$_POST['club_id']) {
 	// save player data
 	$player = array();
-	foreach ($PlayerModel->fields as $fld => $fldProp) {
+	foreach (Player::$fields as $fld => $fldProp) {
 		if (isset($_POST[$fld])) {
 			$player[$fld] = $_POST[$fld];
 		}
 	}
-	$success = SavePlayer($player);
+	$success = Player::Save($player);
 	if ($success) {
 		$player['uid'] = mysql_insert_id();
 		$_SESSION['notice'] = "<strong>Yes!</strong> Der Spieler \"{$player['name']}\" wurde erfolgreich hinzugefügt.";
@@ -55,7 +54,7 @@ navbar_admin('players');
 	  <form role="form" method="post">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($PlayerModel->fields as $fld => $fldProp) {
+	  foreach (Player::$fields as $fld => $fldProp) {
 		$val = @$player[$fld];
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";

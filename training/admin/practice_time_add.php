@@ -3,7 +3,6 @@ define('NO_INCLUDES', true);
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 require_once '../inc/lib.inc.php';
-// load times model
 require_once '../inc/model_practice_time.inc.php';
 
 # connect to db
@@ -14,13 +13,13 @@ $initPractice = true;
 if (isset($_POST['practice_id']) && @$_POST['club_id']) {
 	// save practice time data
 	$practice = array();
-	$practice['practice_id'] = $_POST['id'];
-	foreach ($PracticeTimeModel->fields as $fld => $fldProp) {
+	$practice['practice_id'] = $_POST['practice_id'];
+	foreach (PracticeTime::$fields as $fld => $fldProp) {
 		if (isset($_POST[$fld])) {
 			$practice[$fld] = $_POST[$fld];
 		}
 	}
-	$success = SavePracticeTime($practice);
+	$success = PracticeTime::Save($practice);
 	if ($success) {
 		$practice['uid'] = mysql_insert_id();
 		$_SESSION['notice'] = "<strong>Yes!</strong> Die neue Trainingszeit wurde erfolgreich hinzugefügt.";
@@ -57,7 +56,7 @@ navbar_admin('practice-times');
 	  <form role="form" method="post">
 	  <div style="margin-bottom:10px;">
 	  <?php
-	  foreach ($PracticeTimeModel->fields as $fld => $fldProp) {
+	  foreach (PracticeTime::$fields as $fld => $fldProp) {
 		$val = @$practice[$fld];
 		if ('hidden' == @$fldProp['type']) {
 			print "<input type='hidden' name='{$fld}' value='{$val}'>\n";
