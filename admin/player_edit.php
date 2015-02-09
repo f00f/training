@@ -1,9 +1,12 @@
 <?php
 define('NO_INCLUDES', true);
+require_once '../inc/lib.inc.php';
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
-require_once '../inc/lib.inc.php';
 require_once '../inc/model_player.inc.php';
+
+get_club_id();
+load_config($club_id);
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
@@ -41,7 +44,7 @@ $playerUID = $_REQUEST['id'];
 
 // load player data
 if ($loadFromDB) {
-	$player = Player::Load($playerUID, $teamId);
+	$player = Player::Load($playerUID, $club_id);
 	if (false === $player) {
 		$_SESSION['warning'] = 'Spieler nicht gefunden.';
 		Redirect($rootUrl . 'admin/player_list.php');

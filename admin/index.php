@@ -1,7 +1,7 @@
 <?php
 @define('NO_INCLUDES', true);
-require_once '../inc/conf.inc.php';
 require_once '../inc/lib.inc.php';
+require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
 
 get_club_id();
@@ -33,7 +33,7 @@ navbar_admin('home');
 
 <?php
 require_once '../inc/model_player.inc.php';
-$playersCount = count(Player::LoadConfigured($teamId));
+$playersCount = count(Player::LoadConfigured($club_id));
 $unknownPlayersCount = '?';
 ?>
 		<h2><span class="glyphicon glyphicon-user"></span> Spieler</h2>
@@ -45,7 +45,7 @@ $unknownPlayersCount = '?';
 
 <?php
 require_once '../inc/model_practice_time.inc.php';
-$practicesCount = count(PracticeTime::LoadAll($teamId));
+$practicesCount = count(PracticeTime::LoadAll($club_id));
 ?>
 		<h2><span class="glyphicon glyphicon-calendar"></span> Trainingszeiten</h2>
 		<div class='list-group'>

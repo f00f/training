@@ -1,16 +1,19 @@
 <?php
-require_once '../inc/conf.inc.php';
-require_once '../inc/dbconf.inc.php';
 @define('NO_INCLUDES', true);
 require_once '../inc/lib.inc.php';
-require_once '../inc/trainingszeiten.inc.php';
+require_once '../inc/conf.inc.php';
+require_once '../inc/dbconf.inc.php';
+
+get_club_id();
+load_config($club_id);
+
+require_once '../inc/'.$club_id.'-trainingszeiten.inc.php';
 require_once '../inc/model_practice_time.inc.php';
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
 mysql_select_db($dbDB);
 
-$club_id = $teamId;
 $defaultErstmals = date('Y-m-d', strtotime('yesterday'));
 $defaultLetztmals = date('Y-m-d', strtotime('+1 year'));
 $pagetitle = "{$teamNameShort} Training Admin";
@@ -163,5 +166,5 @@ function do_practice_times_migration($club_id) {
 	# disconnect from db, only output follows
 	$mysqli->close();
 
-	print "<div class='alert alert-".(0 == $errors ? 'success' : 'danger')."'>Fertig ".(0 == $errors ? 'ohne' : 'mit '.$errors)." Fehlern.</div>\n";
+	print "<div class='alert alert-".(0 == $errors ? 'success' : 'danger')."'>Fertig ".(0 == $errors ? 'ohne Fehler' : 'mit '.$errors.' Fehlern').".</div>\n";
 }

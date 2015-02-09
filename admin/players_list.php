@@ -1,9 +1,12 @@
 <?php
 define('NO_INCLUDES', true);
+require_once '../inc/lib.inc.php';
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
-require_once '../inc/lib.inc.php';
 require_once '../inc/model_player.inc.php';
+
+get_club_id();
+load_config($club_id);
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
@@ -15,7 +18,7 @@ html_header();
 navbar_admin('players');
 
 // load all players data
-$players = Player::LoadConfigured($teamId);
+$players = Player::LoadConfigured($club_id);
 ?>
     <div class="container">
 	  <h1>Alle Spieler <small><?=$teamNameShort?></small></h1>

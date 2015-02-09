@@ -1,6 +1,7 @@
 <?php
 require_once 'inc/lib.inc.php';
-require_once 'inc/spieler.inc.php';
+require_once 'inc/conf.inc.php';
+//require_once 'inc/spieler.inc.php';
 //require_once 'inc/trainingszeiten.inc.php';
 require_once 'inc/dbconf.inc.php';
 require_once 'inc/model_player.inc.php';
@@ -117,7 +118,7 @@ $sql = "SELECT `status` "
 	. "AND `when` >= {$lastReset} "
 	. "AND `when` <= {$nextReset} "
 	. "ORDER BY `when` DESC "
-	. "LIMIT 1"
+	. "LIMIT 1";
 $result = DbQuery($sql);
 $row = mysql_fetch_assoc($result);
 if (mysql_num_rows($result) > 0) {

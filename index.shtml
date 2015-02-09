@@ -35,7 +35,7 @@
             <!--#set var="menuColor" value="blue"-->
 			<table border="0" cellpadding="1" cellspacing="0" align="right">
 			<tr>
-			<!--#set var="menuTitle" value="uwr1.de"--><!--#set var="menuHref" value="http://uwr1.de/"--><!--#include virtual="../inc/menuePunkt.shtml"-->
+			<!--#set var="menuTitle" value="uwr1.de"--><!--#set var="menuHref" value="http://uwr1.de/"--><!--#include virtual="shtml/menuePunkt.shtml"-->
 			</tr>
 			</table>
             </td>
@@ -121,4 +121,4 @@ if ((new Date()).getTime()/1000 > naechstesTrain)
 
 $(function(){$('#funktionen').toggle()});
 </script>
-<!--#include virtual="../inc/footer.shtml"-->
+<!--#include virtual="shtml/footer.shtml"-->

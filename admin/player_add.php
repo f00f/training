@@ -1,9 +1,12 @@
 <?php
 define('NO_INCLUDES', true);
+require_once '../inc/lib.inc.php';
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
-require_once '../inc/lib.inc.php';
 require_once '../inc/model_player.inc.php';
+
+get_club_id();
+load_config($club_id);
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
@@ -39,7 +42,7 @@ if (isset($_POST['uid']) && @$_POST['club_id']) {
 if ($initPlayer) {
 	$player = array(
 		'uid' => 0,
-		'club_id' => $teamId,
+		'club_id' => $club_id,
 	);
 }
 

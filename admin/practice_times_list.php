@@ -1,9 +1,12 @@
 <?php
 define('NO_INCLUDES', true);
+require_once '../inc/lib.inc.php';
 require_once '../inc/conf.inc.php';
 require_once '../inc/dbconf.inc.php';
-require_once '../inc/lib.inc.php';
 require_once '../inc/model_practice_time.inc.php';
+
+get_club_id();
+load_config($club_id);
 
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
@@ -15,7 +18,7 @@ html_header();
 navbar_admin('practice-times');
 
 // load all times data
-$times = PracticeTime::LoadAll($teamId);
+$times = PracticeTime::LoadAll($club_id);
 $icons = array(
   'active' => array(
 	'desc' => 'Momentan aktive Trainingszeit.',
