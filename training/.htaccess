@@ -10,3 +10,13 @@ Header set Pragma "no-cache"
 Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
 </ifModule>
 </filesMatch>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+
+	RewriteCond %{REQUEST_URI} ^/demo/
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ([^/]+)/(.+)?$ ./$2?club_id=$1 [L,QSA]
+</IfModule>

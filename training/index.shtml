@@ -10,8 +10,8 @@
         <meta name="robots" content="ALL" />
         <meta name="copyright" content="(c) Hannes Hofmann 2008+" />
         <meta name="Author" content="Hannes Hofmann" />
-        <meta name="keywords" content="Unterwasser, Rugby, Team, Sport, Unterwasser Rugby, Unter Wasser Rugby, Unter-Wasser-Rugby, 3D, 3D-Action, Action, UWR, Tauchclub, DEINESTADT, Unter, Wasser, TC, under, water, deutschland, bayern, homepage, web, online" />
-        <meta name="description" content="Unterwasser-Rugby Training in DEINESTADT" />
+        <meta name="keywords" content="Unterwasser, Rugby, Team, Sport, Unterwasser Rugby, Unter Wasser Rugby, Unter-Wasser-Rugby, 3D, 3D-Action, Action, UWR, Tauchclub, Unter, Wasser, TC, under, water, deutschland, homepage, web, online" />
+        <meta name="description" content="Unterwasser-Rugby Training in <!--#echo var="club_id" -->" />
         <!--#if expr="$noindex = '1'"--><meta name="robots" content="noindex" /><!--#endif -->
     </head>
     <body>
@@ -20,7 +20,7 @@
         <tr>
             <td rowspan="3" width="10" nowrap="nowrap">
                 <div style="white-space: nowrap;">
-                <a href="../"><b><span class="big2"><!--#echo var="rooturl"--></span></b></a><b><span class="big1">:</span></b><span class="big1">training</span>&nbsp;&nbsp;
+                <b><span class="big2"><!--#echo var="rooturl"--></span></b>&nbsp;&nbsp;
                 </div>
             </td>
             <td class="minitext">
@@ -47,9 +47,9 @@
         <br />
         <div align="center">
         <div style="width: 80%; text-align: left; padding: 20px;" class="colorFrame">
-<!--#include virtual="inc/bad.html"-->
+<!--#include virtual="shtml/$club_id-bad.html"-->
 <h2>training</h2>
-<!--#include virtual="inc/stats.html"-->
+<!--#include virtual="shtml/$club_id-stats.html"-->
 
 <div id="you">
 <h3>Deine Meldung:</h3>
@@ -77,7 +77,7 @@
 
 <div id="theothers">
 	<h3>Das machen die Anderen:</h3>
-	<!--#include virtual="inc/beteiligung.html"-->
+	<!--#include virtual="shtml/$club_id-beteiligung.html"-->
 	<br />
 	<a href="training.php">Aktualisieren</a>
 </div>

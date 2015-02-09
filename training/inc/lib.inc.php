@@ -2,23 +2,43 @@
 /*
  * Created on 04.06.2006
  */
+date_default_timezone_set('Europe/Berlin');
+
 session_start();
-
-if (!defined('NO_INCLUDES') || !NO_INCLUDES) {
-	require_once 'inc/conf.inc.php';
-}
-
 
 define('SPAM_SAME_IP_TIMEOUT', 120);
 define('SPAM_SAME_IP_COUNT', 2);
 define('SPAM_SAME_USER_TIMEOUT', 300);
 
+// if a user submits less than LATE_THRESHOLD before start of the training, show notice
+define('LATE_THRESHOLD', 1 * 3600); // TODO: make this a config value
+// RESET_DELAY_HOURS after begin of the training, switch to next training
+define('RESET_DELAY_HOURS', 1); // TODO: make this a config value
+
+// Don't change values below.
+define('RESET_DELAY_MINUTES', RESET_DELAY_HOURS * 60);
+define('RESET_DELAY', RESET_DELAY_MINUTES * 60);
 define('SECONDS_PER_DAY', 86400);
+define('PLUGINS_FILE', 'inc/plugins.inc.php');
+define('YOU_ARE_LATE_URL', './spaet-dran.shtml');
+
+
+if (!defined('NO_INCLUDES') || !NO_INCLUDES) {
+	require_once 'inc/conf.inc.php';
+}
+require_once 'PHPMailer/PHPMailerAutoload.php';
+require_once 'mailconf.inc.php'; // TODO: adjust values in that file!
+
+if (file_exists(PLUGINS_FILE)) {
+	include_once PLUGINS_FILE;
+}
 
 if (!defined('ON_TEST_SERVER')) {
 	define('ON_TEST_SERVER', (false !== strpos($_SERVER['HTTP_HOST'], '.test')));
 }
 
+/* obsolete (but used for import in admin)
+TODO: move to admin files
 function AddWithEndDate(&$pTraining, $pEndDate) {
 	global $date, $training;
 	if ($date <= $pEndDate) {
@@ -41,6 +61,7 @@ function AddSingleDate(&$pTraining, $pDate) {
 		$training[] = $pTraining;
 	}
 }
+*/
 
 function GetAction() {
 	if ((boolean) @$_REQUEST['zusage']) {
@@ -54,17 +75,24 @@ function GetAction() {
 	}
 }
 
-function InsertRow($p_name, $p_text, $p_status) {
+function InsertRow($p_name, $p_text, $p_status, $p_app = 'web', $p_app_version = 'unknown', $p_club_id = 'unknown') {
 	global $table, $aliases;
 	global $ip, $host;
 
 	$p_nameLC = strtolower($p_name);
 	$p_name = isset($aliases[$p_nameLC]) ? $aliases[$p_nameLC] : $p_name;
 
+	// insert one second later if not a reset
+	// this avoids problems with automatic inserts from EvaluateFollowUps
+	//
+	// insert RESET_DELAY later if a reset
+	// this allows to still show player list even after training has started
+	$timeOffset = ('RESET' == $p_name) ? RESET_DELAY : 1;
+
 	DbQuery("INSERT INTO `{$table}` "
-		. "(`name`, `text`, `when`, `status`, `ip`, `host`) "
+		. "(`name`, `text`, `when`, `status`, `ip`, `host`, `app`, `app_ver`, `club_id`) "
 		. "VALUES "
-		. "('{$p_name}', '{$p_text}', '".time()."', '{$p_status}', '{$ip}', '{$host}')");
+		. "('{$p_name}', '{$p_text}', '".(time()+$timeOffset)."', '{$p_status}', '{$ip}', '{$host}', '{$p_app}', '{$p_app_version}', '{$p_club_id}')");
 }
 
 function SpamCheck($p_name, $p_ip) {
@@ -128,90 +156,232 @@ function SpamCheck($p_name, $p_ip) {
 	return true;
 }
 
-function Redirect($loc = null) {
+function Redirect($loc = null, $checkTime = false ) {
+	global $nextTraining;
+
+	$now = time();
 	if (!$loc) {
-		$loc = './?nocache='.time();
+		$loc = './?nocache='.$now;
 	}
+
+	if ($checkTime && $now > ($nextTraining['when'] - LATE_THRESHOLD)) {
+		$loc = YOU_ARE_LATE_URL;
+	}
+
+	header("HTTP/1.1 302 Moved Temporarily");
 	header("Location: {$loc}");
 	exit;
 }
 
 function FirstWord($p_text) {
 	$matches = array();
-	preg_match('/^([\w ]*)/', $p_text, $matches);
+	preg_match('/^([\w ]*)/', $p_text, $matches);// TODO: correct pattern? Used to be '/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/'
 	return trim($matches[1]);
 }
 
-function UpdateFiles() {
-	global $allPlayers, $nextTraining, $lastUpdate, $anzahlZugesagt, $anzahlAbgesagt, $zugesagt, $abgesagt, $nixgesagtTendenzJa, $nixgesagtKeineTendenz, $nixgesagtTendenzNein;
+/* TODO: BA: move to plugin
+function GetWasserTemp() {
+	return ZapfenTemp();
+}
+*/
+
+function UpdateHtmlFiles() {
+/* TODO: BA:
+global $ZTCacheFile;
+*/
+	global $club_id, $allPlayers, $nextTraining, $lastUpdate,
+		$anzahlZugesagt, $anzahlAbgesagt, $zugesagt, $zugesagtNamen, $abgesagt,
+		$nixgesagtTendenzJa, $nixgesagtKeineTendenz, $nixgesagtTendenzNein,
+		$poolImageFile, $poolThumbFile;
 
 	// store stats like next training's date and those JavaScript variables
 	$html = '<script>
 		var namen = new Array(\''.implode("', '", $allPlayers).'\');
-		var naechstesTrain = '.$nextTraining['when'].';
+		var naechstesTrain = '.$nextTraining['end'].';
 		</script>
 		<div id="nexttraining">Das nächste Training ist am <strong>'.$nextTraining['wtag'].', '.date('d.m.', $nextTraining['datum']).' um '.$nextTraining['zeit'].'</strong> (Beckenzeit) im <strong>'.$nextTraining['ort'].'</strong></div>
 		<div id="infos">Anreise empfohlen um '.$nextTraining['anreise'].' ;-)</div>
-		
 		<div id="letztem">Letzte Meldung am '.date('d.m.y \u\m H:i', $lastUpdate).'</div>';
+/* TODO BA: create hook + plugin
+	if ('Zapfendorf' == $nextTraining['ort']) {
+		$html .= 'Wassertemperatur: <strong>'.GetWasserTemp().'</strong> (Stand: '.date('d.m., H:i', filemtime($ZTCacheFile)).')<br />';
+	}
+*/
 
-	$fh = fopen('inc/stats.html', 'w');
+	$fh = fopen('shtml/'.$club_id.'-stats.html', 'w');
 	fwrite($fh, $html);
 	fclose($fh);
 
 	// find random pool image
-	$fh = fopen('inc/bad.html', 'w');
-	$poolImageFolder = './badbilder/'.strtolower($nextTraining['ort']).'/';
-	if (!file_exists($poolImageFolder) || !is_dir($poolImageFolder)) {
+	$fh = fopen('shtml/'.$club_id.'-bad.html', 'w');
+	if ('' == @$poolImageFile) {
 		fwrite($fh, '');
 	} else {
-		$poolImageFile = RandomFile($poolImageFolder, 'jpg|png|gif');
-		// thumb
-		$poolThumbFolder = './badbilder/thumbs/'.strtolower($nextTraining['ort']).'/';
-		if (!file_exists($poolThumbFolder) || !is_dir($poolThumbFolder)) {
-			mkdir($poolThumbFolder);
-			copy('./badbilder/thumbs/index_sub.html', $poolThumbFolder.'index.html');
-		}
-		$poolThumbFile = str_replace($poolImageFolder, $poolThumbFolder, $poolImageFile);
-		$thumbMaxH = 240;
-		$hasValidThumbnail = true;
-		if (!file_exists($poolThumbFile)) { // is there a thumbnail at all?
-			$hasValidThumbnail = false;
-		}
-		if ($hasValidThumbnail) { // is the thumbnail small enough?
-			$imageSize = getimagesize($poolThumbFile);
-			$imageH = $imageSize[1];
-			if ($imageH > $thumbMaxH) {
-				$hasValidThumbnail = false;
-			}
-		}
-		if (!$hasValidThumbnail) { // try creating a new thumbnail
-			$hasValidThumbnail = CreateThumbnail($poolImageFile, $poolThumbFile, $thumbMaxH);
-		}
-		if (!$hasValidThumbnail) { // fall-back
-			$poolThumbFile = $poolImageFile;
-		}
 		fwrite($fh, '<div id="badbild"><a href="'.$poolImageFile.'"><img src="'.$poolThumbFile.'" /></a></div>');
 	}
 	fclose($fh);
 
 	// store people's status
-	$html = '<strong class="zusage">zugesagt '.(1 == $anzahlZugesagt ? 'hat' : 'haben').' '.$anzahlZugesagt.':</strong><div id="zusager"><span>
-'.($anzahlZugesagt ? implode('</span>; <span>', $zugesagt) : '---').'</span></div>
+	$html = '<div id="zusagen">
+  <strong class="zusage">zugesagt '.(1 == $anzahlZugesagt ? 'hat' : 'haben').' '.$anzahlZugesagt.':</strong>
+  <div id="zusager">
+'.($anzahlZugesagt ? '<span>' . implode("</span>;\n <span>", $zugesagt) . '</span>' : '---').'
+  </div>
+  <br />
+</div>
+<div id="absagen">
+  <strong class="absage">abgesagt '.(1 == $anzahlAbgesagt ? 'hat' : 'haben').' '.$anzahlAbgesagt.':</strong>
+  <div id="absager">'.($anzahlAbgesagt ? '<span>' . implode('</span>; <span>', $abgesagt) . '</span>' : '---').'
+  </div>
 <br />
-<strong class="absage">abgesagt '.(1 == $anzahlAbgesagt ? 'hat' : 'haben').' '.$anzahlAbgesagt.':</strong><div id="absager"><span>
-'.($anzahlAbgesagt ? implode('</span>; <span>', $abgesagt) : '---').'</span></div>
-<br />
+</div>
 <div id="nixgesagt">
-<strong>nix gesagt haben bisher:</strong><br />
-'.implode('; ', $nixgesagtTendenzJa).'<br />
-'.implode('; ', $nixgesagtKeineTendenz).'<br />
-'.implode('; ', $nixgesagtTendenzNein).'<br />
-</div>';
+  <strong>nix gesagt haben bisher:</strong>'."<br />\n"
+.implode('; ', $nixgesagtTendenzJa) . ($nixgesagtTendenzJa?"<br />\n":'')
+.implode('; ', $nixgesagtKeineTendenz)."<br />\n"
+.implode('; ', $nixgesagtTendenzNein)."<br />\n"
+.'</div>';
 
-	$fh = fopen('inc/beteiligung.html', 'w');
+/* TODO STC+BA: move to hook + plugin
+	$html .= '<div><p>';
+	if (count($zugesagtNamen) < 5)
+	{
+		$html .= 'Automatische Einteilung (erst ab 5 Spielern)';
+	}
+	else
+	{
+		$nikLink = 'http://ba.uwr1.de/training/einteilung/?namen=' . urlencode(implode(',', $zugesagtNamen));
+		$html .= '<a href="'.$nikLink.'">Automatische Einteilung</a>';
+	}
+	$html .= '</p></div>';
+*/
+
+	$fh = fopen('shtml/'.$club_id.'-beteiligung.html', 'w');
 	fwrite($fh, $html);
 	fclose($fh);
+}// UpdateHtmlFiles
+
+function UpdateJsonFiles() {
+	global $ZTCacheFile;
+	global $club_id, $allPlayers, $nextTraining, $lastUpdate,
+		$anzahlZugesagt, $anzahlAbgesagt, $zugesagt, $abgesagt,
+		$nixgesagtTendenzJa, $nixgesagtKeineTendenz, $nixgesagtTendenzNein,
+		$poolImageFile, $poolThumbFile;
+
+	// store people's status
+	$jsonTrain = ''
+			.'"begin":'.$nextTraining['begin'].','
+			.'"end":'.$nextTraining['end'].','
+			.'"wtag":"'.$nextTraining['wtag'].'",'
+			.'"datum":"'.date('d.m.', $nextTraining['datum']).'",'
+			.'"zeit":"'.$nextTraining['zeit'].'",'
+			.'"anreise":"'.$nextTraining['anreise'].'",'
+			.'"ort":"'.$nextTraining['ort'].'",'
+			.'"updated":'.$lastUpdate
+			;
+	$jsonZuAbCnt = ''
+		.'"numZu":'.$anzahlZugesagt.','
+		.'"numAb":'.$anzahlAbgesagt.','
+		;
+	$jsonAllNames = '"names":['.'"'.implode('","', $allPlayers).'"'.']';
+	$jsonZuNames = count($zugesagt) ? '"'.implode('","', $zugesagt).'"' : '';
+	$jsonAbNames = count($abgesagt) ? '"'.implode('","', $abgesagt).'"' : '';
+	$jsonZuAbNames = '"zu":['
+			.$jsonZuNames // crashes if zugesagt contains quotes '"'
+			.'],'
+		.'"ab":['
+			.$jsonAbNames // crashes if abgesagt contains quotes '"'
+			.']'
+		;
+	$jsonExtra = '';
+	/* TODO BA: create hook + plugin
+	if ('Zapfendorf' == $nextTraining['ort']) {
+		if ($jsonExtra != '') {
+			$jsonExtra .= ',';
+		}
+		$jsonExtra .= '"temp":{'
+			.'"deg":"'.GetWasserTemp().'"'
+			.',"updated":'.filemtime($ZTCacheFile)
+			.'}';
+	}
+	*/
+	if ('' != @$poolImageFile) {
+		if ($jsonExtra != '') {
+			$jsonExtra .= ',';
+		}
+		$jsonExtra .= '"pic":{'
+			.'"full":"'.$poolImageFile.'"'
+			.',"thumb":"'.$poolThumbFile.'"'
+			.'}';
+	}
+	$jsonExtra = '"x":{'.$jsonExtra.'}';
+
+	// this can be aggressively cached
+	$fh = fopen('json/'.$club_id.'-all-players.json', 'w');
+	fwrite($fh, utf8_encode('{'.$jsonAllNames.'}'));
+	fclose($fh);
+
+	// load this for detailed display
+	$fh = fopen('json/'.$club_id.'-training.json', 'w');
+	fwrite($fh, utf8_encode('{"train":{'.$jsonTrain.','.$jsonZuAbNames.','.$jsonExtra.'}}'));
+	fclose($fh);
+
+	/*
+	// load this for widget display, if cached training info is still valid
+	$fh = fopen('json/'.$club_id.'-counts.json', 'w');
+	fwrite($fh, '{'.$jsonZuAbCnt.'}');
+	fclose($fh);
+
+	// load this for widget display, if cached training info is no longer valid
+	$fh = fopen('json/'.$club_id.'-training-counts.json', 'w');
+	fwrite($fh, '{"train":{'.$jsonTrain.','.$jsonZuAbCnt.'}}');
+	fclose($fh);
+	*/
+	//die('Hannes is am Frickeln.');
+}// UpdateJsonFiles
+
+function UpdateFiles() {
+	FindBadBild();
+	UpdateHtmlFiles();
+	UpdateJsonFiles();
+}
+
+function FindBadBild()
+{
+	global $nextTraining, $poolImageFile, $poolThumbFile;
+	$poolImageFolder = './badbilder/'.strtolower($nextTraining['ort']).'/';
+	if (!file_exists($poolImageFolder) || !is_dir($poolImageFolder)) {
+		$poolImageFile = '';
+		$poolThumbFile = '';
+		return;
+	}
+
+	$poolImageFile = RandomFile($poolImageFolder, 'jpg|png|gif');
+	// thumb
+	$poolThumbFolder = './badbilder/thumbs/'.strtolower($nextTraining['ort']).'/';
+	if (!file_exists($poolThumbFolder) || !is_dir($poolThumbFolder)) {
+		mkdir($poolThumbFolder);
+		copy('./badbilder/thumbs/index_sub.html', $poolThumbFolder.'index.html');
+	}
+	$poolThumbFile = str_replace($poolImageFolder, $poolThumbFolder, $poolImageFile);
+	$thumbMaxH = 240;
+	$hasValidThumbnail = true;
+	if (!file_exists($poolThumbFile)) { // is there a thumbnail at all?
+		$hasValidThumbnail = false;
+	}
+	if ($hasValidThumbnail) { // is the thumbnail small enough?
+		$imageSize = getimagesize($poolThumbFile);
+		$imageH = $imageSize[1];
+		if ($imageH > $thumbMaxH) {
+			$hasValidThumbnail = false;
+		}
+	}
+	if (!$hasValidThumbnail) { // try creating a new thumbnail
+		$hasValidThumbnail = CreateThumbnail($poolImageFile, $poolThumbFile, $thumbMaxH);
+	}
+	if (!$hasValidThumbnail) { // fall-back
+		$poolThumbFile = $poolImageFile;
+	}
 }
 
 function CreateThumbnail($imageFile, $thumbFile, $maxHeight)
@@ -307,13 +477,16 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 	global $emailFrom, $rootUrl, $teamNameShort;
 	if (@ON_TEST_SERVER OR !$p_action) { return; }
 
+	$mailSender = "training-{$emailFrom}@uwr1.de";
+	$mailFrom = "\"[{$teamNameShort}] Trainingsseite\" <{$mailSender}>";
+	$mailReturnPath = "<{$mailSender}>";
+	$mailHeader = "From: {$mailFrom}\r\n"
+				. "Sender: {$mailSender}\r\n"
+				. "Return-Path: {$mailReturnPath}\r\n";
+
 	if ('reset' == $p_action) {
 		$subject	= 'Training - Reset';
-		mail('training-test@uwr1.de', 'Training - Reset', 'k/T',
-			"From: \"[{$teamNameShort}] Trainingsliste\" <training-{$emailFrom}@uwr1.de>\r\n"
-				. "Sender: training-{$emailFrom}@uwr1.de\r\n"
-				. "Return-Path: <training-{$emailFrom}@uwr1.de>\r\n"
-		);
+		mail_SMTP('training@uwr1.de', 'Training - Reset', 'k/T');
 		return;
 	}
 
@@ -353,9 +526,26 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 		$meldungStatus = 'vom Training abgemeldet.';
 		$betreffStatus = 'Absage';
 	}
-	$subject       = "[UWR] Training: {$betreffStatus} von {$p_name} ({$p_next['wtag']}, ".date('d.m.', $p_next['datum']).", {$p_next['zeit']} Uhr)";
-	$trainingsUrl  = $rootUrl;
-	$meldeUrl      = $trainingsUrl.'training.php?text=';
+	$subject = "[UWR] Training: {$betreffStatus} von {$p_name}"
+		. ' ('
+		. "+{$p_anzZu}/-{$p_anzAb}"
+		. ' - '
+		. "{$p_next['wtag']}, ".date('d.m.', $p_next['datum']).", {$p_next['zeit']} Uhr";
+/* TODO BA: integrate this into subject -> hook + plugin
+	if ('Zapfendorf' == $p_next['ort']) {
+		$subject .= ', ' . GetWasserTemp();
+	}
+*/
+	$subject .=  ')';
+	$trainingsUrl = $rootUrl;
+	$meldeUrl     = $trainingsUrl.'training.php?text=';
+	$wassertemp = '';
+/* TODO BA: move to hook + plugin
+	$wassertemp = '';
+	if ('Zapfendorf' == $p_next['ort']) {
+		$wassertemp = 'Wassertemperatur: ' . GetWasserTemp()."\n\n";
+	}
+*/
 	$zwischenstand = "Zwischenstand: {$p_anzZu} Zusagen, {$p_anzAb} Absagen.\n"
 				. "Den aktuellen Stand findest Du hier: {$trainingsUrl}\n\n";
 	$neu = "Funktionen:\n"
@@ -385,24 +575,18 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 
 		if (@ON_TEST_SERVER) {
 /*
-			print "mail({$empf['email']},
+			print "mail_SMTP({$empf['email']},
 					{$subject},
-					{$anrede}.{$meldung}.{$aufforderung}.{$zwischenstand}.{$neu}.{$ps},
-					\"From: \\\"[{$teamNameShort}] Trainingsliste\\\" <training-{$emailFrom}@uwr1.de>\\n\"
-					. \"Sender: training-{$emailFrom}@uwr1.de\\n\"
-					. \"Return-Path: <training-{$emailFrom}@uwr1.de>\\n\"
+					{$anrede}.{$meldung}.{$aufforderung}.{$zwischenstand}.{$neu}.{$ps}
 			);";
 			print "<br>";
 			print '$empf[\'name\']='.($empf['nixgesagt']?1:0);
 			print "<br><br>";
 */
 		} else {
-			mail($empf['email'],
+			mail_SMTP($empf['email'],
 				$subject,
-				$anrede.$meldung.$aufforderung.$zwischenstand.$neu.$ps,
-				"From: \"[{$teamNameShort}] Trainingsliste\" <training-{$emailFrom}@uwr1.de>\n"
-					. "Sender: training-{$emailFrom}@uwr1.de\n"
-					. "Return-Path: <training-{$emailFrom}@uwr1.de>\n"
+				$anrede.$meldung.$aufforderung.$wassertemp.$zwischenstand.$neu.$ps
 			);
 		}
 	}
@@ -413,11 +597,48 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 //// HELPERS ////
 ////////////////////////////////////////////////////////////////////////////////
 
+function mail_SMTP($to, $subject, $msg) {
+	if (!$to) return false;
+	if (!$subject) return false;
+	if (!$msg) return false;
+
+	$mail = new PHPMailer;
+
+	//$mail->SMTPDebug = 3;                               // Enable verbose debug output
+
+	$mail->isSMTP();                                      // Set mailer to use SMTP
+	$mail->Host = MAILER_SMTP_HOST;  // Specify main and backup SMTP servers
+	$mail->SMTPAuth = true;                               // Enable SMTP authentication
+	$mail->Username = MAILER_USER;                 // SMTP username
+	$mail->Password = MAILER_PASSWORD;                           // SMTP password
+	//$mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+	//$mail->Port = 587;                                    // TCP port to connect to
+	$mail->Port = 25;                                    // TCP port to connect to
+
+	$mail->From = MAILER_FROM;
+	$mail->FromName = MAILER_NAME;
+	$mail->addAddress($to);               // Name is optional
+	$mail->addReplyTo(MAILER_FROM, MAILER_NAME);
+	// Add ReturnPath?
+	// Add Sender?
+
+	$mail->WordWrap = 78;                                 // Set word wrap to 78 characters
+
+	$mail->Subject = $subject;
+	$mail->Body    = $msg;
+	//$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+	return $mail->send();
+}
 
 function DbQuery($query) {
 	$result	= mysql_query($query);
 	if (mysql_errno() != 0) {
-		die(mysql_error() . '<br />Query was: ' . $query);
+		$msg = mysql_error();
+		if (@ON_TEST_SERVER) {
+			$msg += '<br />Query was: ' . $query;
+		}
+		die($msg);
 	}
 	return $result;
 }

@@ -6,22 +6,60 @@
 // training/inc/trainingszeiten.inc.php
 
 
-//rootUrl: used to build links in notification emails
-// should point to the folder of the training website, with trailing slash.
-$rootUrl = 'http://ba.uwr1.de/training/';
+function get_club_id() {
+	global $club_id, $conf;
+	if (!isset($_GET['club_id'])) {
+		die('CLUB ID MISSING');
+	}
+	$myClubId = strtolower($_GET['club_id']);
+	if (!isset($conf[$myClubId])) {
+		die('INVALID CLUB ID');
+	}
+	$club_id = $myClubId;
+	return $club_id;
+}
 
-//teamNameShort: used in email sender name of notification emails.
-$teamNameShort = 'UWR BA';
+function load_config($club_id) {
+	global $conf;
+	global $rootUrl, $teamNameShort, $emailFrom, $forgetPlayersAfter, $forgetConfiguredPlayers, $teamId;
 
-//emailFrom: used to build the sender username of notification emails.
-// the actual sender will be "training-{$emailFrom}@uwr1.de"
-$emailFrom = 'ba';
+	if (!isset($conf[$club_id])) {
+		die('Config not found.');
+	}
 
-// Non-configured players will disapear from the page N months after their last reply.
-$forgetPlayersAfter = 2;
+	extract($conf[$club_id], EXTR_IF_EXISTS);
+}
 
-// Whether configured players will also disapear from the page N months after their last reply.
-// Note: this is only a question of displaying the name on the page.
-$forgetConfiguredPlayers = true;
+// Create emtpy config array
+$conf = array();
 
-$teamId = 'ba';
+function create_default_config($team_name) {
+	global $conf;
+
+	$club_id = strtolower($team_name);
+
+	$conf[$club_id] = array();
+
+	//rootUrl: used to build links in notification emails
+	// should point to the folder of the training website, with trailing slash.
+	$conf[$club_id]['rootUrl'] = 'http://training.uwr1.de/'.$club_id.'/';
+
+	//teamNameShort: used in email sender name of notification emails.
+	$conf[$club_id]['teamNameShort'] = 'UWR ' . $team_name;
+
+	//emailFrom: used to build the sender username of notification emails.
+	// the actual sender will be "training-{$emailFrom}@uwr1.de"
+	$conf[$club_id]['emailFrom'] = $club_id;
+
+	// Non-configured players will disapear from the page N months after their last reply.
+	$conf[$club_id]['forgetPlayersAfter'] = 2;
+
+	// Whether configured players will also disapear from the page N months after their last reply.
+	// Note: this is only a question of displaying the name on the page.
+	$conf[$club_id]['forgetConfiguredPlayers'] = true;
+
+	//teamId: probably used on several occasions.
+	$conf[$club_id]['teamId'] = $club_id;
+}
+
+create_default_config('Demo');
