@@ -64,9 +64,21 @@ $icons = array(
 		$classes[] = $t['active'] ? 'current' : 'inactive';
 		$classes[] = $t['has-started'] ? 'has-started' : 'has-not-started';
 		$classes[] = $t['has-ended'] ? 'has-ended' : 'has-not-ended';
+		$zeitraum = '';
+		if (@$t['first'] && @$t['last']) {
+			if ($t['first'] == $t['last']) {
+				$zeitraum = "1x am {$t['first']}";
+			} else {
+				$zeitraum = "{$t['first']} &ndash; {$t['last']}";
+			}
+		} else if (@$t['first']) {
+				$zeitraum = "ab dem {$t['first']}";
+		} else if (@$t['last']) {
+				$zeitraum = "bis zum {$t['last']}";
+		}
 	    print "<tr class='_list-group-item practice-time ".implode(' ', $classes)."'>\n"
 			. "  <th>{$icon}{$t['dow']}, {$t['begin']} &ndash; {$t['end']} Uhr</th>\n"
-			. "  <td>{$t['ort']}, {$t['first']} &ndash; {$t['last']}</td>\n"
+			. "  <td>{$t['ort']}, {$zeitraum}</td>\n"
 			//. "  <td>".implode(' ', $classes)."</td>\n"
 			. "  <td>"
 			. "<a href='practice_time_edit.php?id={$tId}'><span class='glyphicon glyphicon-pencil'></span> bearbeiten</a> "
