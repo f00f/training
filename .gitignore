@@ -1,6 +1,8 @@
 # large files
-training/badbilder/*
+badbilder/*
 
 # generated files
-training/json/*
-training/shtml/*
+json/*
+shtml/*-*.html
+
+Thumbs.db

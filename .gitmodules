@@ -1,3 +1,3 @@
-[submodule "training/inc/PHPMailer"]
-	path = training/inc/PHPMailer
+[submodule "inc/PHPMailer"]
+	path = inc/PHPMailer
 	url = git://github.com/PHPMailer/PHPMailer.git
