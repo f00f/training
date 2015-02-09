@@ -43,14 +43,13 @@ function not_empty_warning($cid) {
 }
 
 function preview_practice_times_migration($club_id) {
-	global $training;
+	global $trainingX;
 	global $teamNameShort;
 	global $defaultErstmals, $defaultLetztmals;
-
 	?>
 	<h1>Trainingszeiten importieren &ndash; Vorschau <small><?=$teamNameShort?></small></h1>
 	<p>
-	In der Konfigurationsdatei <tt>trainingszeiten.inc.php</tt> wurden <?=count($training)?> aktive Trainingszeiten gefunden.
+	In der Konfigurationsdatei <tt>trainingszeiten.inc.php</tt> wurden <?=count($trainingX)?> aktive Trainingszeiten gefunden.
 	Diese können jetzt für die Mannschaft <em><?=$club_id?></em> in die Datenbank importiert werden.
 	Hinweis: Es könnten nur Trainingszeiten importiert werden, die im Moment aktiv sind.
 	</p>
@@ -65,13 +64,27 @@ function preview_practice_times_migration($club_id) {
 	<thead>
 	<th>Tag und Zeit</th>
 	<th>Ort, Anreise</th>
+	<th>Zeitraum</th>
 	</thead>
 	<tbody>
 	<?php
-	foreach ($training as $t) {
+	foreach ($trainingX as $t) {
+		$comment = '';
+		if (@$t['first'] && @$t['last']) {
+			if ($t['first'] == $t['last']) {
+				$comment = '1x am '.$t['first'];
+			} else {
+				$comment = $t['first'] .' &ndash; '. $t['last'];
+			}
+		} else if (@$t['first']) {
+				$comment = 'ab dem '.$t['first'];
+		} else if (@$t['last']) {
+				$comment = 'bis zum '.$t['last'];
+		}
 		print "<tr>\n"
 			. "<td>{$t['tag']}, {$t['zeit']}</td>\n"
 			. "<td>{$t['ort']}, {$t['anreise']}</td>\n"
+			. "<td>{$comment}</td>\n"
 			. "</tr>\n";
 	}
 	?>
@@ -99,16 +112,14 @@ function preview_practice_times_migration($club_id) {
 }
 
 function do_practice_times_migration($club_id) {
-	print 'nothing imported';
-	return;
 	global $dbHost, $dbUser, $dbPass, $dbDB;
 	global $teamNameShort;
 
-	global $training;
+	global $trainingX;
 	global $defaultErstmals, $defaultLetztmals;
 
 	print "<h1>Trainingszeiten importieren <small>{$teamNameShort}</small></h1>\n";
-	print "<p>Importiere ".count($training)." Trainingszeiten für die Mannschaft '{$club_id}' in die Datenbank.</p>\n";
+	print "<p>Importiere ".count($trainingX)." Trainingszeiten für die Mannschaft '{$club_id}' in die Datenbank.</p>\n";
 
 	# connect to db
 	$mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbDB);
@@ -137,16 +148,16 @@ function do_practice_times_migration($club_id) {
 	}
 
 	$errors = 0;
-	foreach ($training as $t) {
+	foreach ($trainingX as $t) {
 		$practice_name = "{$t['tag']} {$t['zeit']} {$t['ort']}";
-		print "Importiere {$practice_name}.\n";
+		print "Importiere {$practice_name}.<br>\n";
 
 		$dow = $t['tag'];
 		unset($t['tag']);
 		list($begin, $end) = split(' - ', $t['zeit']);
 		unset($t['zeit']);
-		$first = @$t['first'] ? $t['first'] : '2012-09-01';
-		$last  = @$t['last'] ? $t['last'] : '2013-05-31';
+		$first = @$t['first'] ? $t['first'] : $defaultErstmals;
+		$last  = @$t['last'] ? $t['last'] : $defaultLetztmals;
 		$data = serialize($t);
 
 		if (!$stmt->execute()) {
