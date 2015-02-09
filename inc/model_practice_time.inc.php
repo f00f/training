@@ -177,8 +177,10 @@ class PracticeTime {
 		$CACHE->activePracticeTimes = array();
 
 		$q = "SELECT `practice_id`, `club_id`, `dow`, `begin`, `end`, `first`, `last`, `data` FROM `{$tables['practices_conf']}` "
-			. "WHERE `club_id` = '{$cid}' "
-			. "ORDER BY `last` DESC, `first` DESC";//TODO: add deleted
+			. " WHERE `club_id` = '{$cid}'"
+			. " ORDER BY `last` < CURDATE(),"
+			. " `first` ASC,"
+			. " `last` ASC";//TODO: add deleted
 		$result = DbQuery($q);
 
 		if (mysql_num_rows($result) > 0) {
