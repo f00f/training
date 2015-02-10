@@ -83,6 +83,7 @@ function GetAction() {
 }
 
 function InsertRow($p_name, $p_text, $p_status, $p_app = 'web', $p_app_version = 'unknown', $p_club_id = 'unknown') {
+	return; // Deprecated
 	global $table, $aliases;
 	global $ip, $host;
 

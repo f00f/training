@@ -123,19 +123,18 @@ if (!empty($allPlayers[$f_playerLC])) {
 setcookie('spieler', str_replace(' ', '%20', $f_player), time()+2419200, '/');
 
 # update db
-// TODO: add $f_app and $f_app_version
 $statusChanged = false;
 switch ($action) {
 	case 'add':
 //		SpamCheck($f_player, $ip);
-		$statusChanged = Player::StoreReply('ja', $f_player, $f_text, $club_id);
+		$statusChanged = Player::StoreReply('ja', $f_player, $f_text, $club_id, $f_app, $f_app_version);
 		break;
 	case 'remove':
 //		SpamCheck($f_player, $ip);
-		$statusChanged = Player::StoreReply('nein', $f_player, $f_text, $club_id);
+		$statusChanged = Player::StoreReply('nein', $f_player, $f_text, $club_id, $f_app, $f_app_version);
 		break;
 	case 'reset':
-		InsertRow('RESET', '', '');
+		//InsertRow('RESET', '', '', $f_app, $f_app_version, $club_id);// deprecated
 		$statusChanged = false;
 		$isReset = true;
 		break;

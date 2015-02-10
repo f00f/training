@@ -84,7 +84,7 @@ class PracticeTime {
 		$nextTraining['datum'] = strtotime($nextTraining['next-date']); // Change: timestamp is now at 00:00
 
 		// TODO: store $nextTraining to $tables['practice_sessions']
-		// @see: Practice::store
+		// @see: Practice::CreateRecord
 		// correct timestamp
 		list($ntHour, $ntMin, $ntSec) = explode(':', $nextTraining['zeit']);
 		$ntMin = (int) $ntMin; // kludge: cut the tail

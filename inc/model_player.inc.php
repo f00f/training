@@ -125,7 +125,7 @@ class Player {
 	}
 
 	# Side-effect: Updates record of corresponding practice session.
-	public static function StoreReply($reply, $name, $text, $cid) {
+	public static function StoreReply($reply, $name, $text, $cid, $app, $app_ver) {
 		global $tables;
 
 		$when = time();
@@ -138,9 +138,9 @@ class Player {
 		$statusChanged = ($reply != $currentPlayerStatus);
 
 		$q = "INSERT INTO `{$tables['replies']}` "
-			."(`club_id`, `session_id`, `name`, `text`, `when`, `status`, `ip`, `host`) "
+			."(`club_id`, `session_id`, `name`, `text`, `when`, `status`, `ip`, `host`, `app`, `app_ver`) "
 			."VALUES "
-			."('{$cid}', '{$sid}', '{$name}', '{$text}', {$when}, '{$reply}', '{$ip}', '{$host}')";
+			."('{$cid}', '{$sid}', '{$name}', '{$text}', {$when}, '{$reply}', '{$ip}', '{$host}', '{$app}', '{$app_ver}')";
 		DbQuery($q);
 
 		// update practice session record
