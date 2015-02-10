@@ -74,39 +74,24 @@ foreach ($spieler as $nameLC => $s) {
 // either because a training passed, or b/c someone called the 'reset' action
 $isReset = false;
 
-# find last reset before now
+# find next session after now
 # offest by RESET_DELAY
 $trainHorizon = time() - RESET_DELAY;
-$sql = "SELECT MAX(`when`) AS `LAST_RESET`"
-	. "FROM `{$tables['replies']}` "
+$nextSession = false;
+$sql = "SELECT `session_id` AS `NEXT_SESSION` "
+	. "FROM `{$tables['practice_sessions']}` "
 	. "WHERE `club_id` = '{$club_id}' "
-	. "AND `name` = 'RESET' "
-	. "AND `when` < '".$trainHorizon."'";
-$result = DbQuery($sql);
-$row = mysql_fetch_assoc($result);
-$lastReset = $row['LAST_RESET'];
-if (!$lastReset) {
-	$lastReset = strtotime('- 1 week');
-} else {
-	$lastReset += RESET_DELAY; // offset
-}
-
-# find next reset after now
-$nextReset = false;
-$sql = "SELECT MIN(`when`) AS `NEXT_RESET`"
-	. "FROM `{$tables['replies']}` "
-	. "WHERE `club_id` = '{$club_id}' "
-	. "AND `name` = 'RESET' "
-	. "AND `when` > '".$trainHorizon."'";
+	. "AND `session_id` > '".date('Y-m-d H:i:s', $trainHorizon)."' "
+	. "ORDER BY `session_id` ASC "
+	. "LIMIT 1";
 $result = DbQuery($sql);
 if (mysql_num_rows($result) > 0) {
 	$row = mysql_fetch_assoc($result);
-	$nextReset = $row['NEXT_RESET'];
+	$nextSession = $row['NEXT_SESSION'];
 }
-if (!$nextReset) {
-	// assume at least one train per week
-	$nextReset = strtotime('+ 1 week');
-	$isReset = true;
+if (!$nextSession) {
+	print 'Fehler: Keine zukünftige Trainingszeit gefunden.<br>';
+	die();
 }
 
 # load current status for current player
@@ -115,8 +100,7 @@ $sql = "SELECT `status` "
 	. "FROM `{$tables['replies']}` "
 	. "WHERE `club_id` = '{$club_id}' "
 	. "AND `name` = '{$f_player}' "
-	. "AND `when` >= {$lastReset} "
-	. "AND `when` <= {$nextReset} "
+	. "AND `session_id` = '{$nextSession}' "
 	. "ORDER BY `when` DESC "
 	. "LIMIT 1";
 $result = DbQuery($sql);
@@ -172,7 +156,7 @@ $lastUpdate    = 0;
 $sql = "SELECT `name`, `text`, `status`, `when`"
 	. "FROM `{$tables['replies']}` "
 	. "WHERE `club_id` = '{$club_id}' "
-	. "AND `when` >= '{$lastReset}' AND `when` <= '{$nextReset}' AND `name` != 'RESET' "
+	. "AND `session_id` = '{$nextSession}' "
 	. "ORDER BY `when` DESC";
 $result = DbQuery($sql);
 
@@ -206,7 +190,7 @@ while ($row = mysql_fetch_assoc($result)) {
 	unset($nixgesagtLc[$lcName]);
 }
 if (0 == $lastUpdate) {
-	$lastUpdate = $lastReset;
+	$lastUpdate = -1;
 }
 
 $nixgesagtTendenzJa = array();
