@@ -4,9 +4,6 @@ require_once 'inc/lib.inc.php';
 require_once 'inc/model_player.inc.php';
 require_once 'inc/model_practice_time.inc.php';
 
-get_club_id();
-load_config($club_id);
-
 if (@ON_TEST_SERVER) {
 	ini_set('display_errors', 1);
 	error_reporting(E_ALL);

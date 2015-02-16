@@ -3,9 +3,6 @@ require_once '../config/conf.inc.php';
 require_once '../inc/lib.inc.php';
 require_once '../inc/model_practice_time.inc.php';
 
-get_club_id();
-load_config($club_id);
-
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
 mysql_select_db($dbDB);

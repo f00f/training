@@ -1,16 +1,15 @@
 <?php
-// Besides this config file, make sure to also change the files
-// training/root.shtml
-// training/inc/dbconf.inc.php
-// training/inc/spieler.inc.php
-// training/inc/trainingszeiten.inc.php
-
-
-// TODO
-// * auto-load club config
-
 require_once 'config-site.inc.php'; // @uses ON_TEST_SERVER
 
+// Create emtpy config array
+$conf = array();
+
+// Create configs for clubs
+create_default_config('Demo');
+
+// Load current club's config
+$club_id = get_club_id();
+load_config($club_id);
 
 function get_club_id() {
 	global $club_id, $conf;
@@ -35,9 +34,6 @@ function load_config($club_id) {
 
 	extract($conf[$club_id], EXTR_IF_EXISTS);
 }
-
-// Create emtpy config array
-$conf = array();
 
 function create_default_config($team_name) {
 	global $conf;
@@ -75,5 +71,3 @@ function create_default_config($team_name) {
 	// Enable only for clubs which use the new site.
 	$conf[$club_id]['copyJsonFiles'] = false;
 }
-
-create_default_config('Demo');

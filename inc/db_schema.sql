@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS `training` (
   `status` varchar(10) NOT NULL DEFAULT '',
   `ip` varchar(15) NOT NULL DEFAULT '',
   `host` varchar(255) NOT NULL DEFAULT '',
+  `app` varchar(255) NOT NULL DEFAULT 'web',
+  `app_ver` varchar(10) NOT NULL DEFAULT '-1',
   UNIQUE KEY `name` (`name`,`when`),
   KEY `when` (`when`) USING BTREE,
   KEY `status` (`status`)

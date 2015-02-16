@@ -2,9 +2,6 @@
 require_once '../config/conf.inc.php';
 require_once 'lib.inc.php';
 
-get_club_id();
-load_config($club_id);
-
 # connect to db
 mysql_connect($dbHost, $dbUser, $dbPass);
 mysql_select_db($dbDB);

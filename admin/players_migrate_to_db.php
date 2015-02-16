@@ -2,9 +2,6 @@
 require_once '../config/conf.inc.php';
 require_once '../inc/lib.inc.php';
 
-get_club_id();
-load_config($club_id);
-
 require_once '../inc/'.$club_id.'-spieler.inc.php';
 require_once '../inc/model_player.inc.php';
 
