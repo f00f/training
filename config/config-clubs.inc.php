@@ -6,6 +6,12 @@
 // training/inc/trainingszeiten.inc.php
 
 
+// TODO
+// * auto-load club config
+
+require_once 'config-site.inc.php'; // @uses ON_TEST_SERVER
+
+
 function get_club_id() {
 	global $club_id, $conf;
 	if (!isset($_GET['club_id'])) {
@@ -21,7 +27,7 @@ function get_club_id() {
 
 function load_config($club_id) {
 	global $conf;
-	global $rootUrl, $teamNameShort, $emailFrom, $forgetPlayersAfter, $forgetConfiguredPlayers, $teamId;
+	global $rootUrl, $teamNameShort, $emailFrom, $forgetPlayersAfter, $forgetConfiguredPlayers, $teamId, $copyJsonFiles;
 
 	if (!isset($conf[$club_id])) {
 		die('Config not found.');
@@ -42,7 +48,11 @@ function create_default_config($team_name) {
 
 	//rootUrl: used to build links in notification emails
 	// should point to the folder of the training website, with trailing slash.
-	$conf[$club_id]['rootUrl'] = 'http://training.uwr1.de/'.$club_id.'/';
+	if (@ON_TEST_SERVER) {
+		$conf[$club_id]['rootUrl'] = 'http://training.uwr1.test/'.$club_id.'/';
+	} else {
+		$conf[$club_id]['rootUrl'] = 'http://training.uwr1.de/'.$club_id.'/';
+	}
 
 	//teamNameShort: used in email sender name of notification emails.
 	$conf[$club_id]['teamNameShort'] = 'UWR ' . $team_name;
@@ -56,10 +66,14 @@ function create_default_config($team_name) {
 
 	// Whether configured players will also disapear from the page N months after their last reply.
 	// Note: this is only a question of displaying the name on the page.
-	$conf[$club_id]['forgetConfiguredPlayers'] = true;
+	$conf[$club_id]['forgetConfiguredPlayers'] = false;
 
 	//teamId: probably used on several occasions.
 	$conf[$club_id]['teamId'] = $club_id;
+
+	//copyJsonFiles: copy json output files to old location so that the app can find them.
+	// Enable only for clubs which use the new site.
+	$conf[$club_id]['copyJsonFiles'] = false;
 }
 
 create_default_config('Demo');

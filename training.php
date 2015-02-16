@@ -1,9 +1,6 @@
 <?php
+require_once 'config/conf.inc.php';
 require_once 'inc/lib.inc.php';
-require_once 'inc/conf.inc.php';
-//require_once 'inc/spieler.inc.php';
-//require_once 'inc/trainingszeiten.inc.php';
-require_once 'inc/dbconf.inc.php';
 require_once 'inc/model_player.inc.php';
 require_once 'inc/model_practice_time.inc.php';
 
@@ -73,6 +70,9 @@ foreach ($spieler as $nameLC => $s) {
 // Flag to indicate when the stats were reset
 // either because a training passed, or b/c someone called the 'reset' action
 $isReset = false;
+
+# make sure that a record for the next practice session is created
+$foo = PracticeTime::GetNext($club_id);
 
 # find next session after now
 # offest by RESET_DELAY

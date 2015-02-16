@@ -36,4 +36,3 @@ $spieler = array(
 
 $aliases = array(
 );
-?>

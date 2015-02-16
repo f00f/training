@@ -1,4 +1,6 @@
 <?php
+require_once 'config-site.inc.php'; // @uses ON_TEST_SERVER
+
 // 1) enter your DB config
 $dbHost	= '';
 $dbDB	= '';

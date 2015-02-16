@@ -5,4 +5,10 @@ badbilder/*
 json/*
 shtml/*-*.html
 
+# files which will become redundant in the near future
+inc/*-spieler.inc.php
+inc/*-trainingszeiten.inc.php
+
+# Windows (copied) files
 Thumbs.db
+Copy of *

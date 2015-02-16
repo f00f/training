@@ -45,4 +45,3 @@ $t = array(
 	'ort'     => 'Bambados',
 );
 AddWithStartDate($t, 20111131);
-?>

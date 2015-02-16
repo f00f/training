@@ -1,8 +1,6 @@
 <?php
-@define('NO_INCLUDES', true);
+require_once '../config/conf.inc.php';
 require_once '../inc/lib.inc.php';
-require_once '../inc/conf.inc.php';
-require_once '../inc/dbconf.inc.php';
 
 get_club_id();
 load_config($club_id);

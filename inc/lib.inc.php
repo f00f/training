@@ -2,73 +2,21 @@
 /*
  * Created on 04.06.2006
  */
-date_default_timezone_set('Europe/Berlin');
 
 session_start();
 
-define('SPAM_SAME_IP_TIMEOUT', 120);
-define('SPAM_SAME_IP_COUNT', 2);
-define('SPAM_SAME_USER_TIMEOUT', 300);
-
-// if a user submits less than LATE_THRESHOLD before start of the training, show notice
-define('LATE_THRESHOLD', 1 * 3600); // TODO: make this a config value
-// RESET_DELAY_HOURS after begin of the training, switch to next training
-define('RESET_DELAY_HOURS', 1); // TODO: make this a config value
-
-// Don't change values below.
-define('RESET_DELAY_MINUTES', RESET_DELAY_HOURS * 60);
-define('RESET_DELAY', RESET_DELAY_MINUTES * 60);
-define('SECONDS_PER_DAY', 86400);
-define('PLUGINS_FILE', 'inc/plugins.inc.php');
-define('YOU_ARE_LATE_URL', './spaet-dran.shtml');
-
-
 if (!defined('NO_INCLUDES') || !NO_INCLUDES) {
-	require_once 'inc/conf.inc.php';
+	require_once 'conf.inc.php';
 }
-require_once 'PHPMailer/PHPMailerAutoload.php';
-require_once 'mailconf.inc.php'; // TODO: adjust values in that file!
+require_once 'db.inc.php';
+require_once 'html.inc.php';
+require_once 'import.inc.php';
+require_once 'mail.inc.php';
+require_once 'config-site.inc.php';
 
 if (file_exists(PLUGINS_FILE)) {
 	include_once PLUGINS_FILE;
 }
-
-if (!defined('ON_TEST_SERVER')) {
-	define('ON_TEST_SERVER', (false !== strpos($_SERVER['HTTP_HOST'], '.test')));
-}
-
-/* obsolete (but used for import in admin)
-TODO: move to admin files */
-function AddWithEndDate(&$pTraining, $pEndDate) {
-	global $date, $training, $trainingX;
-	if ($date <= $pEndDate) {
-		$training[] = $pTraining;
-	}
-	$pTraining['last'] = $pEndDate;
-	$trainingX[] = $pTraining;
-}
-
-function AddWithStartDate(&$pTraining, $pStartDate) {
-	global $date, $training, $trainingX;
-	$oneWeekBefore = date('Ymd', strtotime($pStartDate) - 7*SECONDS_PER_DAY);
-	if ($date > $oneWeekBefore) {
-		$training[] = $pTraining;
-	}
-	$pTraining['first'] = $pStartDate;
-	$trainingX[] = $pTraining;
-}
-
-function AddSingleDate(&$pTraining, $pDate) {
-	global $date, $training, $trainingX;
-	$oneWeekBefore = date('Ymd', strtotime($pDate) - 7*SECONDS_PER_DAY);
-	if ($date > $oneWeekBefore AND $date <= $pDate) {
-		$training[] = $pTraining;
-	}
-	$pTraining['first'] = $pDate;
-	$pTraining['last'] = $pDate;
-	$trainingX[] = $pTraining;
-}
-/**/
 
 function GetAction() {
 	if ((boolean) @$_REQUEST['zusage']) {
@@ -80,27 +28,6 @@ function GetAction() {
 	if ((boolean) @$_REQUEST['reset']) {
 		return 'reset';
 	}
-}
-
-function InsertRow($p_name, $p_text, $p_status, $p_app = 'web', $p_app_version = 'unknown', $p_club_id = 'unknown') {
-	return; // Deprecated
-	global $table, $aliases;
-	global $ip, $host;
-
-	$p_nameLC = strtolower($p_name);
-	$p_name = isset($aliases[$p_nameLC]) ? $aliases[$p_nameLC] : $p_name;
-
-	// insert one second later if not a reset
-	// this avoids problems with automatic inserts from EvaluateFollowUps
-	//
-	// insert RESET_DELAY later if a reset
-	// this allows to still show player list even after training has started
-	$timeOffset = ('RESET' == $p_name) ? RESET_DELAY : 1;
-
-	DbQuery("INSERT INTO `{$table}` "
-		. "(`name`, `text`, `when`, `status`, `ip`, `host`, `app`, `app_ver`, `club_id`) "
-		. "VALUES "
-		. "('{$p_name}', '{$p_text}', '".(time()+$timeOffset)."', '{$p_status}', '{$ip}', '{$host}', '{$p_app}', '{$p_app_version}', '{$p_club_id}')");
 }
 
 function SpamCheck($p_name, $p_ip) {
@@ -179,12 +106,6 @@ function Redirect($loc = null, $checkTime = false ) {
 	header("HTTP/1.1 302 Moved Temporarily");
 	header("Location: {$loc}");
 	exit;
-}
-
-function FirstWord($p_text) {
-	$matches = array();
-	preg_match('/^([\w ]*)/', $p_text, $matches);// TODO: correct pattern? Used to be '/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/'
-	return trim($matches[1]);
 }
 
 /* TODO: BA: move to plugin
@@ -481,301 +402,25 @@ function RandomFile($folder='', $extensions='.*')
     return $folder . $files[$rand];
 }
 
-function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
-	global $emailFrom, $rootUrl, $teamNameShort;
-	if (@ON_TEST_SERVER OR !$p_action) { return; }
-
-	$mailSender = "training-{$emailFrom}@uwr1.de";
-	$mailFrom = "\"[{$teamNameShort}] Trainingsseite\" <{$mailSender}>";
-	$mailReturnPath = "<{$mailSender}>";
-	$mailHeader = "From: {$mailFrom}\r\n"
-				. "Sender: {$mailSender}\r\n"
-				. "Return-Path: {$mailReturnPath}\r\n";
-
-	if ('reset' == $p_action) {
-		$subject	= 'Training - Reset';
-		mail_SMTP('training@uwr1.de', 'Training - Reset', 'k/T');
-		return;
-	}
-
-	$toArray = $GLOBALS['spieler'];
-	$anzahlGesamt = $p_anzZu + $p_anzAb;
-	foreach ($toArray as $spielerId => $spieler) {
-		// user will jede $freq-te mail
-		if (0 < $spieler['freq'] AND 0 == $anzahlGesamt % $spieler['freq']) {
-			$toArray[$spielerId]['nixgesagt'] = in_array($spieler['name'], $GLOBALS['nixgesagt']);
-		}
-		// user will die ersten $freq mails
-		elseif (0 > $spieler['freq'] AND $anzahlGesamt <= abs($spieler['freq'])) {
-			$toArray[$spielerId]['nixgesagt'] = in_array($spieler['name'], $GLOBALS['nixgesagt']);
-		}
-		// user will keine mails
-		else {
-			unset($toArray[$spielerId]);
-		}
-
-		// user will keine mail wenn er sich gerade selbst an-/abgemeldet hat
-		if (($p_name == $spieler['name']) AND @$spieler['keineSelbstMail']) {
-			unset($toArray[$spielerId]);
-		}
-
-		// user will keine mail wenn er sich bereits an-/abgemeldet hat
-		if (@$spieler['keineMailsNachMeldung'] AND !$toArray[$spielerId]['nixgesagt']) {
-			unset($toArray[$spielerId]);
-		}
-	}
-
-	$meldungStatus = '';
-	if ('add' == $p_action) {
-		$meldungStatus = 'zum Training angemeldet.';
-		$betreffStatus = 'Zusage';
-	}
-	if ('remove' == $p_action) {
-		$meldungStatus = 'vom Training abgemeldet.';
-		$betreffStatus = 'Absage';
-	}
-	$subject = "[UWR] Training: {$betreffStatus} von {$p_name}"
-		. ' ('
-		. "+{$p_anzZu}/-{$p_anzAb}"
-		. ' - '
-		. "{$p_next['wtag']}, ".date('d.m.', $p_next['datum']).", {$p_next['zeit']} Uhr";
-/* TODO BA: integrate this into subject -> hook + plugin
-	if ('Zapfendorf' == $p_next['ort']) {
-		$subject .= ', ' . GetWasserTemp();
-	}
-*/
-	$subject .=  ')';
-	$trainingsUrl = $rootUrl;
-	$meldeUrl     = $trainingsUrl.'training.php?text=';
-	$wassertemp = '';
-/* TODO BA: move to hook + plugin
-	$wassertemp = '';
-	if ('Zapfendorf' == $p_next['ort']) {
-		$wassertemp = 'Wassertemperatur: ' . GetWasserTemp()."\n\n";
-	}
-*/
-	$zwischenstand = "Zwischenstand: {$p_anzZu} Zusagen, {$p_anzAb} Absagen.\n"
-				. "Den aktuellen Stand findest Du hier: {$trainingsUrl}\n\n";
-	$neu = "Funktionen:\n"
-		. "+ Einstellbare E-Mail Häufigkeit (mir sagen wie gewünscht):\n"
-		. "  - Wahlweise nur die ersten x Mails oder jede x-te Mail bekommen.\n"
-		. "  - Wahlweise keine Mail für die eigene Meldung bekommen.\n"
-		. "  - Wahlweise keine Mails mehr bekommen nachdem man sich gemeldet hat.\n"
-		. "+ Direkte An-/Abmeldung aus den Mails\n"
-		. "+ Ein längerer Text ist möglich, das erste Wort wird als Name erkannt,\n"
-		. "  z.B.: \"Flo muss schlafen\"\n\n";
-	$ps = '';
-
-//$to = 'training-test@uwr1.de';
-//$subject .= ' - testing -';
-	foreach ($toArray as $empf) {
-		$anrede = "Hallo {$empf['name']},\n\n";
-		$meldung = (($p_name == $empf['name']) ? 'Du hast dich' : "{$p_name} hat sich");
-		$meldung .= " gerade {$meldungStatus}\n\n";
-		$aufforderung = '';
-		if ($empf['nixgesagt']) {
-			$anmeldeUrl = $meldeUrl.$empf['name'].'&zusage=1';
-			$abmeldeUrl = $meldeUrl.$empf['name'].'&absage=1';
-			$aufforderung = "Kommst Du am {$p_next['wtag']}, ".date('d.m.', $p_next['datum'])." auch?\n"
-					. "+ Ja:    {$anmeldeUrl}\n"
-					. "- Nein:  {$abmeldeUrl}\n\n";
-		}
-
-		if (@ON_TEST_SERVER) {
-/*
-			print "mail_SMTP({$empf['email']},
-					{$subject},
-					{$anrede}.{$meldung}.{$aufforderung}.{$zwischenstand}.{$neu}.{$ps}
-			);";
-			print "<br>";
-			print '$empf[\'name\']='.($empf['nixgesagt']?1:0);
-			print "<br><br>";
-*/
-		} else {
-			mail_SMTP($empf['email'],
-				$subject,
-				$anrede.$meldung.$aufforderung.$wassertemp.$zwischenstand.$neu.$ps
-			);
-		}
-	}
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //// HELPERS ////
 ////////////////////////////////////////////////////////////////////////////////
 
-function mail_SMTP($to, $subject, $msg) {
-	if (!$to) return false;
-	if (!$subject) return false;
-	if (!$msg) return false;
-
-	$mail = new PHPMailer;
-
-	//$mail->SMTPDebug = 3;                               // Enable verbose debug output
-
-	$mail->isSMTP();                                      // Set mailer to use SMTP
-	$mail->Host = MAILER_SMTP_HOST;  // Specify main and backup SMTP servers
-	$mail->SMTPAuth = true;                               // Enable SMTP authentication
-	$mail->Username = MAILER_USER;                 // SMTP username
-	$mail->Password = MAILER_PASSWORD;                           // SMTP password
-	//$mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
-	//$mail->Port = 587;                                    // TCP port to connect to
-	$mail->Port = 25;                                    // TCP port to connect to
-
-	$mail->From = MAILER_FROM;
-	$mail->FromName = MAILER_NAME;
-	$mail->addAddress($to);               // Name is optional
-	$mail->addReplyTo(MAILER_FROM, MAILER_NAME);
-	// Add ReturnPath?
-	// Add Sender?
-
-	$mail->WordWrap = 78;                                 // Set word wrap to 78 characters
-
-	$mail->Subject = $subject;
-	$mail->Body    = $msg;
-	//$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
-	return $mail->send();
-}
-
-function DbQuery($query) {
-	$result	= mysql_query($query);
-	if (mysql_errno() != 0) {
-		$msg = mysql_error();
-		if (@ON_TEST_SERVER) {
-			$msg += '<br />Query was: ' . $query;
-		}
-		die($msg);
-	}
-	return $result;
-}
-
+// A global cache object.
+// Used by player model and practice time model
 $CACHE = new stdClass();
 
+
+function FirstWord($p_text) {
+	$matches = array();
+	preg_match('/^([\w ]*)/', $p_text, $matches);// TODO: correct pattern? Used to be '/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/'
+	return trim($matches[1]);
+}
 
 function sani($s) {
 	return mysql_real_escape_string($s);
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
-//// HTML ////
-////////////////////////////////////////////////////////////////////////////////
-
-
-function html_header() {
-	global $pagetitle;
-?>
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- link rel="shortcut icon" href="../../assets/ico/favicon.png" -->
-
-    <title><?= $pagetitle ?></title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="../css/bootstrap.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="admin.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="../js/html5shiv.js"></script>
-      <script src="../js/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
-<?php
-	if (@$_SESSION['error']) {
-		print '<div class="container">'
-			. "<div class='alert alert-danger'>{$_SESSION['error']}</div>"
-			. '</div>';
-		unset($_SESSION['error']);
-	}
-	if (@$_SESSION['warning']) {
-		print '<div class="container">'
-			. "<div class='alert alert-warning'>{$_SESSION['warning']}</div>"
-			. '</div>';
-		unset($_SESSION['warning']);
-	}
-	if (@$_SESSION['notice']) {
-		print '<div class="container">'
-			. "<div class='alert alert-success'>{$_SESSION['notice']}</div>"
-			. '</div>';
-		unset($_SESSION['notice']);
-	}
-} // html_header
-
-function navbar_admin($active = null) {
-	global $pagetitle;
-?>
-    <div class="navbar navbar-fixed-top navbar-default">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#"><?= $pagetitle; ?></a>
-        </div>
-        <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav pull-right">
-            <li<?=('home'==$active)?' class="active"':''?>><a href="./">Home</a></li>
-            <li><a href="../">Trainingsseite</a></li>
-            <li class="dropdown<?=('players'==$active)?' active':''?>">
-			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spieler <b class="caret"></b></a>
-			  <ul class="dropdown-menu">
-			  <li><a href="players_list.php">Auflisten</a></li>
-			  <li><a href="player_add.php">Hinzufügen</a></li>
-			  </ul>
-			</li>
-            <li class="dropdown<?=('practice-times'==$active)?' active':''?>">
-			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Zeiten <b class="caret"></b></a>
-			  <ul class="dropdown-menu">
-			  <li><a href="practice_times_list.php">Auflisten</a></li>
-			  <li><a href="practice_time_add.php">Hinzufügen</a></li>
-			  </ul>
-			</li>
-            <li<?=('config'==$active)?' class="active"':''?>><a href="config_show.php">Konfig</a></li>
-            <li<?=('contact'==$active)?' class="active"':''?>><a href="contact.php">Kontakt</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </div>
-
-<?php
-}
-
-function html_footer() {
-	global $enablePopovers;
-?>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../js/jquery.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
-	<?php
-	if (count($enablePopovers) > 0) {
-		$sels = array_keys($enablePopovers);
-		print "<script>\n";
-		foreach ($sels as $sel) {
-			print "\$('{$sel}').popover({html:true});\n";
-		}
-		print "</script>\n";
-	}
-	?>
-  </body>
-</html>
-<?php
-} // html_footer
 
 
 ////////////////////////////////////////////////////////////////////////////////
