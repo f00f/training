@@ -122,7 +122,7 @@ var gFirstLetters = '';
 var brow, vers, n4, moz;
 
 if ((new Date()).getTime()/1000 > naechstesTrain)
-	{ window.location.href = 'http://'+window.location.host+'/training/training.php'; }
+	{ window.location.href = 'http://'+window.location.host+'/<!--#echo var="club_id" -->/training.php'; }
 
 $(function(){$('#funktionen').toggle()});
 </script>
