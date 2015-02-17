@@ -22,3 +22,8 @@ define('RESET_DELAY', RESET_DELAY_MINUTES * 60);
 define('SECONDS_PER_DAY', 86400);
 define('PLUGINS_FILE', 'inc/plugins.inc.php');
 define('YOU_ARE_LATE_URL', './spaet-dran.shtml');
+
+if (@ON_TEST_SERVER) {
+	ini_set('display_errors', 1);
+	error_reporting(E_ALL);
+}

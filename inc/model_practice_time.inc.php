@@ -157,10 +157,9 @@ class PracticeTime {
 	// load active practice times from DB
 	static function LoadActive($cid) {
 		global $CACHE;
-		if (isset($CACHE->activePracticeTimes) && false !== @$CACHE->activePracticeTimes) {
-			return $CACHE->activePracticeTimes;
+		if (!isset($CACHE->activePracticeTimes) || false === @$CACHE->activePracticeTimes) {
+			self::LoadAll($cid);
 		}
-		self::LoadAll($cid);
 		return $CACHE->activePracticeTimes;
 	}
 
@@ -207,7 +206,7 @@ class PracticeTime {
 
 		$CACHE->dow2date = array();
 		for ($i = 0; $i < 7; $i++) {
-			$nowPlusXDays = strtotime("+ {$i} days");
+			$nowPlusXDays = strtotime("+ {$i} days", SCRIPT_START_TIME);
 			$dowThen = date('w', $nowPlusXDays);
 			$dateThen = date('Y-m-d', $nowPlusXDays);
 			$CACHE->dow2date[$dowThen] = $dateThen;
@@ -219,8 +218,8 @@ class PracticeTime {
 
 		self::CreateDow2Date();
 		$dow2date =& $CACHE->dow2date;
-		$now = date('Y-m-d');
-		$nowTime = date('H:i');
+		$today = date('Y-m-d', SCRIPT_START_TIME);
+		$nowTime = date('H:i', SCRIPT_START_TIME);
 
 		$p = unserialize($row['data']);
 
@@ -237,11 +236,13 @@ class PracticeTime {
 		$dowIdx = self::$tag2int[$row['dow']];
 		$p['dowIdx'] = ($dowIdx - 1) % 7;
 		$nextDate = $dow2date[$dowIdx];
-		$p['has-started'] = $row['first'] <= $now;
-		$p['has-ended'] = $row['last'] < $now;
+		$p['has-started'] = $row['first'] <= $today;
+		$p['has-ended'] = $row['last'] < $today;
 		$p['active'] = $nextDate >= $row['first'] && $nextDate <= $row['last'];
-		if ($nextDate == $now && $p['begin'] < $nowTime) {
-			$p['active'] = false;
+		if ($nextDate == $today AND $p['begin'] < $nowTime) {
+			// this practice session had been today, but it's over, so add one week to next-date
+			$nextDate = date('Y-m-d', strtotime('+ 1 week', strtotime($nextDate)));
+			$p['active'] = $nextDate >= $row['first'] && $nextDate <= $row['last'];
 		}
 		if ($p['active']) {
 			$p['next-date'] = $nextDate;
@@ -249,7 +250,6 @@ class PracticeTime {
 
 		return $p;
 	}
-
 }
 
 
@@ -319,10 +319,8 @@ class PracticeSession {
 
 		if (!@$CACHE->nextSessionID) {
 			$now = time() - 2*3600; // offset for overlap
-			//$dtzEB  = new DateTimeZone('Europe/Berlin');
 
 			$date = new DateTime("@{$now}");
-			//$date->setTimezone($dtzEB);
 			$now = $date->format('Y-m-d H:i:s');
 
 			$q = "SELECT MIN(`session_id`) AS `sid` FROM `{$tables['practice_sessions']}` "

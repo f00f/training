@@ -18,6 +18,9 @@ if (file_exists(PLUGINS_FILE)) {
 	include_once PLUGINS_FILE;
 }
 
+define('SCRIPT_START_TIME', time());
+define('TRAIN_HORIZON', SCRIPT_START_TIME - RESET_DELAY);
+
 function GetAction() {
 	if ((boolean) @$_REQUEST['zusage']) {
 		return 'add';

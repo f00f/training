@@ -31,7 +31,7 @@ function InsertRow($p_name, $p_text, $p_status, $p_app = 'web', $p_app_version =
 	// insert one second later if not a reset
 	// this avoids problems with automatic inserts from EvaluateFollowUps
 	//
-	// insert RESET_DELAY later if a reset
+	// insert delayed by RESET_DELAY if it is a reset
 	// this allows to still show player list even after training has started
 	$timeOffset = ('RESET' == $p_name) ? RESET_DELAY : 1;
 
