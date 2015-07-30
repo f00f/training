@@ -66,7 +66,7 @@ class PracticeTime {
 	# Get information about the next upcoming practice time.
 	# Side-effect: Creates record for corresponding practice session.
 	static function GetNext($cid) {
-		$training = self::LoadActive($cid);
+		$training = self::LoadActiveAndFuture($cid);
 
 		$trainingDates = array();
 		foreach($training as $t) {
@@ -154,6 +154,14 @@ class PracticeTime {
 		return true;
 	}
 
+	// load active and future practice times from DB
+	static function LoadActiveAndFuture($cid) {
+		global $CACHE;
+		self::LoadActive($cid);
+		self::LoadFuture($cid);
+		return array_merge($CACHE->activePracticeTimes, $CACHE->futurePracticeTimes);
+	}
+
 	// load active practice times from DB
 	static function LoadActive($cid) {
 		global $CACHE;
@@ -161,6 +169,15 @@ class PracticeTime {
 			self::LoadAll($cid);
 		}
 		return $CACHE->activePracticeTimes;
+	}
+
+	// load future practice times from DB
+	static function LoadFuture($cid) {
+		global $CACHE;
+		if (!isset($CACHE->futurePracticeTimes) || false === @$CACHE->futurePracticeTimes) {
+			self::LoadAll($cid);
+		}
+		return $CACHE->futurePracticeTimes;
 	}
 
 	// load all practice times from DB
@@ -174,6 +191,7 @@ class PracticeTime {
 
 		$CACHE->allPracticeTimes = array();
 		$CACHE->activePracticeTimes = array();
+		$CACHE->futurePracticeTimes = array();
 
 		$q = "SELECT `practice_id`, `club_id`, `dow`, `begin`, `end`, `first`, `last`, `data` FROM `{$tables['practices_conf']}` "
 			. " WHERE `club_id` = '{$cid}'"
@@ -190,6 +208,9 @@ class PracticeTime {
 
 				if ($p['active']) {
 					$CACHE->activePracticeTimes[] = $p;
+				}
+				if (!$p['has-started']) {
+					$CACHE->futurePracticeTimes[] = $p;
 				}
 			}
 		}
@@ -245,6 +266,15 @@ class PracticeTime {
 			$p['active'] = $nextDate >= $row['first'] && $nextDate <= $row['last'];
 		}
 		if ($p['active']) {
+			$p['next-date'] = $nextDate;
+		}
+		if (!$p['has-started']) {
+			// Compute next-date for future session
+			$oneWeek = 7 * 24 * 3600;
+			$tmFirst = strtotime($row['first']);
+			$tmNext = strtotime($nextDate);
+			$tmNewNext = $tmNext + (floor(($tmFirst - $tmNext) / $oneWeek) + 1) * $oneWeek; // this might be susceptible to rounding errors.
+			$nextDate = date('Y-m-d', $tmNewNext);
 			$p['next-date'] = $nextDate;
 		}
 
