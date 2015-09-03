@@ -181,6 +181,7 @@ class Player {
 
 		return $CACHE->configuredPlayers;
 	}
+
 	// load _all_ players (configured and not) from DB
 	public static function LoadAll($cid) {
 		global $CACHE;

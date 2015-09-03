@@ -276,6 +276,21 @@ function UpdateFiles() {
 	FindBadBild();
 	UpdateHtmlFiles();
 	UpdateJsonFiles();
+	// copy JSON files to old directory, for compatibility with old app versions.
+	global $club_id, $copyJsonFiles;
+	if ($copyJsonFiles) {
+		$infiles = array(
+			'json/'.$club_id.'-all-players.json',
+			'json/'.$club_id.'-training.json',
+		);
+		$outfiles = array(
+			'../'.$club_id.'/training/json/all-players.json',
+			'../'.$club_id.'/training/json/training.json',
+		);
+		for($i=0; $i<count($infiles); $i++) {
+			copy($infiles[$i], $outfiles[$i]);
+		}
+	}
 }
 
 function FindBadBild()
@@ -417,7 +432,14 @@ $CACHE = new stdClass();
 
 function FirstWord($p_text) {
 	$matches = array();
-	preg_match('/^([\w ]*)/', $p_text, $matches);// TODO: correct pattern? Used to be '/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/'
+	$allowSpacesInWord = true;
+	if ($allowSpacesInWord) {
+		$pattern = '/^([\w ]*)/';
+	} else {
+		// TODO: replace complicated set by \W or [^\p{L}\p{N}] (letter/number)
+		$pattern = '/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/';
+	}
+	preg_match($pattern, $p_text, $matches);
 	return trim($matches[1]);
 }
 

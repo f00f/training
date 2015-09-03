@@ -105,7 +105,7 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 		}
 
 		if (@ON_TEST_SERVER) {
-/*
+			/*
 			print "mail_SMTP({$empf['email']},
 					{$subject},
 					{$anrede}.{$meldung}.{$aufforderung}.{$zwischenstand}.{$neu}.{$ps}
@@ -113,7 +113,7 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 			print "<br>";
 			print '$empf[\'name\']='.($empf['nixgesagt']?1:0);
 			print "<br><br>";
-*/
+			*/
 		} else {
 			mail_SMTP($empf['email'],
 				$subject,
