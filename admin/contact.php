@@ -11,8 +11,12 @@ navbar_admin('contact');
 	  <h1>Kontakt <small><?=$teamNameShort?></small></h1>
 	  
 	  <h3>Ansprechpartner <?=$teamNameShort?> Training</h3>
-	  Vorname Nachname<br>
-	  E-Mail: vorname.nachname@...
+	  <?php print $KontaktName
+				? $KontaktName
+				: 'Vorname Nachname'?><br>
+	  E-Mail: <?php print $KontaktEmail
+				? '<a href="mailto:'.$KontaktEmail.'">'.$KontaktEmail.'</a>'
+				: 'vorname.nachname@...'?><br>
 
 	  <h3>Ansprechpartner bei Problemen mit der Trainingsseite</h3>
 	  Hannes Hofmann<br>

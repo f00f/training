@@ -48,9 +48,9 @@ $ConfigModel->fields = array(
 		'help' => 'Spieler, die nicht in die Datenbank eingetragen wurden, verschwinden N Monate nach ihrer letzten Meldung wieder von der Seite.',
 	),
 	'forgetConfiguredPlayers' => array(
-		'label' => 'Bekannte Spieler auch ausblenden?',
+		'label' => 'Auch bekannte Spieler ausblenden?',
 		'values' => 'bool',
-		'help' => 'Sollen Spieler, die in die Datenbank eingetragen wurden, auch ausgeblendet werden?',
+		'help' => 'Sollen auch Spieler, die in die Datenbank eingetragen wurden, bei Inaktivität ausgeblendet werden?',
 	),
 );
 ?>
