@@ -27,7 +27,7 @@ $ConfigModel->fields = array(
 	),
 	'rootUrl' => array(
 		'label' => 'Trainingsseite',
-		'help' => 'Adresse der Trainingsseite.<br>(Meist: <tt>http://<em>teamID</em>.uwr1.de/training/</tt>)',
+		'help' => 'Adresse der Trainingsseite.<br>(Meist: <tt>http://training.uwr1.de/<em>teamID</em>/</tt>)',
 	),
 	'forgetPlayersAfter' => array(
 		'label' => 'Ausblenden nach Monaten',
