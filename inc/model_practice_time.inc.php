@@ -58,6 +58,7 @@ class PracticeTime {
 		'Fr' => 5, 'Sa' => 6, 'So' => 0,
 	);
 
+	// Obsolete
 	public static $dow2int = array(
 		'Mo' => 0, 'Di' => 1, 'Mi' => 2, 'Do' => 3,
 		'Fr' => 4, 'Sa' => 5, 'So' => 6,
@@ -273,9 +274,15 @@ class PracticeTime {
 			$oneWeek = 7 * 24 * 3600;
 			$tmFirst = strtotime($row['first']);
 			$tmNext = strtotime($nextDate);
-			$tmNewNext = $tmNext + (floor(($tmFirst - $tmNext) / $oneWeek) + 1) * $oneWeek; // this might be susceptible to rounding errors.
-			$nextDate = date('Y-m-d', $tmNewNext);
-			$p['next-date'] = $nextDate;
+			$i = 0;
+			while ($tmNext < $tmFirst && $i < 52) {
+				// use loop and strtotime to cope with problems when crossing the DST switching date
+				$tmNext = strtotime('+ 1 week', $tmNext);
+				$i++;
+			}
+			if ($i < 52) {
+				$p['next-date'] = date('Y-m-d', $tmNext);
+			}
 		}
 
 		return $p;
