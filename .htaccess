@@ -15,6 +15,10 @@ Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
 	RewriteEngine On
 	RewriteBase /
 
+	# Add trailing slash
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ([^/]+)/([^/\.]+)$ ./$1/$2/ [R=307,L]
+
 	RewriteCond %{REQUEST_URI} ^/demo/
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
