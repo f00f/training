@@ -69,8 +69,8 @@ function navbar_admin($active = null) {
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav pull-right">
-            <li<?=('home'==$active)?' class="active"':''?>><a href="./">Home</a></li>
-            <li><a href="../">Trainingsseite</a></li>
+            <li<?=('home'==$active)?' class="active"':''?>><a href="./">Admin</a></li>
+            <li><a href="../">T-Seite</a></li>
             <li class="dropdown<?=('players'==$active)?' active':''?>">
 			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Spieler <b class="caret"></b></a>
 			  <ul class="dropdown-menu">
@@ -85,8 +85,14 @@ function navbar_admin($active = null) {
 			  <li><a href="practice_time_add.php">Hinzufügen</a></li>
 			  </ul>
 			</li>
-            <li<?=('config'==$active)?' class="active"':''?>><a href="config_show.php">Konfig</a></li>
-            <li<?=('contact'==$active)?' class="active"':''?>><a href="contact.php">Kontakt</a></li>
+            <li class="dropdown<?=('etc'==$active)?' active':''?>">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Etc <b class="caret"></b></a>
+			  <ul class="dropdown-menu">
+				<li<?=('config'==$active)?' class="active"':''?>><a href="config_show.php">Konfig</a></li>
+				<li<?=('stats'==$active)?' class="active"':''?>><a href="stats.php">Stats</a></li>
+				<li<?=('contact'==$active)?' class="active"':''?>><a href="contact.php">Kontakt</a></li>
+			  </ul>
+			</li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

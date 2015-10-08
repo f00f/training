@@ -6,24 +6,10 @@ require_once '../inc/lib.inc.php';
 mysql_connect($dbHost, $dbUser, $dbPass);
 mysql_select_db($dbDB);
 
-if (@$_POST['id']) {
-	// save player data
-	$player = array();
-	$player['uid'] = $_POST['id'];
-	$player['club_id'] = @$_POST['club_id'];
-	foreach ($playerAvailableFields as $fld => $fldProp) {
-		if (@$_POST[$fld]) {
-			$player[$fld] = $_POST[$fld];
-		}
-	}
-	SavePlayer($player);
-	$_SESSION['notice'] = "<strong>Yes!</strong> {$player['name']} wurde erfolgreich gespeichert.";
-}
-
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();
 
-navbar_admin('config');
+navbar_admin('etc');
 
 $ConfigModel = new stdClass();
 $ConfigModel->fields = array(
