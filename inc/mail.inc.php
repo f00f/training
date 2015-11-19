@@ -1,6 +1,6 @@
 <?php
 // Include 3rd party libraries and config file
-require_once 'PHPMailer/PHPMailerAutoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config-site.inc.php'; // @uses ON_TEST_SERVER
 require_once 'mailconf.inc.php'; // TODO: adjust values in that file!
 
