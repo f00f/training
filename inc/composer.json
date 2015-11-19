@@ -1,0 +1,7 @@
+{
+    "require": {
+        "firebase/php-jwt": "^3.0",
+        "ktamas77/firebase-php": "dev-master",
+        "firebase/token-generator": "^3.0"
+    }
+}
