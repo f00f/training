@@ -271,7 +271,6 @@ class PracticeTime {
 		}
 		if (!$p['has-started']) {
 			// Compute next-date for future session
-			$oneWeek = 7 * 24 * 3600;
 			$tmFirst = strtotime($row['first']);
 			$tmNext = strtotime($nextDate);
 			$i = 0;
