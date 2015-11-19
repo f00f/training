@@ -13,6 +13,7 @@ require_once 'html.inc.php';
 require_once 'import.inc.php';
 require_once 'mail.inc.php';
 require_once 'config-site.inc.php';
+require_once __DIR__ . '/firebase.inc.php';
 
 if (file_exists(PLUGINS_FILE)) {
 	include_once PLUGINS_FILE;
@@ -272,10 +273,49 @@ function UpdateJsonFiles() {
 	//die('Hannes is am Frickeln.');
 }// UpdateJsonFiles
 
+function UpdateFirebase() {
+	global $ZTCacheFile;
+	global $club_id, $allPlayers, $nextTraining, $lastUpdate,
+		$anzahlZugesagt, $anzahlAbgesagt, $zugesagt, $abgesagt,
+		$nixgesagtTendenzJa, $nixgesagtKeineTendenz, $nixgesagtTendenzNein,
+		$poolImageFile, $poolThumbFile;
+
+	// store people's status
+	$train = array(
+			'begin' => $nextTraining['begin'],
+			'end' => $nextTraining['end'],
+			'wtag' => $nextTraining['wtag'],
+			'datum' => date('d.m.', $nextTraining['datum']),
+			'zeit' => $nextTraining['zeit'],
+			'anreise' => $nextTraining['anreise'],
+			'ort' => $nextTraining['ort'],
+			'updated' => $lastUpdate,
+			'zu' => $zugesagt,
+			'ab' => $abgesagt,
+			);
+	$xtra = new stdClass();
+	/* TODO BA: create hook + plugin
+	if ('Zapfendorf' == $nextTraining['ort']) {
+		$xtra->temp = new stdClass();
+		$xtra->temp->deg = GetWasserTemp();
+		$xtra->temp->updated = filemtime($ZTCacheFile);
+	}
+	*/
+	if ('' != @$poolImageFile) {
+		$xtra->pic = new stdClass();
+		$xtra->pic->full = $poolImageFile;
+		$xtra->pic->thumb = $poolThumbFile;
+	}
+	$train['x'] = $xtra;
+
+	FB_UpdateData($club_id, array_values($allPlayers), $train);
+}// UpdateFirebase
+
 function UpdateFiles() {
 	FindBadBild();
 	UpdateHtmlFiles();
 	UpdateJsonFiles();
+	UpdateFirebase();
 	// copy JSON files to old directory, for compatibility with old app versions.
 	global $club_id, $copyJsonFiles;
 	if ($copyJsonFiles) {
