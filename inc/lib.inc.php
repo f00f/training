@@ -336,8 +336,9 @@ function UpdateFiles() {
 function FindBadBild()
 {
 	global $nextTraining, $poolImageFile, $poolThumbFile;
-	$poolImageFolder = './badbilder/'.strtolower($nextTraining['ort']).'/';
-	if (!file_exists($poolImageFolder) || !is_dir($poolImageFolder)) {
+	$ort = strtolower(trim($nextTraining['ort']));
+	$poolImageFolder = './badbilder/'.$ort.'/';
+	if (!$ort || !file_exists($poolImageFolder) || !is_dir($poolImageFolder)) {
 		$poolImageFile = '';
 		$poolThumbFile = '';
 		return;
@@ -345,7 +346,7 @@ function FindBadBild()
 
 	$poolImageFile = RandomFile($poolImageFolder, 'jpg|png|gif');
 	// thumb
-	$poolThumbFolder = './badbilder/thumbs/'.strtolower($nextTraining['ort']).'/';
+	$poolThumbFolder = './badbilder/thumbs/'.$ort.'/';
 	if (!file_exists($poolThumbFolder) || !is_dir($poolThumbFolder)) {
 		mkdir($poolThumbFolder);
 		copy('./badbilder/thumbs/index_sub.html', $poolThumbFolder.'index.html');
