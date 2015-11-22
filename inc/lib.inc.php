@@ -13,7 +13,7 @@ require_once 'html.inc.php';
 require_once 'import.inc.php';
 require_once 'mail.inc.php';
 require_once 'config-site.inc.php';
-require_once __DIR__ . '/firebase.inc.php';
+require_once __DIR__ . '/FirebaseStore.php';
 
 if (file_exists(PLUGINS_FILE)) {
 	include_once PLUGINS_FILE;
@@ -308,7 +308,10 @@ function UpdateFirebase() {
 	}
 	$train['x'] = $xtra;
 
-	FB_UpdateData($club_id, array_values($allPlayers), $train);
+	$fbUrl = FIREBASE_URL . $club_id;
+	$fbStore = new \Training\FirebaseStore($fbUrl, FIREBASE_SECRET);
+	$fbStore->AuthUid = 'trainingServer';
+	$fbStore->StoreData(array_values($allPlayers), $train);
 }// UpdateFirebase
 
 function UpdateFiles() {
