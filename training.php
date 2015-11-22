@@ -54,8 +54,7 @@ if (('add' == $action OR 'remove' == $action) AND !$f_text) {
 
 
 # connect to db
-mysql_connect($dbHost, $dbUser, $dbPass);
-mysql_select_db($dbDB);
+$mysqli = mysqli_connect($dbHost, $dbUser, $dbPass, $dbDB);
 
 # load players
 $allPlayers = array();
@@ -82,8 +81,8 @@ $sql = "SELECT `session_id` AS `NEXT_SESSION` "
 	. "ORDER BY `session_id` ASC "
 	. "LIMIT 1";
 $result = DbQuery($sql);
-if (mysql_num_rows($result) > 0) {
-	$row = mysql_fetch_assoc($result);
+if (mysqli_num_rows($result) > 0) {
+	$row = mysqli_fetch_assoc($result);
 	$nextSession = $row['NEXT_SESSION'];
 }
 if (!$nextSession) {
@@ -101,8 +100,8 @@ $sql = "SELECT `status` "
 	. "ORDER BY `when` DESC "
 	. "LIMIT 1";
 $result = DbQuery($sql);
-$row = mysql_fetch_assoc($result);
-if (mysql_num_rows($result) > 0) {
+$row = mysqli_fetch_assoc($result);
+if (mysqli_num_rows($result) > 0) {
 	$currentPlayerStatus = $row['status'];
 }
 
@@ -156,7 +155,7 @@ $sql = "SELECT `name`, `text`, `status`, `when`"
 	. "ORDER BY `when` DESC";
 $result = DbQuery($sql);
 
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = mysqli_fetch_assoc($result)) {
 	$lastUpdate = max($lastUpdate, $row['when']);
 	$lcName = strtolower($row['name']);
 	if (empty($nixgesagtLc[$lcName])) {
@@ -242,7 +241,7 @@ $sql = "REPLACE INTO `{$tables['replies']}` "
 $result	= DbQuery($sql);
 */
 
-mysql_close();
+mysqli_close($mysqli);
 
 UpdateFiles();
 

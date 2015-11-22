@@ -4,8 +4,7 @@ require_once '../inc/lib.inc.php';
 require_once '../inc/model_practice_time.inc.php';
 
 # connect to db
-mysql_connect($dbHost, $dbUser, $dbPass);
-mysql_select_db($dbDB);
+$mysqli = mysqli_connect($dbHost, $dbUser, $dbPass, $dbDB);
 
 $initPractice = true;
 if (isset($_POST['practice_id']) && @$_POST['club_id']) {
@@ -19,7 +18,7 @@ if (isset($_POST['practice_id']) && @$_POST['club_id']) {
 	}
 	$success = PracticeTime::Save($practice);
 	if ($success) {
-		$practice['uid'] = mysql_insert_id();
+		$practice['uid'] = mysqli_insert_id($mysqli);
 		$_SESSION['notice'] = "<strong>Yes!</strong> Die neue Trainingszeit wurde erfolgreich hinzugefügt.";
 		Redirect($rootUrl . 'admin/practice_time_edit.php?id='.$practice['uid']);
 	}

@@ -50,11 +50,11 @@ class Player {
 			$q .= " AND `club_id` = '{$cid}'";
 		}
 		$result = DbQuery($q);
-		if (mysql_num_rows($result) != 1) {
+		if (mysqli_num_rows($result) != 1) {
 			return false;
 		}
 
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$player = unserialize($row['player_data']);
 		foreach ($row as $k => $v) {
 			if ('player_data' == $k) {
@@ -171,8 +171,8 @@ class Player {
 			. "WHERE `club_id` = '{$cid}' "
 			. "ORDER BY `player_name` ASC";//TODO: add deleted
 		$result = DbQuery($q);
-		if (mysql_num_rows($result) > 0) {
-			while ($row = mysql_fetch_assoc($result)) {
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
 				$pData = unserialize($row['player_data']);
 				$pData['uid'] = $row['uid'];
 				$CACHE->configuredPlayers[ $row['player_name'] ] = $pData;
@@ -215,8 +215,8 @@ class Player {
 			. "WHERE `club_id` = '{$cid}' "
 			. "AND `when` > {$someMonthsAgo}";
 		$result = DbQuery($sql);
-		if (mysql_num_rows($result) > 0) {
-			while ($row = mysql_fetch_assoc($result)) {
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
 				$name = trim($row['name']);
 				$nameLC = mb_strtolower($name, 'utf8');
 				$recentPlayers[] = $nameLC;

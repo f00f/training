@@ -4,8 +4,7 @@ require_once '../inc/lib.inc.php';
 require_once '../inc/model_player.inc.php';
 
 # connect to db
-mysql_connect($dbHost, $dbUser, $dbPass);
-mysql_select_db($dbDB);
+$mysqli = mysqli_connect($dbHost, $dbUser, $dbPass, $dbDB);
 
 $initPlayer = true;
 if (isset($_POST['uid']) && @$_POST['club_id']) {
@@ -18,7 +17,7 @@ if (isset($_POST['uid']) && @$_POST['club_id']) {
 	}
 	$success = Player::Save($player);
 	if ($success) {
-		$player['uid'] = mysql_insert_id();
+		$player['uid'] = mysqli_insert_id($mysqli);
 		$_SESSION['notice'] = "<strong>Yes!</strong> Der Spieler \"{$player['name']}\" wurde erfolgreich hinzugefügt.";
 		Redirect($rootUrl . 'admin/player_edit.php?id='.$player['uid']);
 	} else {

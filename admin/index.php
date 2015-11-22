@@ -3,8 +3,7 @@ require_once '../config/conf.inc.php';
 require_once 'lib.inc.php';
 
 # connect to db
-mysql_connect($dbHost, $dbUser, $dbPass);
-mysql_select_db($dbDB);
+$mysqli = mysqli_connect($dbHost, $dbUser, $dbPass, $dbDB);
 
 $pagetitle = "{$teamNameShort} Training Admin";
 html_header();

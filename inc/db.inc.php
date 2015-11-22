@@ -6,9 +6,10 @@ require_once 'dbconf.inc.php';
 // Displays error, if any.
 // ON_TEST_SERVER: Also displays query.
 function DbQuery($query) {
-	$result	= mysql_query($query);
-	if (mysql_errno() != 0) {
-		$msg = mysql_error();
+	global $mysqli;
+	$result	= mysqli_query($mysqli, $query);
+	if (mysqli_errno($mysqli) != 0) {
+		$msg = mysqli_error($mysqli);
 		if (@ON_TEST_SERVER) {
 			$msg += '<br />Query was: ' . $query;
 		}

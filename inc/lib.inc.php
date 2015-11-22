@@ -39,7 +39,7 @@ function SpamCheck($p_name, $p_ip) {
 		return;
 	}
 
-	global $table;
+	global $mysqli, $table;
 
 	# Find all updates during the last SPAM_SAME_IP_TIMEOUT seconds that
 	# were made from $p_ip
@@ -49,9 +49,9 @@ function SpamCheck($p_name, $p_ip) {
 		. "AND `name` <> 'RESET' "
 		. "AND `when` > ".(time()-SPAM_SAME_IP_TIMEOUT));
 	if (!$result) {
-		die (mysql_error());
+		die (mysqli_error($mysqli));
 	}
-	if (SPAM_SAME_IP_COUNT <= mysql_num_rows($result)) {
+	if (SPAM_SAME_IP_COUNT <= mysqli_num_rows($result)) {
 //print '<h3>SPAM_SAME_IP_TIMEOUT!</h3>';
 		Redirect();
 	}
@@ -65,10 +65,10 @@ function SpamCheck($p_name, $p_ip) {
 		. "ORDER BY `when` DESC "
 		. "LIMIT 1");
 	if (!$result) {
-		die (mysql_error());
+		die (mysqli_error($mysqli));
 	}
-	if (0 < mysql_num_rows($result)) {
-		$row = mysql_fetch_assoc($result);
+	if (0 < mysqli_num_rows($result)) {
+		$row = mysqli_fetch_assoc($result);
 		$lastIPOfUser		= $row['ip'];
 	}
 /*
@@ -488,7 +488,8 @@ function FirstWord($p_text) {
 }
 
 function sani($s) {
-	return mysql_real_escape_string($s);
+	global $mysqli;
+	return mysqli_real_escape_string($mysqli, $s);
 }
 
 

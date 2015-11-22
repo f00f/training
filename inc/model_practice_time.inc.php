@@ -109,11 +109,11 @@ class PracticeTime {
 			$q .= " AND `club_id` = '{$cid}'";
 		}
 		$result = DbQuery($q);
-		if (mysql_num_rows($result) != 1) {
+		if (mysqli_num_rows($result) != 1) {
 			return false;
 		}
 
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$practice = self::row2practice($row);
 
 		return $practice;
@@ -201,8 +201,8 @@ class PracticeTime {
 			. " `last` ASC";//TODO: add deleted
 		$result = DbQuery($q);
 
-		if (mysql_num_rows($result) > 0) {
-			while ($row = mysql_fetch_assoc($result)) {
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
 				$p = self::row2practice($row);
 
 				$CACHE->allPracticeTimes[] = $p;
@@ -342,8 +342,8 @@ class PracticeSession {
 			."LIMIT 1";
 		$res = DbQuery($q);
 		$status = false;
-		if (mysql_num_rows($res) > 0) {
-			$row = mysql_fetch_assoc($res);
+		if (mysqli_num_rows($res) > 0) {
+			$row = mysqli_fetch_assoc($res);
 			$status = $row['status'];
 		}
 		return $status;
@@ -362,11 +362,11 @@ class PracticeSession {
 			$q = "SELECT MIN(`session_id`) AS `sid` FROM `{$tables['practice_sessions']}` "
 				."WHERE `session_id` >= '{$now}' AND `club_id` = '{$cid}'";
 			$res = DbQuery($q);
-			if (0 == mysql_num_rows($res)) {
+			if (0 == mysqli_num_rows($res)) {
 				//die("Err0r in GetNextSessionId({$cid})!");
 				return false;
 			}
-			$row = mysql_fetch_assoc($res);
+			$row = mysqli_fetch_assoc($res);
 
 			$CACHE->nextSessionID = $row['sid'];
 		}
@@ -410,11 +410,11 @@ class PracticeSession {
 			. "WHERE `club_id` = '{$cid}' "
 			. "AND `session_id` = '{$session_id}'";
 		$result = DbQuery($q);
-		if (mysql_num_rows($result) != 1) {
+		if (mysqli_num_rows($result) != 1) {
 			return false;
 		}
 
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$session = array();
 		foreach ($row as $k => $v) {
 			if ('meta' == $k) {

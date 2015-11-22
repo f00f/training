@@ -6,8 +6,7 @@ require_once '../inc/'.$club_id.'-trainingszeiten.inc.php';
 require_once '../inc/model_practice_time.inc.php';
 
 # connect to db
-mysql_connect($dbHost, $dbUser, $dbPass);
-mysql_select_db($dbDB);
+$mysqli = mysqli_connect($dbHost, $dbUser, $dbPass, $dbDB);
 
 $defaultErstmals = date('Y-m-d', strtotime('yesterday'));
 $defaultLetztmals = date('Y-m-d', strtotime('+1 year'));

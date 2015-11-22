@@ -4,8 +4,7 @@ require_once '../inc/lib.inc.php';
 require_once '../inc/model_player.inc.php';
 
 # connect to db
-mysql_connect($dbHost, $dbUser, $dbPass);
-mysql_select_db($dbDB);
+$mysqli = mysqli_connect($dbHost, $dbUser, $dbPass, $dbDB);
 
 $loadFromDB = true;
 if (@$_POST['id']) {
