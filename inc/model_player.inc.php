@@ -20,23 +20,23 @@ class Player {
 		),
 		'email' => array(
 			'label' => 'E-Mail',
-			'help' => 'Die E-Mail-Adresse wird nur für Benachrichtigungs-E-Mails benutzt.',
+			'help' => 'Die E-Mail-Adresse wird nur fÃ¼r Benachrichtigungs-E-Mails benutzt.',
 		),
 		'freq' => array(
 			'label' => 'Frequenz',
 			'values' => 'numeric',
-			'help' => 'Häufigkeit der Benachrichtigungs-E-Mails.<br>x &lt; 0: bis zur x-ten Meldung.<br>x = 0: garkeine Mails.<br>x &gt; 0: bei jeder x-ten Meldung.',
+			'help' => 'HÃ¤ufigkeit der Benachrichtigungs-E-Mails.<br>x &lt; 0: bis zur x-ten Meldung.<br>x = 0: garkeine Mails.<br>x &gt; 0: bei jeder x-ten Meldung.',
 		),
 		'keineSelbstMail' => array(
 			'values' => 'bool',
-			'help' => 'Keine E-Mail für die eigene An-/Abmeldung schicken.',
+			'help' => 'Keine E-Mail fÃ¼r die eigene An-/Abmeldung schicken.',
 		),
 		'tendenz' => array(
 			'values' => array('ja', 'nein', ''),
-			'help' => 'Dieser Spieler kommt tendenziell eher (<em>ja</em>) oder eher nicht (<em>nein</em>) zum Training.<br>Mögliche Werte für das Feld: <em>ja</em>, <em>nein</em> oder <em>leer lassen</em>.',
+			'help' => 'Dieser Spieler kommt tendenziell eher (<em>ja</em>) oder eher nicht (<em>nein</em>) zum Training.<br>MÃ¶gliche Werte fÃ¼r das Feld: <em>ja</em>, <em>nein</em> oder <em>leer lassen</em>.',
 		),
 		'grund' => array(
-			'help' => '"Grund für die Tendenz" &ndash; Ein Standard-Kommentar, der in der nichts-gesagt-Liste in Klammern hinter dem Namen angezeigt wird.',
+			'help' => '"Grund fÃ¼r die Tendenz" &ndash; Ein Standard-Kommentar, der in der nichts-gesagt-Liste in Klammern hinter dem Namen angezeigt wird.',
 		),
 	);
 

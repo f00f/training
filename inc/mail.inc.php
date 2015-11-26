@@ -80,12 +80,12 @@ function SendMail($p_action, $p_name, $p_anzZu, $p_anzAb, $p_next) {
 	$zwischenstand = "Zwischenstand: {$p_anzZu} Zusagen, {$p_anzAb} Absagen.\n"
 				. "Den aktuellen Stand findest Du hier: {$trainingsUrl}\n\n";
 	$neu = "Funktionen:\n"
-		. "+ Einstellbare E-Mail Häufigkeit (mir sagen wie gewünscht):\n"
+		. "+ Einstellbare E-Mail HÃ¤ufigkeit (mir sagen wie gewÃ¼nscht):\n"
 		. "  - Wahlweise nur die ersten x Mails oder jede x-te Mail bekommen.\n"
-		. "  - Wahlweise keine Mail für die eigene Meldung bekommen.\n"
+		. "  - Wahlweise keine Mail fÃ¼r die eigene Meldung bekommen.\n"
 		. "  - Wahlweise keine Mails mehr bekommen nachdem man sich gemeldet hat.\n"
 		. "+ Direkte An-/Abmeldung aus den Mails\n"
-		. "+ Ein längerer Text ist möglich, das erste Wort wird als Name erkannt,\n"
+		. "+ Ein lÃ¤ngerer Text ist mÃ¶glich, das erste Wort wird als Name erkannt,\n"
 		. "  z.B.: \"Flo muss schlafen\"\n\n";
 	$ps = '';
 

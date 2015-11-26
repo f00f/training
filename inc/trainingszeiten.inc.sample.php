@@ -6,7 +6,7 @@ $training = array();
 $date = date('Ymd');
 
 /**
- * Die Informationen über einen Trainingstermin sind in einem Array
+ * Die Informationen Ã¼ber einen Trainingstermin sind in einem Array
  * gespeichert, das immer wie folgt aufgebaut ist. Das Format von Wochentag
  * und Uhrzeiten ist wichtig.
  * $t = array(
@@ -16,7 +16,7 @@ $date = date('Ymd');
  *	 'ort'     => 'Bambados',       // Bad
  * );
  *
- * Trainingstermine müssen danach immer eingetragen werden. Dazu gibt es drei
+ * Trainingstermine mÃ¼ssen danach immer eingetragen werden. Dazu gibt es drei
  * Moeglichkeiten. Das Datum ist immer im Format YYYYMMDD.
  * 1) ab einem bestimmten Datum auf unbestimmte Zeit
  *    AddWithStartDate($t, 20120401);

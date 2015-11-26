@@ -251,12 +251,12 @@ function UpdateJsonFiles() {
 
 	// this can be aggressively cached
 	$fh = fopen('json/'.$club_id.'-all-players.json', 'w');
-	fwrite($fh, utf8_encode('{'.$jsonAllNames.'}'));
+	fwrite($fh, '{'.$jsonAllNames.'}');
 	fclose($fh);
 
 	// load this for detailed display
 	$fh = fopen('json/'.$club_id.'-training.json', 'w');
-	fwrite($fh, utf8_encode('{"train":{'.$jsonTrain.','.$jsonZuAbNames.','.$jsonExtra.'}}'));
+	fwrite($fh, '{"train":{'.$jsonTrain.','.$jsonZuAbNames.','.$jsonExtra.'}}');
 	fclose($fh);
 
 	/*
@@ -478,10 +478,10 @@ function FirstWord($p_text) {
 	$matches = array();
 	$allowSpacesInWord = true;
 	if ($allowSpacesInWord) {
-		$pattern = '/^([\w ]*)/';
+		$pattern = '/^([\w ]*)/u';
 	} else {
 		// TODO: replace complicated set by \W or [^\p{L}\p{N}] (letter/number)
-		$pattern = '/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/';
+		$pattern = '/^(.*?)[^A-Za-z0-9äöüßÄÖÜ]/u';
 	}
 	preg_match($pattern, $p_text, $matches);
 	return trim($matches[1]);

@@ -6,7 +6,7 @@
  * Otherwise, arbitrary names can simply be entered into the web form.
  */
 $spieler = array(
-	/* Erklärung der Felder
+	/* ErklÃ¤rung der Felder
 	name:  
 	email: E-Mail Adresse
 	freq:  Wie oft will er E-Mails?

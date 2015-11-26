@@ -49,7 +49,7 @@ if ('ba' == $club_id) {
 }
 
 if (('add' == $action OR 'remove' == $action) AND !$f_text) {
-	trigger_error('Kein Spieler ausgewählt.', E_USER_ERROR);
+	trigger_error('Kein Spieler ausgewÃ¤hlt.', E_USER_ERROR);
 }
 
 
@@ -86,7 +86,7 @@ if (mysqli_num_rows($result) > 0) {
 	$nextSession = $row['NEXT_SESSION'];
 }
 if (!$nextSession) {
-	print 'Fehler: Keine zukünftige Trainingszeit gefunden.<br>';
+	print 'Fehler: Keine zukÃ¼nftige Trainingszeit gefunden.<br>';
 	die();
 }
 
@@ -116,7 +116,7 @@ if (!empty($allPlayers[$f_playerLC])) {
 		$allPlayers[$f_playerLC] = $f_player;
 	}
 }
-setcookie('spieler', str_replace(' ', '%20', $f_player), time()+2419200, '/');
+setcookie('spieler', utf8_decode(str_replace(' ', '%20', $f_player)), time()+2419200, '/');
 
 # update db
 $statusChanged = false;
