@@ -32,7 +32,7 @@ if (@$_POST['id']) {
 
 if (!@$_REQUEST['id']) {
 	$_SESSION['warning'] = 'Spieler nicht gefunden.';
-	Redirect($rootUrl . 'admin/player_list.php');
+	Redirect($rootUrl . 'admin/players_list.php');
 }
 $playerUID = $_REQUEST['id'];
 
@@ -41,7 +41,7 @@ if ($loadFromDB) {
 	$player = Player::Load($playerUID, $club_id);
 	if (false === $player) {
 		$_SESSION['warning'] = 'Spieler nicht gefunden.';
-		Redirect($rootUrl . 'admin/player_list.php');
+		Redirect($rootUrl . 'admin/players_list.php');
 	}
 }
 
