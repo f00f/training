@@ -9,13 +9,6 @@ if (@ON_TEST_SERVER) {
 	error_reporting(E_ALL);
 }
 
-# Gather information about remote host
-# and parse parameters
-$ip     = $_SERVER['REMOTE_ADDR'];
-$host   = gethostbyaddr($ip);
-$action = GetAction();
-$f_text = @trim($_REQUEST['text']);
-$f_player = FirstWord($f_text.' ');
 // Which app did the reply come from?
 // Current values: Web/Android/null
 $f_app = @trim($_REQUEST['app']);
@@ -25,6 +18,18 @@ if (!$f_app) { $f_app = 'web'; }
 // May be null, the version name (e.g. 1.5.1), or the version ID (e.g. 1, 2, 3, ...)
 $f_app_version = @trim($_REQUEST['app_ver']);
 if (!$f_app_version) { $f_app_version = '-1'; }
+// Gather information about remote host
+// and parse parameters
+$ip     = $_SERVER['REMOTE_ADDR'];
+$host   = gethostbyaddr($ip);
+$action = GetAction();
+if ('android' == $f_app && $f_app_version < 16) {
+	// Old android versions send text as iso-8859-1
+	$f_text = @trim($_REQUEST['text']);
+} else {
+	$f_text = urldecode(@trim($_REQUEST['text']));
+}
+$f_player = FirstWord($f_text.' ');
 // The club id the reply was meant for.
 // Currently only send by recent versions of the Android app.
 // E.g. ba, stc, ...
