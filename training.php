@@ -59,7 +59,11 @@ if (('add' == $action OR 'remove' == $action) AND !$f_text) {
 
 
 # connect to db
-$mysqli = mysqli_connect($dbHost, $dbUser, $dbPass, $dbDB);
+$mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbDB);
+/* check connection */
+if ($mysqli->connect_errno) {
+    die("Connect failed: " . $mysqli->connect_errno);
+}
 
 # load players
 $allPlayers = array();
@@ -77,15 +81,17 @@ $foo = PracticeTime::GetNext($club_id);
 
 # find next session after now
 # offest by RESET_DELAY
+// TODO: replace this: sessions which are currently in progress should also be considered.
 $trainHorizon = time() - RESET_DELAY;
 $nextSession = false;
 $sql = "SELECT `session_id` AS `NEXT_SESSION` "
 	. "FROM `{$tables['practice_sessions']}` "
-	. "WHERE `club_id` = '{$club_id}' "
-	. "AND `session_id` > '".date('Y-m-d H:i:s', $trainHorizon)."' "
+	. "WHERE `club_id` = ? "
+	. "AND `session_id` > ? "
 	. "ORDER BY `session_id` ASC "
 	. "LIMIT 1";
-$result = DbQuery($sql);
+$dt = date('Y-m-d H:i:s', $trainHorizon);
+$result = DbQueryP($sql, 'ss', $club_id, $dt);
 if (mysqli_num_rows($result) > 0) {
 	$row = mysqli_fetch_assoc($result);
 	$nextSession = $row['NEXT_SESSION'];
@@ -99,12 +105,12 @@ if (!$nextSession) {
 $currentPlayerStatus = false;
 $sql = "SELECT `status` "
 	. "FROM `{$tables['replies']}` "
-	. "WHERE `club_id` = '{$club_id}' "
-	. "AND `name` = '{$f_player}' "
-	. "AND `session_id` = '{$nextSession}' "
+	. "WHERE `club_id` = ? "
+	. "AND `name` = ? "
+	. "AND `session_id` = ? "
 	. "ORDER BY `when` DESC "
 	. "LIMIT 1";
-$result = DbQuery($sql);
+$result = DbQueryP($sql, 'sss', $club_id, $f_player, $nextSession);
 $row = mysqli_fetch_assoc($result);
 if (mysqli_num_rows($result) > 0) {
 	$currentPlayerStatus = $row['status'];
@@ -155,10 +161,10 @@ $lastUpdate    = 0;
 // TODO: move to PlayerModel or PracticeTimeModel?
 $sql = "SELECT `name`, `text`, `status`, `when`"
 	. "FROM `{$tables['replies']}` "
-	. "WHERE `club_id` = '{$club_id}' "
-	. "AND `session_id` = '{$nextSession}' "
+	. "WHERE `club_id` = ? "
+	. "AND `session_id` = ? "
 	. "ORDER BY `when` DESC";
-$result = DbQuery($sql);
+$result = DbQueryP($sql, 'ss', $club_id, $nextSession);
 
 while ($row = mysqli_fetch_assoc($result)) {
 	$lastUpdate = max($lastUpdate, $row['when']);
@@ -237,16 +243,9 @@ $ntYear	= date('Y', $nextTraining['datum']);
 $nextTraining['begin'] = mktime($ntHourBegin, $ntMinBegin, 0, $ntMon, $ntDay, $ntYear);
 $nextTraining['end']   = mktime($ntHourEnd, $ntMinEnd, 0, $ntMon, $ntDay, $ntYear);
 $nextTraining['when']  = $nextTraining['begin'];
-# write a RESET with the training's date into the db 
-/* RESET is no longer required
-$sql = "REPLACE INTO `{$tables['replies']}` "
-	. "(`club_id`, `name`, `text`, `when`, `status`, `ip`, `host`) "
-	. "VALUES "
-	. "('{$club_id}', 'RESET', '', '{$nextTraining['when']}', '', '', '---')";
-$result	= DbQuery($sql);
-*/
 
-mysqli_close($mysqli);
+
+$mysqli->close();
 
 UpdateFiles();
 

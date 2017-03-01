@@ -43,11 +43,13 @@ function SpamCheck($p_name, $p_ip) {
 
 	# Find all updates during the last SPAM_SAME_IP_TIMEOUT seconds that
 	# were made from $p_ip
-	$result = DbQuery("SELECT `when` "
+	$q = "SELECT `when` "
 		. "FROM `{$table}` "
-		. "WHERE `ip` = '{$p_ip}' "
+		. "WHERE `ip` = ? "
 		. "AND `name` <> 'RESET' "
-		. "AND `when` > ".(time()-SPAM_SAME_IP_TIMEOUT));
+		. "AND `when` > ?";
+	$dt = time() - SPAM_SAME_IP_TIMEOUT;
+	$result = DbQueryP($q, 'si', $p_ip, $dt);
 	if (!$result) {
 		die (mysqli_error($mysqli));
 	}
@@ -58,12 +60,14 @@ function SpamCheck($p_name, $p_ip) {
 
 	$lastIPOfUser = '';
 	# Finde letzte IP von der aus $p_name aktualisiert wurde
-	$result = DbQuery("SELECT `ip`, `when` AS `last_update_of_user` "
+	$q = "SELECT `ip`, `when` AS `last_update_of_user` "
 		. "FROM `{$table}` "
-		. "WHERE `name` = '{$p_name}' "
-		. "AND `when` > ".(time()-SPAM_SAME_USER_TIMEOUT)." "
+		. "WHERE `name` = ? "
+		. "AND `when` > ? "
 		. "ORDER BY `when` DESC "
-		. "LIMIT 1");
+		. "LIMIT 1";
+	$dt = time() - SPAM_SAME_USER_TIMEOUT;
+	$result = DbQueryP($q, 'si', $p_name, $dt);
 	if (!$result) {
 		die (mysqli_error($mysqli));
 	}

@@ -104,11 +104,13 @@ class PracticeTime {
 		global $tables;
 
 		$q = "SELECT `practice_id`, `club_id`, `dow`, `begin`, `end`, `first`, `last`, `data` FROM `{$tables['practices_conf']}` "
-			. "WHERE `practice_id` = '{$practice_id}'";
+			. "WHERE `practice_id` = ?";
 		if ($cid !== false) {
-			$q .= " AND `club_id` = '{$cid}'";
+			$q .= " AND `club_id` = ?";
+			$result = DbQueryP($q, 'ss', $practice_id, $cid);
+		} else {
+			$result = DbQueryP($q, 's', $practice_id);
 		}
-		$result = DbQuery($q);
 		if (mysqli_num_rows($result) != 1) {
 			return false;
 		}
@@ -149,9 +151,10 @@ class PracticeTime {
 		$q = "REPLACE INTO `{$tables['practices_conf']}` "
 			. "(`practice_id`, `club_id`, `dow`, `begin`, `end`, `first`, `last`, `data`) "
 			. "VALUES "
-			. "({$practice_id}, '{$cid}', '{$practice['dow']}', '{$practice['begin']}', '{$practice['end']}', '{$practice['first']}', '{$practice['last']}', '{$data}')";
-		$result = DbQuery($q);
-
+			. "(?, ?, ?, ?, ?, ?, ?, ?)";
+		$result = DbQueryP($q, 'isssssss', $practice_id, $cid, $practice['dow'],
+										$practice['begin'], $practice['end'],
+										$practice['first'], $practice['last'], $data);
 		return true;
 	}
 
@@ -195,11 +198,11 @@ class PracticeTime {
 		$CACHE->futurePracticeTimes = array();
 
 		$q = "SELECT `practice_id`, `club_id`, `dow`, `begin`, `end`, `first`, `last`, `data` FROM `{$tables['practices_conf']}` "
-			. " WHERE `club_id` = '{$cid}'"
+			. " WHERE `club_id` = ?"
 			. " ORDER BY `last` < CURDATE(),"
 			. " `first` ASC,"
 			. " `last` ASC";//TODO: add deleted
-		$result = DbQuery($q);
+		$result = DbQueryP($q, 's', $cid);
 
 		if (mysqli_num_rows($result) > 0) {
 			while ($row = mysqli_fetch_assoc($result)) {
@@ -336,14 +339,14 @@ class PracticeSession {
 		global $tables;
 
 		$q = "SELECT `status` FROM `{$tables['replies']}` "
-			."WHERE `session_id` = '{$sid}' AND `club_id` = '{$cid}' "
-			."AND `name` = '{$name}' "
+			."WHERE `session_id` = ? AND `club_id` = ? "
+			."AND `name` = ? "
 			."ORDER BY `when` DESC "
 			."LIMIT 1";
-		$res = DbQuery($q);
+		$result = DbQueryP($q, 'sss', $sid, $cid, $name);
 		$status = false;
-		if (mysqli_num_rows($res) > 0) {
-			$row = mysqli_fetch_assoc($res);
+		if (mysqli_num_rows($result) > 0) {
+			$row = mysqli_fetch_assoc($result);
 			$status = $row['status'];
 		}
 		return $status;
@@ -354,19 +357,21 @@ class PracticeSession {
 		global $tables;
 
 		if (!@$CACHE->nextSessionID) {
-			$now = time() - 2*3600; // offset for overlap
+			// 2h offset for overlap
+			// This should probably be replaced by RESET_DELAY
+			$now = time() - 2*3600;
 
 			$date = new DateTime("@{$now}");
 			$now = $date->format('Y-m-d H:i:s');
 
 			$q = "SELECT MIN(`session_id`) AS `sid` FROM `{$tables['practice_sessions']}` "
-				."WHERE `session_id` >= '{$now}' AND `club_id` = '{$cid}'";
-			$res = DbQuery($q);
-			if (0 == mysqli_num_rows($res)) {
+				."WHERE `session_id` >= ? AND `club_id` = ?";
+			$result = DbQueryP($q, 'ss', $now, $cid);
+			if (0 == mysqli_num_rows($result)) {
 				//die("Err0r in GetNextSessionId({$cid})!");
 				return false;
 			}
-			$row = mysqli_fetch_assoc($res);
+			$row = mysqli_fetch_assoc($result);
 
 			$CACHE->nextSessionID = $row['sid'];
 		}
@@ -398,8 +403,8 @@ class PracticeSession {
 		$q = "INSERT IGNORE INTO `{$tables['practice_sessions']}` "
 			. "(`club_id`, `session_id`, `meta`, `count_yes`, `count_no`) "
 			. "VALUES "
-			. "('{$cid}', '{$session_id}', '{$meta}', 0, 0)";
-		DbQuery($q);
+			. "(?, ?, ?, 0, 0)";
+		$result = DbQueryP($q, 'sss', $cid, $session_id, $meta);
 	}
 
 	// Loads information about a practice session.
@@ -407,9 +412,9 @@ class PracticeSession {
 		global $tables;
 
 		$q = "SELECT * FROM `{$tables['practice_sessions']}` "
-			. "WHERE `club_id` = '{$cid}' "
-			. "AND `session_id` = '{$session_id}'";
-		$result = DbQuery($q);
+			. "WHERE `club_id` = ? "
+			. "AND `session_id` = ?";
+		$result = DbQueryP($q, 'ss', $cid, $session_id);
 		if (mysqli_num_rows($result) != 1) {
 			return false;
 		}
@@ -463,11 +468,11 @@ class PracticeSession {
 
 		$meta = serialize($s['meta']);
 		$q = "UPDATE `{$tables['practice_sessions']}` "
-			. "SET `meta` = '{$meta}' "
-			. ", `count_yes` = " . intval($s['count_yes']) . " "
-			. ", `count_no` = " . intval($s['count_no']) . " "
-			. "WHERE `club_id` ='{$cid}' "
-			. "AND `session_id` = '{$session_id}'";
-		DbQuery($q);
+			. "SET `meta` = ? "
+			. ", `count_yes` = ? "
+			. ", `count_no` = ? "
+			. "WHERE `club_id` = ? "
+			. "AND `session_id` = ?";
+		$result = DbQueryP($q, 'siiss', $meta, intval($s['count_yes']), intval($s['count_no']), $cid, $session_id);
 	}
 }

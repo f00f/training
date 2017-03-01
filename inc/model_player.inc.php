@@ -45,11 +45,13 @@ class Player {
 		global $tables;
 
 		$q = "SELECT `uid`, `club_id`, `player_name`, `player_data` FROM `{$tables['players_conf']}` "
-			. "WHERE `uid` = '{$playerUID}'";
+			. "WHERE `uid` = ?";
 		if ($cid !== false) {
-			$q .= " AND `club_id` = '{$cid}'";
+			$q .= " AND `club_id` = ?";
+			$result = DbQueryP($q, 'ss', $playerUID, $cid);
+		} else {
+			$result = DbQueryP($q, 's', $playerUID);
 		}
-		$result = DbQuery($q);
 		if (mysqli_num_rows($result) != 1) {
 			return false;
 		}
@@ -99,9 +101,9 @@ class Player {
 		$q = "REPLACE INTO `{$tables['players_conf']}` "
 			. "(`uid`, `club_id`, `player_name`, `player_data`) "
 			. "VALUES "
-			. "({$uid}, '{$cid}', '{$player_name}', '{$data}')";
+			. "(?, ?, ?, ?)";
 			//. "WHERE `uid` = '{$playerUID}'";
-		$result = DbQuery($q);
+		$result = DbQueryP($q, 'isss', $uid, $cid, $player_name, $data);
 
 		return true;
 	}
@@ -140,8 +142,8 @@ class Player {
 		$q = "INSERT INTO `{$tables['replies']}` "
 			."(`club_id`, `session_id`, `name`, `text`, `when`, `status`, `ip`, `host`, `app`, `app_ver`) "
 			."VALUES "
-			."('{$cid}', '{$sid}', '{$name}', '{$text}', {$when}, '{$reply}', '{$ip}', '{$host}', '{$app}', '{$app_ver}')";
-		DbQuery($q);
+			."(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$result = DbQueryP($q, 'ssssisssss', $cid, $sid, $name, $text, $when, $reply, $ip, $host, $app, $app_ver);
 
 		// update practice session record
 		PracticeSession::Update($reply, $statusChanged, $name, $text, $cid, $sid);
@@ -168,9 +170,9 @@ class Player {
 		$CACHE->configuredPlayers = array();
 
 		$q = "SELECT `uid`, `player_name`, `player_data` FROM `{$tables['players_conf']}` "
-			. "WHERE `club_id` = '{$cid}' "
+			. "WHERE `club_id` = ? "
 			. "ORDER BY `player_name` ASC";//TODO: add deleted
-		$result = DbQuery($q);
+		$result = DbQueryP($q, 's', $cid);
 		if (mysqli_num_rows($result) > 0) {
 			while ($row = mysqli_fetch_assoc($result)) {
 				$pData = unserialize($row['player_data']);
@@ -211,10 +213,10 @@ class Player {
 		// load additional player names
 		$recentPlayers = array();
 		$someMonthsAgo = strtotime("- {$forgetPlayersAfter} months"); // find only players who replied within the last N months
-		$sql = "SELECT DISTINCT `name` FROM `{$tables['replies']}` "
-			. "WHERE `club_id` = '{$cid}' "
-			. "AND `when` > {$someMonthsAgo}";
-		$result = DbQuery($sql);
+		$q = "SELECT DISTINCT `name` FROM `{$tables['replies']}` "
+			. "WHERE `club_id` = ? "
+			. "AND `when` > ?";
+		$result = DbQueryP($q, 'si', $cid, $someMonthsAgo);
 		if (mysqli_num_rows($result) > 0) {
 			while ($row = mysqli_fetch_assoc($result)) {
 				$name = trim($row['name']);
