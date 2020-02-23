@@ -11,7 +11,7 @@ html_header();
 
 navbar_admin('players');
 
-// load all players data
+// load data of configured players
 $players = Player::LoadConfigured($club_id);
 ?>
     <div class="container">
@@ -22,7 +22,7 @@ $players = Player::LoadConfigured($club_id);
 		</div>
 	  </div>
 
-		<table class="list-group player-list">
+      <table class="list-group player-list">
 	  <?php
 	  foreach ($players as $pLower => $p) {
 		$pId = $p['uid'];

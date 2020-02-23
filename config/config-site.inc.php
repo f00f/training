@@ -14,7 +14,7 @@ define('SPAM_SAME_USER_TIMEOUT', 300);
 // if a user submits less than LATE_THRESHOLD before start of the training, show notice
 define('LATE_THRESHOLD', 1 * 3600); // TODO: make this a config value
 // RESET_DELAY_HOURS after begin of the training, switch to next training
-define('RESET_DELAY_HOURS', 1); // TODO: make this a config value
+define('RESET_DELAY_HOURS', 2); // TODO: make this a config value
 
 // Don't change values below.
 define('RESET_DELAY_MINUTES', RESET_DELAY_HOURS * 60);

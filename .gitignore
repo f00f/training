@@ -12,3 +12,8 @@ inc/*-trainingszeiten.inc.php
 # Windows (copied) files
 Thumbs.db
 Copy of *
+
+# Composer
+composer-setup.php
+composer.phar
+inc/vendor/*

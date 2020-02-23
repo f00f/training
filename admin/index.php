@@ -33,7 +33,7 @@ $unknownPlayersCount = '?';
 		<h2><span class="glyphicon glyphicon-user"></span> Spieler</h2>
 		<div class='list-group'>
 		<a class='list-group-item' href="players_list.php">Bekannte Spieler <span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class='glyphicon glyphicon-pencil'></span> bearbeiten und <span class='glyphicon glyphicon-trash'></span> löschen<span class='badge'><?=$playersCount?></span></a>
-		<a class='list-group-item' href="players_list_unkown.php">Unbekannte Spieler <span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class="glyphicon glyphicon-plus"></span> in die Datenbank übernehmen oder <span class='glyphicon glyphicon-trash'></span> löschen<span class='badge'><?=$unknownPlayersCount?></span></a>
+		<a class='list-group-item' href="players_list_unknown.php">Unbekannte Spieler <span class="glyphicon glyphicon-th-list"></span> anzeigen, <span class="glyphicon glyphicon-plus"></span> in die Datenbank übernehmen oder <span class='glyphicon glyphicon-trash'></span> löschen<span class='badge'><?=$unknownPlayersCount?></span></a>
 		<a class='list-group-item' href="player_add.php"><span class="glyphicon glyphicon-plus"></span> hinzufügen</a>
 		</div>
 

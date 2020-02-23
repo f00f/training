@@ -1,5 +1,7 @@
 DirectoryIndex index.shtml index.php
 
+SSILegacyExprParser on
+
 # avoid caching
 <filesMatch "\.shtml$">
 FileETag None

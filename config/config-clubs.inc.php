@@ -24,50 +24,71 @@ function get_club_id() {
 	return $club_id;
 }
 
-function load_config($club_id) {
+function load_config($team_id) {
 	global $conf;
-	global $rootUrl, $teamNameShort, $emailFrom, $forgetPlayersAfter, $forgetConfiguredPlayers, $teamId, $copyJsonFiles;
+	global $rootUrl, $teamNameShort, $emailFrom, $forgetPlayersAfter, $forgetConfiguredPlayers, $teamId, $copyJsonFiles, $KontaktName, $KontaktEmail;
 
-	if (!isset($conf[$club_id])) {
+	if (!isset($conf[$team_id])) {
 		die('Config not found.');
 	}
 
-	extract($conf[$club_id], EXTR_IF_EXISTS);
+	extract($conf[$team_id], EXTR_IF_EXISTS);
+}
+
+function set_config_value($team_name, $key, $val) {
+	global $conf;
+
+	$team_id = strtolower($team_name);
+
+	if (!isset($conf[$team_id])) {
+		die('Config for '.$team_id.' not found.');
+	}
+	
+	if (isset($conf[$team_id][$key])) {
+		die('Config for '.$team_id.' already contains key '.$key.'.');
+	}
+
+	$conf[$team_id][$key] = $val;
 }
 
 function create_default_config($team_name) {
 	global $conf;
 
-	$club_id = strtolower($team_name);
+	$team_id = strtolower($team_name);
 
-	$conf[$club_id] = array();
+	$conf[$team_id] = array();
 
 	//rootUrl: used to build links in notification emails
 	// should point to the folder of the training website, with trailing slash.
+	//$conf[$team_id]['rootUrl'] = 'http://ba.uwr1.de/training/';
+	//$conf[$team_id]['rootUrl'] = 'http://git.uwr1.test/training/';
 	if (@ON_TEST_SERVER) {
-		$conf[$club_id]['rootUrl'] = 'http://training.uwr1.test/'.$club_id.'/';
+		$conf[$team_id]['rootUrl'] = 'http://training.uwr1.test/'.$team_id.'/';
 	} else {
-		$conf[$club_id]['rootUrl'] = 'http://training.uwr1.de/'.$club_id.'/';
+		$conf[$team_id]['rootUrl'] = 'http://training.uwr1.de/'.$team_id.'/';
 	}
 
 	//teamNameShort: used in email sender name of notification emails.
-	$conf[$club_id]['teamNameShort'] = 'UWR ' . $team_name;
+	$conf[$team_id]['teamNameShort'] = 'UWR ' . $team_name;
 
 	//emailFrom: used to build the sender username of notification emails.
 	// the actual sender will be "training-{$emailFrom}@uwr1.de"
-	$conf[$club_id]['emailFrom'] = $club_id;
+	$conf[$team_id]['emailFrom'] = $team_id;
 
 	// Non-configured players will disapear from the page N months after their last reply.
-	$conf[$club_id]['forgetPlayersAfter'] = 2;
+	$conf[$team_id]['forgetPlayersAfter'] = 2;
 
 	// Whether configured players will also disapear from the page N months after their last reply.
 	// Note: this is only a question of displaying the name on the page.
-	$conf[$club_id]['forgetConfiguredPlayers'] = false;
+	$conf[$team_id]['forgetConfiguredPlayers'] = false;
 
 	//teamId: probably used on several occasions.
-	$conf[$club_id]['teamId'] = $club_id;
+	$conf[$team_id]['teamId'] = $team_id;
 
 	//copyJsonFiles: copy json output files to old location so that the app can find them.
 	// Enable only for clubs which use the new site.
-	$conf[$club_id]['copyJsonFiles'] = false;
+	$conf[$team_id]['copyJsonFiles'] = false;
+
+	//plugins: list of plugin names which should be active on a club's page.
+	$conf[$team_id]['plugins'] = array();
 }

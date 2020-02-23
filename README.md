@@ -3,12 +3,14 @@ training
 
 Requirements
 ============
-PHP, SSI, MySQL
+PHP, SSI, MySQL, Apache (.htaccess rewrite rules)
 
 Installation
 ============
 * Create a database table according to training/inc/db_schema.sql
 * Configure (see section Config Files below)
+* Install composer to inc/, `php composer.phar install`
+* Add a club to the `.htaccess` file: copy and edit the "demo" line, chain with `[OR]`.
 
 Config Files
 ============

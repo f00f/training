@@ -5,14 +5,14 @@
     <head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="css/t.css?v=20130831" type="text/css" />
+        <link rel="stylesheet" href="css/t.css?v=20161123" type="text/css" />
         <title><!--#echo var="title"--> |<!--#echo var="rooturl"--></title>
         <meta name="robots" content="ALL" />
         <meta name="copyright" content="(c) Hannes Hofmann 2008+" />
         <meta name="Author" content="Hannes Hofmann" />
         <meta name="keywords" content="Unterwasser, Rugby, Team, Sport, Unterwasser Rugby, Unter Wasser Rugby, Unter-Wasser-Rugby, 3D, 3D-Action, Action, UWR, Tauchclub, Unter, Wasser, TC, under, water, deutschland, homepage, web, online" />
         <meta name="description" content="Unterwasser-Rugby Training in <!--#echo var="club_id" -->" />
-        <!--#if expr="$noindex = '1'"--><meta name="robots" content="noindex" /><!--#endif -->
+        <!--#if expr="$noindex = '1'" --><meta name="robots" content="noindex" /><!--#endif -->
     </head>
     <body>
 <!--#config timefmt="%d.%m.%Y %H:%M" -->
